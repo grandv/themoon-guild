@@ -112,7 +112,7 @@ tr.r2 .why{color:light-dark(#7a2e0e,#fcd9a8)}
 .drop td input{min-height:36px;padding:4px 8px}
 .empty{padding:40px 16px;text-align:center;color:var(--mute)}
 body.gated main>section:not(#gate),body.gated main>#msg{display:none!important}
-body.gated .bar nav,body.gated .bar .right label.btn{display:none}
+body.gated .bar nav,body.gated .bar .right label.btn,body.gated #langTop{display:none}
 body.viewer .staffonly,body.norisk .riskonly{display:none!important}
 #gate{max-width:560px;margin:48px auto;text-align:center}
 #gate .moon{width:64px;height:64px;margin:0 auto 14px}
@@ -138,6 +138,49 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 .pg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
 @media(max-width:700px){.pg{grid-template-columns:minmax(0,1fr)}}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/*m*/
+.langsel{min-height:34px;padding:4px 8px;font-size:13.5px;border-radius:9px}
+#sortSel{display:none}
+@media(max-width:700px){
+  body{font-size:15px}
+  .bar .wrap{gap:6px 10px;min-height:56px;padding-block:6px}
+  .brand{font-size:18px}.brand .moon{width:22px;height:22px}
+  .right{margin-left:auto;gap:6px}
+  .right .btn{min-height:36px;padding:6px 12px;font-size:14px}
+  nav{order:5;flex:1 1 100%;margin:0 -4px}
+  nav a{padding:6px 10px;font-size:14px}
+  main{padding-top:14px}
+  .hero h1{font-size:24px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+  .kpi{padding:10px 12px;border-radius:14px}.kpi b{font-size:24px}
+  .card{border-radius:16px;padding:14px}
+  .head{margin-bottom:10px}
+  .tools{width:100%}.tools .seg{flex:1 1 auto}.seg button{flex:1;padding:4px 6px;font-size:13.5px}
+  .fig{height:260px}.fig.s{height:200px}
+  .list li{flex-wrap:wrap;padding:9px 10px}
+  .list li>.row{width:100%;justify-content:flex-end}
+  #sortSel{display:inline-block}
+  #members .tools input,#members .tools select{flex:1 1 9em;min-width:0}
+  #members table,#members tbody{display:block}
+  #members thead{display:none}
+  #members tbody tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 10px;padding:10px 12px;border-bottom:1px solid var(--line);border-radius:12px;margin-bottom:6px;background:var(--card2)}
+  #members tbody tr.r1{background:var(--y1);box-shadow:inset 4px 0 0 var(--warn)}
+  #members tbody tr.r2{background:var(--y2);box-shadow:inset 4px 0 0 var(--bad)}
+  #members td{border:0;padding:0;background:none!important;box-shadow:none!important;text-align:left!important;font-size:14px}
+  #members td.hide-s{display:none}
+  #members td:first-child{grid-column:1/-1;font-size:15.5px}
+  #members td[data-l]::before{content:attr(data-l)' ';color:var(--mute);font-size:12px;display:block}
+  #members td.stc,#members td.clc{grid-column:1/-1}
+  #members td.clc::before{display:none!important}
+  #members td.clc{font-size:13px;color:var(--mute);margin-top:-4px}
+  #members td.clc .job{width:18px;height:18px}
+  #members td.stc::before{display:none!important}
+  .modal{padding:0;place-items:stretch}
+  .sheet{border-radius:0;max-height:none;height:100%;width:100%;border:0;padding:16px 14px 40px}
+  .phead img{width:44px;height:44px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #gate{margin:20px auto}
+}
 @media(max-width:700px){.bar{position:static}.bar .wrap{gap:8px}html{scroll-padding-top:12px}}
 @media(max-width:600px){.crow{grid-template-columns:10.5em minmax(0,1fr) 4em}.hide-s{display:none}table{font-size:13px}td,th{padding:8px 6px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
@@ -147,7 +190,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 <div class="bar"><div class="wrap">
   <div class="brand"><span class="moon"></span>TheMoon</div>
   <nav><a href="#overview">ภาพรวม</a><a href="#classes">อาชีพ</a><a href="#members">สมาชิก</a><a href="#log" class="riskonly">ประวัติ</a><a href="#access" class="staffonly" id="navAccess" hidden>สิทธิ์เข้าดู <span id="pendN"></span></a><a href="#settings" class="staffonly">ตั้งค่า</a></nav>
-  <div class="right"><span class="pill" id="storePill">เก็บในเครื่องนี้</span><span id="auth"></span>
+  <div class="right"><span id="langTop"></span><span class="pill hide-s" id="storePill">เก็บในเครื่องนี้</span><span id="auth"></span>
     <label class="btn pri staffonly">อัปโหลด CSV<input type="file" id="file" accept=".csv,text/csv" multiple></label></div>
 </div></div>
 
@@ -188,7 +231,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 
 <section id="members" class="card">
   <div class="head"><h2>สมาชิกทั้งหมด</h2>
-    <div class="tools"><input id="q" placeholder="ค้นหาชื่อ" style="width:11em"><select id="fClass"><option value="">ทุกอาชีพ</option></select>
+    <div class="tools"><select id="sortSel" aria-label="sort"><option value="sev">สถานะ</option><option value="gear">Gear</option><option value="dG">Gear +</option><option value="act">กิจกรรม</option><option value="away">ออนไลน์ล่าสุด</option><option value="name">ชื่อ</option></select><input id="q" placeholder="ค้นหาชื่อ" style="width:11em"><select id="fClass"><option value="">ทุกอาชีพ</option></select>
       <select id="fStat" class="riskonly"><option value="">ทุกสถานะ</option><option value="0">Active</option><option value="1">เฝ้าระวัง</option><option value="2">เสี่ยงเตะ</option><option value="risk">มีความเสี่ยง (เหลือง)</option><option value="new">คนใหม่</option><option value="ex">ยกเว้น</option></select></div></div>
   <p class="note" id="count" style="margin:-6px 0 8px"></p>
   <div class="scroll"><table><thead><tr id="thead"></tr></thead><tbody id="rows"></tbody></table></div>
@@ -237,6 +280,285 @@ const FB_CONFIG={apiKey:"AIzaSyA_Np440xRhf0eS7NCa1BRNir0wqs5-2aw",authDomain:"th
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* ---------- i18n: TH (source) / EN / ID / PH ---------- */
+const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filipino']];
+const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
+let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
+const D={
+'ภาพรวม':['Overview','Ringkasan','Overview'],
+'อาชีพ':['Classes','Kelas','Mga Class'],
+'สมาชิก':['Members','Anggota','Miyembro'],
+'ประวัติ':['History','Riwayat','Kasaysayan'],
+'สิทธิ์เข้าดู':['Access','Akses','Access'],
+'ตั้งค่า':['Settings','Pengaturan','Settings'],
+'คลาวด์':['Cloud','Cloud','Cloud'],
+'เก็บในเครื่องนี้':['This device','Perangkat ini','Device na ito'],
+'อัปโหลด CSV':['Upload CSV','Unggah CSV','Mag-upload ng CSV'],
+'TheMoon · ภาพรวมกิลด์':['TheMoon · Guild overview','TheMoon · Ringkasan guild','TheMoon · Overview ng guild'],
+'อัปโหลดหรือลากไฟล์ CSV รายชื่อกิลด์มาวาง ได้ทีละหลายไฟล์':['Upload or drop guild roster CSV files — several at once','Unggah atau seret file CSV daftar guild — bisa sekaligus','Mag-upload o i-drop ang mga CSV ng guild — puwedeng sabay-sabay'],
+'ไฟล์ที่รอบันทึก':['Files ready to save','File siap disimpan','Mga file na ise-save'],
+'บันทึก':['Save','Simpan','I-save'],
+'ยกเลิก':['Cancel','Batal','Kanselahin'],
+'ไฟล์':['File','File','File'],
+'จำนวนคน':['Players','Pemain','Players'],
+'วันเวลาของข้อมูล':['Data date & time','Tanggal & jam data','Petsa at oras ng data'],
+'ไฟล์ที่วันเวลาซ้ำกับของเดิมจะบันทึกทับ':['A file with the same date & time replaces the old one','File dengan tanggal & jam sama akan menimpa yang lama','Papalitan ang luma kung pareho ang petsa at oras'],
+'ค่าพลัง (Gear) ตามวัน':['Gear score by day','Gear per hari','Gear bawat araw'],
+'ทั้งกิลด์':['Whole guild','Seluruh guild','Buong guild'],
+'แยกอาชีพ':['By class','Per kelas','Bawat class'],
+'รายคน':['By player','Per pemain','Bawat player'],
+'7 วัน':['7 days','7 hari','7 araw'],
+'30 วัน':['30 days','30 hari','30 araw'],
+'ทั้งหมด':['All','Semua','Lahat'],
+'พิมพ์ชื่อผู้เล่นเพื่อเพิ่มเส้น':['Type a player name to add a line','Ketik nama pemain untuk menambah garis','I-type ang pangalan para magdagdag ng linya'],
+'แยกตามอาชีพ':['By class','Per kelas','Ayon sa class'],
+'แถบ =':['Bar =','Bar =','Bar ='],
+'ขวา = Gear เฉลี่ย':['right = avg Gear','kanan = rata-rata Gear','kanan = average Gear'],
+'รายชื่อเสี่ยงเตะ':['Kick-risk list','Daftar risiko kick','Listahan ng risk ma-kick'],
+'คัดลอกข้อความ':['Copy text','Salin teks','Kopyahin ang text'],
+'บันทึกเป็นรูป':['Save as image','Simpan sebagai gambar','I-save bilang larawan'],
+'พัฒนาเร็วที่สุด':['Fastest growing','Paling cepat naik','Pinakamabilis umangat'],
+'ความเคลื่อนไหวสมาชิก':['Member changes','Perubahan anggota','Pagbabago ng miyembro'],
+'สมาชิกทั้งหมด':['All members','Semua anggota','Lahat ng miyembro'],
+'ค้นหาชื่อ':['Search name','Cari nama','Hanapin ang pangalan'],
+'ทุกอาชีพ':['All classes','Semua kelas','Lahat ng class'],
+'ทุกสถานะ':['All statuses','Semua status','Lahat ng status'],
+'มีความเสี่ยง (เหลือง)':['At risk (yellow)','Berisiko (kuning)','May risk (dilaw)'],
+'คนใหม่':['New','Baru','Bago'],
+'ยกเว้น':['Exempt','Dikecualikan','Exempt'],
+'สิทธิ์เข้าดูเว็บ':['Website access','Akses situs','Access sa website'],
+'เฉพาะหัวหน้า/รองหัวหน้าเห็นส่วนนี้':['Only leader/officers see this','Hanya ketua/wakil yang melihat ini','Leader/officer lang ang nakakakita nito'],
+'ประวัติการเตะ':['Kick history','Riwayat kick','Kasaysayan ng kick'],
+'ข้อมูลที่บันทึกไว้':['Saved data','Data tersimpan','Naka-save na data'],
+'สำรองข้อมูล':['Back up','Cadangkan','Mag-back up'],
+'นำเข้าไฟล์สำรอง':['Import backup','Impor cadangan','Mag-import ng backup'],
+'เกณฑ์ตัดสิน':['Rules','Kriteria','Pamantayan'],
+'กิจกรรมขั้นต่ำ/สัปดาห์':['Min. activity / week','Aktivitas min. / minggu','Min. activity / linggo'],
+'ต่ำติดกันกี่สัปดาห์ = เสี่ยงเตะ':['Low weeks in a row = kick risk','Minggu rendah berturut = risiko kick','Sunod-sunod na mababang linggo = risk'],
+'ไม่ออนไลน์เกิน (วัน) = เฝ้าระวัง':['Offline over (days) = watch','Offline lebih dari (hari) = pantau','Offline nang lampas (araw) = bantayan'],
+'Gear/แต้มสะสมไม่ขึ้นภายใน (วัน)':['No Gear/contribution gain within (days)','Gear/kontribusi tak naik dalam (hari)','Walang pag-angat ng Gear/contribution sa (araw)'],
+'ผ่อนผันคนเข้าใหม่ (วัน)':['Grace period for new members (days)','Masa tenggang anggota baru (hari)','Palugit sa bagong miyembro (araw)'],
+'สมาชิกทั่วไปเห็นสถานะเสี่ยงเตะไหม':['Can regular members see kick risk?','Anggota biasa bisa lihat risiko kick?','Makikita ba ng miyembro ang kick risk?'],
+'ซ่อน (เห็นแค่ Gear/กราฟ)':['Hide (Gear/charts only)','Sembunyikan (hanya Gear/grafik)','Itago (Gear/chart lang)'],
+'แสดง':['Show','Tampilkan','Ipakita'],
+'วันรีเซ็ตกิจกรรมรายสัปดาห์':['Weekly activity reset day','Hari reset aktivitas mingguan','Araw ng weekly reset'],
+'จันทร์':['Monday','Senin','Lunes'],'อังคาร':['Tuesday','Selasa','Martes'],'พุธ':['Wednesday','Rabu','Miyerkules'],'พฤหัสบดี':['Thursday','Kamis','Huwebes'],'ศุกร์':['Friday','Jumat','Biyernes'],'เสาร์':['Saturday','Sabtu','Sabado'],'อาทิตย์':['Sunday','Minggu','Linggo'],
+'ที่เก็บข้อมูล':['Storage','Penyimpanan','Storage'],
+'Gear และแต้มสนับสนุนสะสม':['Gear & total contribution','Gear & total kontribusi','Gear at kabuuang contribution'],
+'กิจกรรมรายสัปดาห์':['Weekly activity','Aktivitas mingguan','Lingguhang activity'],
+'ปิด':['Close','Tutup','Isara'],
+'เฝ้าระวัง':['Watch','Pantau','Bantayan'],
+'เสี่ยงเตะ':['Kick risk','Risiko kick','Risk ma-kick'],
+'Gear เฉลี่ย':['Avg Gear','Rata-rata Gear','Average Gear'],
+'Gear สูงสุด':['Top Gear','Gear tertinggi','Pinakamataas na Gear'],
+'คนใหม่ / ยกเว้น':['New / exempt','Baru / dikecualikan','Bago / exempt'],
+'ยังไม่มีข้อมูล':['No data yet','Belum ada data','Wala pang data'],
+'ไม่ทำกิจกรรมสัปดาห์นี้':['No activity this week','Tidak ada aktivitas minggu ini','Walang activity ngayong linggo'],
+'สนับสนุนสัปดาห์นี้ 0':['0 contribution this week','Kontribusi minggu ini 0','0 contribution ngayong linggo'],
+'บันทึกเตะ':['Record kick','Catat kick','I-record ang kick'],
+'ไม่มีใครเข้าเกณฑ์':['No one meets the criteria','Tidak ada yang memenuhi kriteria','Walang pasok sa pamantayan'],
+'ต้องมีข้อมูลอย่างน้อย 2 วัน':['Needs at least 2 days of data','Perlu data minimal 2 hari','Kailangan ng hindi bababa sa 2 araw na data'],
+'ยังไม่มีใคร Gear เพิ่มในช่วงนี้':['No one gained Gear in this period','Belum ada yang Gear-nya naik','Wala pang umangat ang Gear'],
+'อาจเปลี่ยนชื่อ (อาชีพเดียวกัน Gear และแต้มสะสมใกล้กัน)':['Possible rename (same class, similar Gear & contribution)','Mungkin ganti nama (kelas sama, Gear & kontribusi mirip)','Posibleng nagpalit ng pangalan (parehong class, malapit ang Gear at contribution)'],
+'ใช่ รวมประวัติ':['Yes, merge history','Ya, gabungkan riwayat','Oo, pagsamahin'],
+'ไม่ใช่':['No','Bukan','Hindi'],
+'เคยถูกเตะ':['Kicked before','Pernah di-kick','Na-kick na dati'],
+'ต้องมีข้อมูลอย่างน้อย 2 ครั้งเพื่อเทียบ':['Needs at least 2 uploads to compare','Perlu minimal 2 unggahan untuk dibandingkan','Kailangan ng 2 upload para maikumpara'],
+'ใหม่':['new','baru','bago'],
+'ชื่อ':['Name','Nama','Pangalan'],
+'ตำแหน่ง':['Rank','Jabatan','Ranggo'],
+'Gear +':['Gear +','Gear +','Gear +'],
+'กิจกรรม':['Activity','Aktivitas','Activity'],
+'สนับสนุน/สัปดาห์':['Contrib./week','Kontrib./minggu','Contrib./linggo'],
+'สะสม +':['Total contrib. +','Total kontrib. +','Total contrib. +'],
+'ออนไลน์ล่าสุด':['Last online','Terakhir online','Huling online'],
+'สถานะ':['Status','Status','Status'],
+'กดชื่อเพื่อดูโปรไฟล์':['tap a name for profile','ketuk nama untuk profil','i-tap ang pangalan para sa profile'],
+'ไม่พบสมาชิกตามตัวกรอง':['No members match the filter','Tidak ada anggota yang cocok','Walang tugmang miyembro'],
+'ลบ':['Delete','Hapus','Burahin'],
+'ยืนยันลบ':['Confirm delete','Yakin hapus','Kumpirmahin'],
+'ยังไม่มีการบันทึก — กด "บันทึกเตะ" ในรายชื่อเสี่ยงเตะ หรือในโปรไฟล์ผู้เล่น':['Nothing recorded yet — use "Record kick" in the kick list or a player profile','Belum ada catatan — pakai "Catat kick" di daftar atau profil pemain','Wala pang record — gamitin ang "I-record ang kick"'],
+'โหลดไลบรารีกราฟไม่สำเร็จ':['Chart library failed to load','Gagal memuat grafik','Hindi na-load ang chart'],
+'มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม':['Only one day of data — upload more to see trends','Baru satu hari data — unggah lagi untuk melihat tren','Isang araw pa lang — mag-upload pa para makita ang trend'],
+'กดชื่อใต้กราฟเพื่อซ่อน/แสดงเส้น':['tap a legend name to show/hide','ketuk nama legenda untuk tampil/sembunyi','i-tap ang legend para ipakita/itago'],
+'เฉลี่ยทั้งกิลด์':['Guild average','Rata-rata guild','Average ng guild'],
+'มัธยฐาน':['Median','Median','Median'],
+'เฉลี่ย Top 10':['Top 10 average','Rata-rata Top 10','Average ng Top 10'],
+'แต้มสะสม':['Total contribution','Total kontribusi','Kabuuang contribution'],
+'เหตุผล':['Reasons','Alasan','Dahilan'],
+'กิจกรรมสัปดาห์นี้':['Activity this week','Aktivitas minggu ini','Activity ngayong linggo'],
+'ยกเว้นการตัดสิน':['Exempt from rules','Kecualikan dari kriteria','I-exempt sa pamantayan'],
+'เช่น แจ้งลา, ตำแหน่งบริหาร':['e.g. on leave, officer','mis. izin, pengurus','hal. naka-leave, officer'],
+'ยกเลิกยกเว้น':['Remove exemption','Batalkan pengecualian','Alisin ang exempt'],
+'บันทึกการเตะ':['Record kick','Catat kick','I-record ang kick'],
+'เก็บไว้ดูว่าเคยเตะใคร ด้วยเหตุผลอะไร':['Keeps who was kicked and why','Menyimpan siapa yang di-kick dan alasannya','Tala kung sino ang na-kick at bakit'],
+'ประวัติ (ล่าสุดก่อน)':['History (latest first)','Riwayat (terbaru dulu)','Kasaysayan (pinakabago muna)'],
+'วันที่':['Date','Tanggal','Petsa'],
+'สนับสนุน':['Contrib.','Kontrib.','Contrib.'],
+'สะสม':['Total','Total','Kabuuan'],
+'ชื่อเดิม:':['Previous names:','Nama sebelumnya:','Dating pangalan:'],
+'เหตุผล':['Reason','Alasan','Dahilan'],
+'ไม่มี':['None','Tidak ada','Wala'],
+'รายชื่อเสี่ยงเตะ (':['Kick-risk list (','Daftar risiko kick (','Listahan ng risk ('],
+'บันทึกไม่สำเร็จ':['Save failed','Gagal menyimpan','Hindi na-save'],
+'ต้องเข้าสู่ระบบด้วยบัญชีที่ได้รับสิทธิ์':['Sign in with an authorised account','Masuk dengan akun yang berwenang','Mag-sign in gamit ang may access na account'],
+'ยังโหลดข้อมูลจากคลาวด์ไม่ได้ ตรวจอินเทอร์เน็ต':['Cannot load cloud data yet — check your internet','Belum bisa memuat data cloud — cek internet','Hindi pa ma-load ang data — tingnan ang internet'],
+'อ่านข้อมูลไม่ได้':['Cannot read data','Tidak bisa membaca data','Hindi mabasa ang data'],
+'ไม่มีสิทธิ์':['No permission','Tidak ada izin','Walang permiso'],
+'ออกจากระบบ':['Sign out','Keluar','Mag-sign out'],
+'เปิดจากแอป LINE/Discord/Facebook อยู่':['You opened this inside LINE/Discord/Facebook','Kamu membuka ini di dalam LINE/Discord/Facebook','Binuksan mo ito sa loob ng LINE/Discord/Facebook'],
+'Google ไม่อนุญาตให้ล็อกอินในแอปเหล่านี้ กด ⋮ หรือ ··· แล้วเลือก "เปิดในเบราว์เซอร์" (Chrome/Safari)':['Google blocks sign-in inside these apps. Tap ⋮ or ··· and choose "Open in browser" (Chrome/Safari)','Google memblokir login di aplikasi ini. Ketuk ⋮ atau ··· lalu pilih "Buka di browser" (Chrome/Safari)','Bawal mag-sign in ang Google sa mga app na ito. I-tap ang ⋮ o ··· at piliin ang "Open in browser" (Chrome/Safari)'],
+'คัดลอกลิงก์':['Copy link','Salin tautan','Kopyahin ang link'],
+'กำลังตรวจสอบสิทธิ์…':['Checking access…','Memeriksa akses…','Sinusuri ang access…'],
+'หน้านี้สำหรับสมาชิกกิลด์ TheMoon เท่านั้น':['This page is for TheMoon guild members only','Halaman ini khusus anggota guild TheMoon','Para lang ito sa mga miyembro ng TheMoon guild'],
+'ล็อกอินด้วย Google แล้วเชื่อมตัวละครของคุณในกิลด์ ก็เข้าดูได้เลย':['Sign in with Google and link your character in the guild to get in','Masuk dengan Google lalu tautkan karaktermu di guild untuk masuk','Mag-sign in sa Google at i-link ang character mo sa guild para makapasok'],
+'เข้าสู่ระบบด้วย Google':['Sign in with Google','Masuk dengan Google','Mag-sign in gamit ang Google'],
+'สวัสดี':['Hi','Halo','Hi'],
+'เลือกชื่อตัวละครของคุณในกิลด์ เพื่อเชื่อมกับบัญชีนี้':['Pick your character in the guild to link it to this account','Pilih karaktermu di guild untuk ditautkan ke akun ini','Piliin ang character mo sa guild para i-link sa account na ito'],
+'ชื่อตัวละคร':['Character name','Nama karakter','Pangalan ng character'],
+'พิมพ์ชื่อตัวละคร':['Type your character name','Ketik nama karakter','I-type ang pangalan ng character'],
+'เชื่อมตัวละคร':['Link character','Tautkan karakter','I-link ang character'],
+'1 บัญชีเชื่อมได้ 1 ตัวละคร · ถ้าชื่อคุณถูกคนอื่นเชื่อมไปแล้ว ติดต่อหัวหน้ากิลด์':['One account links one character. If someone already linked your name, contact the guild leader','1 akun untuk 1 karakter. Jika namamu sudah ditautkan orang lain, hubungi ketua guild','Isang account, isang character. Kung may nag-link na ng pangalan mo, kontakin ang guild leader'],
+'เชื่อมตัวละครแล้ว':['Character linked','Karakter tertaut','Naka-link ang character'],
+'รอเปิดสิทธิ์ — ระบบจะเปิดให้อัตโนมัติเมื่อหัวหน้าหรือรองหัวหน้าออนไลน์':['Waiting for access — it opens automatically when the leader or an officer comes online','Menunggu akses — terbuka otomatis saat ketua atau wakil online','Hinihintay ang access — kusang bubukas pag online ang leader o officer'],
+'เปลี่ยนตัวละคร':['Change character','Ganti karakter','Palitan ang character'],
+'บัญชีนี้ถูกปฏิเสธการเข้าดู':['This account was denied access','Akun ini ditolak','Tinanggihan ang account na ito'],
+'ติดต่อหัวหน้ากิลด์ถ้าคิดว่าผิดพลาด':['Contact the guild leader if this is a mistake','Hubungi ketua guild jika ini keliru','Kontakin ang guild leader kung mali ito'],
+'เกิดข้อผิดพลาด':['Something went wrong','Terjadi kesalahan','May nangyaring mali'],
+'ลองใหม่':['Try again','Coba lagi','Subukan ulit'],
+'ใส่ชื่อตัวละครก่อน':['Enter a character name first','Masukkan nama karakter dulu','Ilagay muna ang pangalan ng character'],
+'ไม่พบชื่อนี้ในรายชื่อกิลด์ล่าสุด — เลือกจากรายการ หรือพิมพ์ให้ตรงตัวพิมพ์':['Name not in the latest guild roster — pick from the list or match the exact spelling','Nama tidak ada di daftar guild terbaru — pilih dari daftar atau ketik persis','Wala sa pinakabagong roster — pumili sa listahan o i-type nang eksakto'],
+'ตัวละครนี้มีคนเชื่อมไว้แล้ว — ติดต่อหัวหน้ากิลด์':['This character is already linked — contact the guild leader','Karakter ini sudah ditautkan — hubungi ketua guild','Naka-link na ang character na ito — kontakin ang guild leader'],
+'เชื่อมไม่สำเร็จ':['Link failed','Gagal menautkan','Hindi na-link'],
+'อยู่ในกิลด์':['in guild','di guild','nasa guild'],
+'ไม่พบชื่อในกิลด์':['not in guild','tidak di guild','wala sa guild'],
+'มีมากกว่า 1 บัญชีอ้างชื่อนี้':['claimed by more than one account','diklaim lebih dari 1 akun','kini-claim ng higit sa 1 account'],
+'สมาชิกล็อกอินแล้วเชื่อมตัวละครเองได้ — ตรวจรายการที่มีเครื่องหมาย ⚠ หรือ ✗':['Members sign in and link their own character — check entries marked ⚠ or ✗','Anggota masuk dan menautkan karakter sendiri — periksa yang bertanda ⚠ atau ✗','Ang miyembro mismo ang nag-li-link — suriin ang may ⚠ o ✗'],
+'รอเปิดสิทธิ์':['Waiting for access','Menunggu akses','Naghihintay ng access'],
+'อนุมัติ':['Approve','Setujui','Aprubahan'],
+'ปฏิเสธ':['Deny','Tolak','Tanggihan'],
+'ไม่มีรายการรอ':['Nothing waiting','Tidak ada antrean','Walang naghihintay'],
+'เข้าดูได้':['Has access','Punya akses','May access'],
+'ถอนสิทธิ์คนที่ไม่อยู่ในกิลด์แล้ว':['Remove everyone no longer in the guild','Cabut akses yang sudah keluar guild','Alisin ang wala na sa guild'],
+'หัวหน้า':['Leader','Ketua','Leader'],
+'รองหัวหน้า':['Officer','Wakil','Officer'],
+'เชื่อมเอง':['self-linked','ditautkan sendiri','sariling link'],
+'ลดเป็นสมาชิก':['Make member','Jadikan anggota','Gawing miyembro'],
+'ตั้งเป็นรองหัวหน้า':['Make officer','Jadikan wakil','Gawing officer'],
+'ถอนสิทธิ์':['Remove access','Cabut akses','Alisin ang access'],
+'ยืนยันถอน':['Confirm remove','Yakin cabut','Kumpirmahin'],
+'ยืนยันถอนสิทธิ์ทั้งหมด':['Confirm remove all','Yakin cabut semua','Kumpirmahin lahat'],
+'ถอนสิทธิ์แล้ว':['Access removed','Akses dicabut','Naalis ang access'],
+'ถูกปฏิเสธ':['Denied','Ditolak','Tinanggihan'],
+'เพิ่มสมาชิกเองด้วยอีเมล':['Add a member by email','Tambah anggota lewat email','Magdagdag gamit ang email'],
+'อีเมล Google':['Google email','Email Google','Google email'],
+'เพิ่ม':['Add','Tambah','Idagdag'],
+'กฎ Firebase สำหรับเปิดสิทธิ์ทันทีหลังเชื่อมตัวละคร':['Firebase rules for instant access after linking','Aturan Firebase untuk akses instan setelah menautkan','Firebase rules para instant access pagka-link'],
+'วางใน Firebase Console → Firestore → Rules แล้วกด Publish (ทำครั้งเดียว ทำจากมือถือก็ได้)':['Paste in Firebase Console → Firestore → Rules and press Publish (once; works from a phone too)','Tempel di Firebase Console → Firestore → Rules lalu tekan Publish (sekali saja, bisa dari HP)','I-paste sa Firebase Console → Firestore → Rules at pindutin ang Publish (isang beses lang, puwede sa phone)'],
+'คัดลอก':['Copy','Salin','Kopyahin'],
+'คัดลอกแล้ว':['Copied','Tersalin','Nakopya'],
+'คัดลอกแล้ว — วางใน Discord/LINE ได้เลย':['Copied — paste into Discord/LINE','Tersalin — tempel di Discord/LINE','Nakopya — i-paste sa Discord/LINE'],
+'คัดลอกไม่ได้ในหน้านี้':['Copy not allowed here','Tidak bisa menyalin di sini','Bawal kumopya dito'],
+'ทำไม่สำเร็จ':['Failed','Gagal','Nabigo'],
+'ไม่มีสิทธิ์ทำรายการนี้':['You do not have permission for this','Kamu tidak punya izin','Wala kang permiso dito'],
+'ข้อมูลเก็บบน Firebase — เฉพาะคนที่ได้รับสิทธิ์เห็นข้อมูล':['Data is stored on Firebase — only approved people can see it','Data disimpan di Firebase — hanya yang berwenang bisa melihat','Nasa Firebase ang data — ang may access lang ang nakakakita'],
+'เข้าสู่ระบบเป็น':['Signed in as','Masuk sebagai','Naka-sign in bilang'],
+'ย้ายข้อมูลจากเครื่องนี้ขึ้นคลาวด์':['Move this device’s data to the cloud','Pindahkan data perangkat ini ke cloud','Ilipat sa cloud ang data ng device na ito'],
+'ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ — กด "สำรองข้อมูล" เป็นระยะ':['Data is kept in this browser — back up regularly','Data disimpan di browser ini — cadangkan secara rutin','Nasa browser na ito ang data — mag-back up palagi'],
+'ชื่อไฟล์ไม่มีวันที่ — ใช้วันที่แก้ไขไฟล์ ตรวจให้ถูกก่อนบันทึก':['No date in file name — used the file’s modified date; check before saving','Tidak ada tanggal di nama file — memakai tanggal ubah file; periksa dulu','Walang petsa sa filename — ginamit ang modified date; suriin muna'],
+'มีข้อมูลเวลานี้แล้ว — จะบันทึกทับ':['Already have this time — will replace','Waktu ini sudah ada — akan ditimpa','Mayroon na nito — papalitan'],
+'ไฟล์สำรองไม่ถูกต้อง':['Invalid backup file','File cadangan tidak valid','Mali ang backup file'],
+'ต้องเข้าสู่ระบบก่อน':['Sign in first','Masuk dulu','Mag-sign in muna'],
+'ต้องเข้าสู่ระบบก่อนอัปโหลด':['Sign in before uploading','Masuk dulu sebelum mengunggah','Mag-sign in muna bago mag-upload'],
+'ใส่วันเวลาให้ครบทุกไฟล์':['Set a date & time for every file','Isi tanggal & jam untuk semua file','Lagyan ng petsa at oras ang bawat file'],
+'ใส่อีเมลและชื่อตัวละครให้ครบ':['Enter both email and character','Isi email dan nama karakter','Ilagay ang email at character'],
+'เบราว์เซอร์บล็อกหน้าต่างล็อกอิน — อนุญาตป๊อปอัปแล้วลองใหม่':['The browser blocked the sign-in window — allow pop-ups and try again','Browser memblokir jendela login — izinkan pop-up lalu coba lagi','Na-block ang sign-in window — i-allow ang pop-up at subukan ulit'],
+'เข้าสู่ระบบไม่สำเร็จ':['Sign-in failed','Gagal masuk','Hindi naka-sign in'],
+'ลบไม่สำเร็จ':['Delete failed','Gagal menghapus','Hindi nabura'],
+'พื้นที่เก็บในเบราว์เซอร์เต็ม — สำรองข้อมูลแล้วลบวันที่เก่าออก':['Browser storage is full — back up and delete old days','Penyimpanan browser penuh — cadangkan lalu hapus data lama','Puno ang storage — mag-back up at burahin ang luma'],
+'ออฟไลน์เกิน 7 วัน':['Offline over 7 days','Offline lebih dari 7 hari','Offline nang lampas 7 araw'],
+'[ออนไลน์]':['[Online]','[Online]','[Online]'],
+'ออนไลน์':['Online','Online','Online'],
+'หัวหน้า Guild':['Guild Leader','Ketua Guild','Guild Leader'],
+'รองหัวหน้า Guild':['Vice Leader','Wakil Ketua','Vice Leader'],
+'เสมียน':['Clerk','Juru tulis','Klerk'],
+'พนักงานต้อนรับ':['Receptionist','Resepsionis','Receptionist'],
+'สมาชิกทั่วไป':['Member','Anggota','Miyembro'],
+'(นี้)':['(now)','(ini)','(ngayon)'],
+'ไม่มีใครเข้าเกณฑ์ ':['No one meets the criteria','Tidak ada yang memenuhi kriteria','Walang pasok sa pamantayan'],
+'ภาษา':['Language','Bahasa','Wika'],
+'เสี่ยงเตะ = ไม่ทำกิจกรรมเลยในสัปดาห์นี้ (ตั้งแต่วันที่ 3 ของสัปดาห์), กิจกรรมต่ำติดกันตามจำนวนสัปดาห์ที่ตั้ง, ไม่ออนไลน์ 7 วันขึ้นไป หรือติดเงื่อนไขเฝ้าระวังตั้งแต่ 2 ข้อ':['Kick risk = no activity this week (from day 3), low activity for the set number of weeks, offline 7+ days, or 2+ watch conditions','Risiko kick = tanpa aktivitas minggu ini (mulai hari ke-3), aktivitas rendah sesuai jumlah minggu, offline 7+ hari, atau 2+ kondisi pantau','Risk ma-kick = walang activity ngayong linggo (mula ika-3 araw), mababang activity ayon sa itinakdang linggo, offline 7+ araw, o 2+ kondisyong bantayan'],
+'เฝ้าระวัง = กิจกรรมต่ำ, ไม่ออนไลน์นาน, Gear ไม่ขึ้น, แต้มสะสมไม่เพิ่ม, สนับสนุนสัปดาห์นี้ 0':['Watch = low activity, long offline, no Gear gain, no contribution gain, 0 contribution this week','Pantau = aktivitas rendah, lama offline, Gear tak naik, kontribusi tak naik, kontribusi minggu ini 0','Bantayan = mababang activity, matagal offline, walang angat sa Gear o contribution, 0 contribution ngayong linggo'],
+'สัปดาห์ที่ยังไม่จบ เกณฑ์กิจกรรมคิดตามสัดส่วนวันที่ผ่านไป':['For the current week the activity target is pro-rated','Untuk minggu berjalan target aktivitas dihitung proporsional','Sa kasalukuyang linggo, proporsyonal ang target'],
+'คนใหม่และคนที่ยกเว้นไม่ถูกนับ':['New and exempt members are not judged','Anggota baru dan yang dikecualikan tidak dinilai','Hindi hinuhusgahan ang bago at exempt'],
+};
+const P_=[
+[/^· (.+)$/,['· $1','· $1','· $1']],
+[/^(.+) ([▲▼])$/,['$1 $2','$1 $2','$1 $2']],
+[/^(\d+) คน$/,['$1 members','$1 anggota','$1 miyembro']],
+[/^\((\d+) คน\)$/,['($1)','($1)','($1)']],
+[/^เสี่ยงเตะ (\d+)$/,['Kick risk $1','Risiko kick $1','Risk $1']],
+[/^เฝ้าระวัง (\d+)$/,['Watch $1','Pantau $1','Bantayan $1']],
+[/^ข้อมูลล่าสุด (.+)$/,['Latest data $1','Data terbaru $1','Pinakabagong data $1']],
+[/^บันทึกแล้ว (\d+) ครั้ง$/,['$1 uploads','$1 unggahan','$1 upload']],
+[/^วันที่ (\d+)\/7 ของสัปดาห์กิจกรรม$/,['Day $1/7 of the activity week','Hari ke-$1/7 minggu aktivitas','Araw $1/7 ng activity week']],
+[/^กิจกรรม (\d+) \(เกณฑ์ตอนนี้ (\d+)\)$/,['Activity $1 (target now $2)','Aktivitas $1 (target saat ini $2)','Activity $1 (target ngayon $2)']],
+[/^กิจกรรมสัปดาห์ก่อน (\d+)$/,['Last week activity $1','Aktivitas minggu lalu $1','Activity noong nakaraang linggo $1']],
+[/^กิจกรรมต่ำ (\d+) สัปดาห์ติด$/,['Low activity $1 weeks in a row','Aktivitas rendah $1 minggu berturut','Mababang activity $1 linggo sunod-sunod']],
+[/^ไม่ออนไลน์ เกิน (\d+) วัน$/,['Offline over $1 days','Offline lebih dari $1 hari','Offline nang lampas $1 araw']],
+[/^ไม่ออนไลน์ (\d+) วัน$/,['Offline $1 days','Offline $1 hari','Offline $1 araw']],
+[/^Gear ไม่ขึ้น (\d+) วัน$/,['No Gear gain in $1 days','Gear tak naik $1 hari','Walang angat sa Gear sa $1 araw']],
+[/^แต้มสะสมไม่เพิ่ม (\d+) วัน$/,['No contribution gain in $1 days','Kontribusi tak naik $1 hari','Walang angat sa contribution sa $1 araw']],
+[/^ช่วง (\d+) วัน$/,['Last $1 days','$1 hari terakhir','Huling $1 araw']],
+[/^(.+)\/วัน$/,['$1/day','$1/hari','$1/araw']],
+[/^ถูกเตะเมื่อ (.+?) — (.*)$/,['Kicked on $1 — $2','Di-kick pada $1 — $2','Na-kick noong $1 — $2']],
+[/^เทียบกับ (.+)$/,['Compared with $1','Dibandingkan dengan $1','Kumpara sa $1']],
+[/^ออก (\d+) คน$/,['Left: $1','Keluar: $1','Umalis: $1']],
+[/^เข้าใหม่ (\d+) คน$/,['Joined: $1','Masuk: $1','Bagong pasok: $1']],
+[/^แสดง (\d+) จาก (\d+) คน$/,['Showing $1 of $2','Menampilkan $1 dari $2','Ipinapakita ang $1 sa $2']],
+[/^อาชีพ (.+)$/,['Class $1','Kelas $1','Class $1']],
+[/^มีข้อมูล (\d+) วัน$/,['$1 days of data','Data $1 hari','$1 araw na data']],
+[/^ขาด (\d+) วัน \((.+)\) เส้นประ = ช่วงที่ไม่มีไฟล์$/,['$1 days missing ($2) — dashed = no file','$1 hari hilang ($2) — putus-putus = tanpa file','$1 araw na kulang ($2) — putol-putol = walang file']],
+[/^อยู่ในข้อมูลตั้งแต่ (.+)$/,['In data since $1','Ada di data sejak $1','Nasa data mula $1']],
+[/^\(ถ้าไม่ยกเว้น\/ไม่ใช่คนใหม่ จะเป็น (.+)\)$/,['(would be $1 if not exempt/new)','(akan menjadi $1 jika tidak dikecualikan/baru)','(magiging $1 kung hindi exempt/bago)']],
+[/^บันทึกไว้แล้ว (.+)$/,['Recorded $1','Tercatat $1','Naka-record $1']],
+[/^(\d+) ชม\.$/,['$1 h','$1 jam','$1 oras']],
+[/^(\d+) วัน$/,['$1 days','$1 hari','$1 araw']],
+[/^ออฟไลน์ (\d+) นาที$/,['Offline $1 min','Offline $1 mnt','Offline $1 min']],
+[/^ออฟไลน์ (\d+) ชม\.$/,['Offline $1 h','Offline $1 jam','Offline $1 oras']],
+[/^ออฟไลน์ (\d+) วัน$/,['Offline $1 days','Offline $1 hari','Offline $1 araw']],
+[/^บันทึก (\d+) ไฟล์$/,['Save $1 files','Simpan $1 file','I-save ang $1 file']],
+[/^บันทึก (\d+) ไฟล์แล้ว$/,['Saved $1 files','$1 file tersimpan','Na-save ang $1 file']],
+[/^อ่านไม่ได้ (\d+) ไฟล์: (.+)$/,['Could not read $1 files: $2','Gagal membaca $1 file: $2','Hindi nabasa ang $1 file: $2']],
+[/^นำเข้า (\d+) วันแล้ว$/,['Imported $1 days','$1 hari diimpor','Na-import ang $1 araw']],
+[/^เพิ่ม (.+) แล้ว$/,['Added $1','$1 ditambahkan','Naidagdag si $1']],
+[/^บันทึกการเตะ (.+) แล้ว$/,['Kick recorded: $1','Kick dicatat: $1','Na-record ang kick: $1']],
+[/^ย้าย (\d+) วันขึ้นคลาวด์แล้ว$/,['Moved $1 days to the cloud','$1 hari dipindah ke cloud','Nailipat ang $1 araw sa cloud']],
+[/^(.+) \(นี้\)$/,['$1 (now)','$1 (ini)','$1 (ngayon)']],
+];
+const LI={th:-1,en:0,id:1,ph:2};
+const hasTh=s=>/[฀-๿]/.test(s);
+function T(s){if(LANG==='th'||!s||!hasTh(s))return s;const k=LI[LANG],t=s.trim();if(D[t])return s.replace(t,D[t][k]);
+  for(const [re,arr] of P_){const m=t.match(re);if(m)return s.replace(t,arr[k].replace(/\$(\d)/g,(_,n)=>T(m[+n]||'')))}
+  if(t.includes(' · ')){const parts=t.split(' · ');const out=parts.map(x=>T(x));if(out.some((x,i)=>x!==parts[i]))return s.replace(t,out.join(' · '))}
+  if(t.includes(', ')){const parts=t.split(', ');const out=parts.map(x=>T(x));if(out.every((x,i)=>x!==parts[i]||!hasTh(x)))return s.replace(t,out.join(', '))}
+  return s}
+function trNode(n){
+  if(LANG==='th')return;
+  if(n.nodeType===3){const v=n.nodeValue;if(v&&hasTh(v)){const t=T(v);if(t!==v)n.nodeValue=t}return}
+  if(n.nodeType!==1||n.tagName==='SCRIPT'||n.tagName==='STYLE'||n.tagName==='TEXTAREA'||n.tagName==='PRE')return;
+  for(const a of ['placeholder','title','aria-label']){const v=n.getAttribute&&n.getAttribute(a);if(v&&hasTh(v)){const t=T(v);if(t!==v)n.setAttribute(a,t)}}
+  for(const c of n.childNodes)trNode(c);
+}
+let trObs=null;
+function startTr(){if(trObs)trObs.disconnect();if(LANG==='th')return;trNode(document.body);
+  trObs=new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')trNode(m.target);else if(m.type==='attributes')trNode(m.target);else m.addedNodes.forEach(trNode)}});
+  trObs.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label']})}
+const langSel=id=>`<select id="${id}" class="langsel" aria-label="Language">${LANGS.map(([c,l])=>`<option value="${c}" ${c===LANG?'selected':''}>${l}</option>`).join('')}</select>`;
+function setLang(l){if(!LI.hasOwnProperty(l))return;const prev=LANG;LANG=l;try{localStorage.setItem('tm-lang',l)}catch(e){}document.documentElement.lang=l==='ph'?'fil':l;
+  if(prev!=='th'&&l!==prev){location.reload();return}
+  startTr();document.querySelectorAll('.langsel').forEach(s=>s.value=l);render();if(gate)renderGate()}
+
 const fmt=n=>n==null||isNaN(n)?'–':Math.round(n).toLocaleString('en-US');
 const sgn=n=>n==null?'–':(n>0?'+':'')+fmt(n);
 const DAY=864e5,ST=['Active','เฝ้าระวัง','เสี่ยงเตะ'];
@@ -260,8 +582,8 @@ const byTs=(a,b)=>a.ts-b.ts;
 function say(t){$('msg').textContent=t||''}
 const pad=n=>String(n).padStart(2,'0');
 const dstr=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
-const dTh=ts=>new Date(ts).toLocaleDateString('th-TH',{day:'numeric',month:'short'});
-const dtTh=ts=>new Date(ts).toLocaleString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+const dTh=ts=>new Date(ts).toLocaleDateString(LOCALE[LANG]||'th-TH',{day:'numeric',month:'short'});
+const dtTh=ts=>new Date(ts).toLocaleString(LOCALE[LANG]||'th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'});
 const toLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 let probe=null;const cssv=n=>{if(!probe){probe=document.createElement('i');probe.style.display='none';document.body.appendChild(probe)}probe.style.color=`var(${n})`;return getComputedStyle(probe).color};
 
@@ -372,7 +694,9 @@ function renderTable(){
   let R=model.P.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!fClass||p.cls===fClass)&&(fs===''||(fs==='risk'?p.sev>0:fs==='new'?p.isNew:fs==='ex'?!!p.ex:p.sev==fs)));
   R.sort((a,b)=>{let x=a[sk],y=b[sk];if(sk==='sev'&&x===y)return b.why.length-a.why.length||a.act-b.act;if(x==null)x=-Infinity;if(y==null)y=-Infinity;return typeof x=='string'?x.localeCompare(y,'th')*sortD:(x-y)*sortD});
   $('count').textContent=`แสดง ${R.length} จาก ${model.P.length} คน`+(fClass?` · อาชีพ ${fClass}`:'')+' · กดชื่อเพื่อดูโปรไฟล์';
-  $('rows').innerHTML=R.map(p=>`<tr class="${p.sev&&!nr?'r'+p.sev:''}"><td><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button>${tagsHtml(p)}${p.sev&&!nr&&p.why.length?`<div class="why">${p.why.map(esc).join(' · ')}</div>`:''}</td><td><span class="cls">${ico(p.cls)}${esc(p.cls)}</span></td><td class="hide-s">${esc(p.rank)}</td><td class="n">${fmt(p.gear)}</td><td class="n ${p.dG>0?'up':''}">${multi?sgn(p.dG):'–'}</td><td class="n" style="${p.act<S.minAct?'color:var(--bad);font-weight:600':''}">${p.act}</td><td class="n hide-s">${fmt(p.cw)}</td><td class="n ${p.dCt>0?'up':''}">${multi?sgn(p.dCt):'–'}</td><td class="n">${awayTxt(p.away)}</td>${nr?'':`<td><span class="st s${p.sev}">${ST[p.sev]}</span></td>`}</tr>`).join('')||'<tr><td colspan="10" class="empty">ไม่พบสมาชิกตามตัวกรอง</td></tr>';
+  const L_={cls:T('อาชีพ'),act:T('กิจกรรม'),ct:T('สะสม +'),away:T('ออนไลน์ล่าสุด')};
+  $('sortSel').value=sk;
+  $('rows').innerHTML=R.map(p=>`<tr class="${p.sev&&!nr?'r'+p.sev:''}"><td><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button>${tagsHtml(p)}${p.sev&&!nr&&p.why.length?`<div class="why">${p.why.map(esc).join(' · ')}</div>`:''}</td><td class="clc" data-l="${L_.cls}"><span class="cls">${ico(p.cls)}${esc(p.cls)}</span></td><td class="hide-s">${esc(p.rank)}</td><td class="n" data-l="Gear"><b>${fmt(p.gear)}</b></td><td class="n ${p.dG>0?'up':''}" data-l="Gear +">${multi?sgn(p.dG):'–'}</td><td class="n" data-l="${L_.act}" style="${p.act<S.minAct&&!nr?'color:var(--bad);font-weight:600':''}">${p.act}</td><td class="n hide-s">${fmt(p.cw)}</td><td class="n ${p.dCt>0?'up':''}" data-l="${L_.ct}">${multi?sgn(p.dCt):'–'}</td><td class="n" data-l="${L_.away}">${awayTxt(p.away)}</td>${nr?'':`<td class="stc"><span class="st s${p.sev}">${ST[p.sev]}</span></td>`}</tr>`).join('')||'<tr><td colspan="10" class="empty">ไม่พบสมาชิกตามตัวกรอง</td></tr>';
 }
 function renderKicks(){
   const K=[...meta.kicks].sort((a,b)=>b.ts-a.ts);
@@ -396,7 +720,7 @@ function drawChart(){
     if(D0.length){const a=new Date(D0[0].ts),b=new Date(D0[D0.length-1].ts);a.setHours(12,0,0,0);b.setHours(12,0,0,0);for(let t=a.getTime();t<=b.getTime()+1;t+=DAY){D.push(byDay.get(dstr(t))||{ts:t,rows:null})}}
     labels=D.map(s=>dTh(s.ts));const R=f=>D.map(s=>s.rows?f(s):null);
     if(mode==='guild'){
-      ds=[['เฉลี่ยทั้งกิลด์',R(s=>s.rows.reduce((a,r)=>a+r[6],0)/s.rows.length),PAL[0]],['มัธยฐาน',R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>a-b);return g[g.length>>1]}),PAL[3]],['เฉลี่ย Top 10',R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>b-a).slice(0,10);return g.reduce((a,b)=>a+b,0)/g.length}),PAL[2]]].map(([l,d,c])=>({label:l,data:d,borderColor:c,backgroundColor:c}));
+      ds=[[T('เฉลี่ยทั้งกิลด์'),R(s=>s.rows.reduce((a,r)=>a+r[6],0)/s.rows.length),PAL[0]],[T('มัธยฐาน'),R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>a-b);return g[g.length>>1]}),PAL[3]],[T('เฉลี่ย Top 10'),R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>b-a).slice(0,10);return g.reduce((a,b)=>a+b,0)/g.length}),PAL[2]]].map(([l,d,c])=>({label:l,data:d,borderColor:c,backgroundColor:c}));
     }else if(mode==='class'){
       const cnt={};model.P.forEach(p=>cnt[p.cls]=(cnt[p.cls]||0)+1);const cls=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
       ds=cls.map((c,i)=>({label:c,data:R(s=>{const g=s.rows.filter(r=>r[2]===c);return g.length?g.reduce((a,r)=>a+r[6],0)/g.length:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],hidden:!!fClass&&c!==fClass,pointStyle:icoImg(c)}));
@@ -433,31 +757,31 @@ function openProfile(name){
   if(typeof Chart!='undefined'){
     const ink=cssv('--ink'),line=cssv('--line'),mute=cssv('--mute');
     const o1=chartOpts(ink,line,mute,true);o1.scales.y1={position:'right',ticks:{color:mute,callback:v=>fmt(v)},grid:{display:false}};
-    pCharts.push(new Chart($('pc1'),{type:'line',data:{labels:H.map(h=>dTh(h.ts)),datasets:[{label:'Gear',data:H.map(h=>h.gear),borderColor:PAL[0],backgroundColor:PAL[0],tension:.3,pointRadius:3},{label:'แต้มสะสม',data:H.map(h=>h.ct),borderColor:PAL[2],backgroundColor:PAL[2],tension:.3,pointRadius:3,yAxisID:'y1'}]},options:o1}));
+    pCharts.push(new Chart($('pc1'),{type:'line',data:{labels:H.map(h=>dTh(h.ts)),datasets:[{label:'Gear',data:H.map(h=>h.gear),borderColor:PAL[0],backgroundColor:PAL[0],tension:.3,pointRadius:3},{label:T('แต้มสะสม'),data:H.map(h=>h.ct),borderColor:PAL[2],backgroundColor:PAL[2],tension:.3,pointRadius:3,yAxisID:'y1'}]},options:o1}));
     const W=[...p.weeks].reverse(),ws=model.ws;
     const o2=chartOpts(ink,line,mute,false);o2.scales.y.max=205;o2.scales.y.min=0;
-    pCharts.push(new Chart($('pc2'),{type:'bar',data:{labels:W.map(([w])=>dTh(w)+(w===ws?' (นี้)':'')),datasets:[{label:'กิจกรรม',data:W.map(([,a])=>a),backgroundColor:W.map(([w,a])=>NR()?'#6d7cff':a<(w===ws?model.curThr:S.minAct)?'#f43f5e':'#10b981'),borderRadius:6}]},options:o2}));
+    pCharts.push(new Chart($('pc2'),{type:'bar',data:{labels:W.map(([w])=>dTh(w)+(w===ws?' '+T('(นี้)'):'')),datasets:[{label:T('กิจกรรม'),data:W.map(([,a])=>a),backgroundColor:W.map(([w,a])=>NR()?'#6d7cff':a<(w===ws?model.curThr:S.minAct)?'#f43f5e':'#10b981'),borderRadius:6}]},options:o2}));
   }
   $('exBtn').onclick=()=>{if(meta.exempt[name])delete meta.exempt[name];else meta.exempt[name]={reason:$('exReason').value.trim(),ts:Date.now()};saveMeta()};
   $('kBtn').onclick=()=>{recordKick(name,$('kReason').value.trim())};
 }
 function closeProfile(){$('modal').hidden=true;document.body.style.overflow='';openName=null;pCharts.forEach(c=>c.destroy());pCharts=[]}
-function recordKick(name,reason){if(isCloud()&&FB)members.filter(m=>canon(m.char||'')===name&&m.role!=='officer').forEach(m=>mdoc(m.email).delete().catch(()=>{}));const p=model.P.find(x=>x.name===name);meta.kicks=meta.kicks.filter(k=>k.name!==name).concat({name,cls:p?p.cls:'',gear:p?p.gear:null,reason:reason||(p?p.why.join(', '):''),ts:Date.now()});saveMeta();say(`บันทึกการเตะ ${name} แล้ว`)}
+function recordKick(name,reason){if(isCloud()&&FB)members.filter(m=>canon(m.char||'')===name&&m.role!=='officer').forEach(m=>unlink(m.email).catch(()=>{}));const p=model.P.find(x=>x.name===name);meta.kicks=meta.kicks.filter(k=>k.name!==name).concat({name,cls:p?p.cls:'',gear:p?p.gear:null,reason:reason||(p?p.why.join(', '):''),ts:Date.now()});saveMeta();say(`บันทึกการเตะ ${name} แล้ว`)}
 
 /* ---------- export ---------- */
-function kickText(){if(!model)return '';const K=kickList();return `TheMoon · รายชื่อเสี่ยงเตะ (${dtTh(model.L.ts)})\n`+(K.length?K.map((p,i)=>`${i+1}. ${p.name} (${p.cls}) — ${p.why.join(', ')}`).join('\n'):'ไม่มี')}
+function kickText(){if(!model)return '';const K=kickList();return `TheMoon · ${T('รายชื่อเสี่ยงเตะ')} (${dtTh(model.L.ts)})\n`+(K.length?K.map((p,i)=>`${i+1}. ${p.name} (${p.cls}) — ${p.why.map(T).join(', ')}`).join('\n'):T('ไม่มี'))}
 async function kickImage(){
   if(!model)return;const K=kickList();try{await document.fonts.ready}catch(e){}
   const W=1200,rh=88,H=200+Math.max(1,K.length)*rh+50,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
   const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0d1020');g.addColorStop(1,'#08090d');x.fillStyle=g;x.fillRect(0,0,W,H);
-  x.fillStyle='#eef0f6';x.font='700 46px "Chakra Petch","IBM Plex Sans Thai",sans-serif';x.fillText('TheMoon · รายชื่อเสี่ยงเตะ',56,92);
-  x.fillStyle='#8b93a7';x.font='400 24px "IBM Plex Sans Thai",sans-serif';x.fillText(`ข้อมูล ${dtTh(model.L.ts)} · ${K.length} คน`,56,136);
+  x.fillStyle='#eef0f6';x.font='700 46px "Chakra Petch","IBM Plex Sans Thai",sans-serif';x.fillText('TheMoon · '+T('รายชื่อเสี่ยงเตะ'),56,92);
+  x.fillStyle='#8b93a7';x.font='400 24px "IBM Plex Sans Thai",sans-serif';x.fillText(`${dtTh(model.L.ts)} · ${T(K.length+' คน')}`,56,136);
   const fit=(t,w)=>{if(x.measureText(t).width<=w)return t;while(t.length>1&&x.measureText(t+'…').width>w)t=t.slice(0,-1);return t+'…'};
-  if(!K.length){x.fillStyle='#34d399';x.font='600 28px "IBM Plex Sans Thai"';x.fillText('ไม่มีใครเข้าเกณฑ์',56,230)}
+  if(!K.length){x.fillStyle='#34d399';x.font='600 28px "IBM Plex Sans Thai"';x.fillText(T('ไม่มีใครเข้าเกณฑ์'),56,230)}
   K.forEach((p,i)=>{const y=180+i*rh;x.fillStyle='rgba(250,204,21,.16)';x.beginPath();x.roundRect?x.roundRect(40,y,W-80,rh-10,14):x.rect(40,y,W-80,rh-10);x.fill();x.fillStyle='#fb4f6b';x.fillRect(40,y,6,rh-10);
     x.fillStyle='#eef0f6';x.font='700 26px "IBM Plex Sans Thai",sans-serif';x.fillText(fit(`${i+1}. ${p.name}`,330),66,y+48);
     x.fillStyle='#b8bfd0';x.font='500 21px "IBM Plex Sans Thai",sans-serif';x.fillText(fit(p.cls,200),410,y+48);
-    x.fillStyle='#fcd9a8';const ln=[''];for(const w of p.why){const t=ln[ln.length-1]?ln[ln.length-1]+' · '+w:w;if(x.measureText(t).width>520&&ln[ln.length-1])ln.push(w);else ln[ln.length-1]=t}
+    x.fillStyle='#fcd9a8';const ln=[''];for(const w of p.why.map(T)){const t=ln[ln.length-1]?ln[ln.length-1]+' · '+w:w;if(x.measureText(t).width>520&&ln[ln.length-1])ln.push(w);else ln[ln.length-1]=t}
     const L2=ln.slice(0,2);if(ln.length>2)L2[1]=fit(L2[1]+' …',520);L2.forEach((t,k)=>x.fillText(fit(t,520),630,y+(L2.length>1?32+k*28:46)))});
   c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`themoon-kick-${dstr(model.L.ts)}.png`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000)},'image/png');
 }
@@ -503,79 +827,119 @@ function startData(){
   dataUnsubs.push(db.collection('snapshots').onSnapshot(q=>{clearTimeout(t);snaps=q.docs.map(d=>{const x=d.data();if(x&&typeof x.rows==='string'){try{x.rows=JSON.parse(x.rows)}catch(e){x.rows=null}}return x}).filter(valid).sort(byTs);render();syncRoster()},e=>{clearTimeout(t);say('อ่านข้อมูลไม่ได้: '+(e.code==='permission-denied'?'ไม่มีสิทธิ์':e.message))}));
   dataUnsubs.push(db.doc('meta/state').onSnapshot(d=>{setMeta(d.exists?d.data():null);render()},()=>{}));
   if(role==='owner'||role==='officer'){
-    dataUnsubs.push(db.collection('members').onSnapshot(q=>{members=q.docs.map(d=>({...d.data(),email:d.id}));render()},e=>say('อ่านรายชื่อผู้ขอเข้าดูไม่ได้: '+e.message)));
-    dataUnsubs.push(db.doc('public/roster').onSnapshot(d=>{roster=d.exists?(d.data().names||[]):[];rosterTs=d.exists?d.data().ts:0;syncRoster()},()=>{}));
+    dataUnsubs.push(db.collection('members').onSnapshot(q=>{members=q.docs.map(d=>({...d.data(),email:d.id}));render();autoApprove()},e=>say('อ่านรายชื่อผู้ขอเข้าดูไม่ได้: '+e.message)));
+    dataUnsubs.push(db.doc('public/roster').onSnapshot(d=>{roster=d.exists?(d.data().names||[]):[];rosterTs=d.exists?d.data().ts:0;const k=d.exists&&d.data().keys;if(!k)rosterTs=0;rosterSynced=false;syncRoster();autoApprove()},()=>{}));
   }
   render();
 }
 let rosterTs=0;
-async function writeRoster(L){if(!L||!FB)return;await FB.db.doc('public/roster').set({ts:L.ts,names:L.rows.map(r=>({n:r[0],c:r[2]}))});rosterTs=L.ts}
+const ckey=n=>encodeURIComponent(n).replace(/\./g,'%2E');
+async function writeRoster(L){if(!L||!FB)return;await FB.db.doc('public/roster').set({ts:L.ts,names:L.rows.map(r=>({n:r[0],c:r[2]})),keys:L.rows.map(r=>ckey(r[0]))});rosterTs=L.ts}
 function syncRoster(){if(rosterSynced||!isStaff()||!snaps.length)return;const L=snaps[snaps.length-1];if(rosterTs>=L.ts){rosterSynced=true;return}rosterSynced=true;writeRoster(L).catch(()=>{rosterSynced=false})}
+/* auto-approve self-linked members while rules still require an officer (fallback mode) */
+let autoBusy=false;
+function autoApprove(){
+  if(autoBusy||!FB||!isStaff()||!isCloud()||!roster.length)return;
+  const inR=new Set(roster.map(r=>r.n)),taken=new Map();members.filter(m=>m.status==='approved').forEach(m=>taken.set(canon(m.char||''),m.email));
+  const cnt={};members.filter(m=>m.status==='pending').forEach(m=>cnt[m.char]=(cnt[m.char]||0)+1);
+  const ok=members.filter(m=>m.status==='pending'&&inR.has(m.char)&&!taken.has(canon(m.char))&&cnt[m.char]===1);
+  if(!ok.length)return;autoBusy=true;
+  Promise.all(ok.map(m=>mdoc(m.email).update({status:'approved',role:'member',by:'auto',at:Date.now()}))).catch(()=>{}).finally(()=>{autoBusy=false});
+}
 const inApp=/Line\/|FBAN|FBAV|Instagram|Discord|MicroMessenger|KAKAOTALK|; wv\)/i.test(navigator.userAgent);
 function setGate(g,extra){gate=g;$('gate').hidden=!g;document.body.classList.toggle('gated',!!g);renderGate(extra);applyRole();renderAccess();renderStore()}
 function applyRole(){document.body.classList.toggle('viewer',isCloud()&&role==='member');document.body.classList.toggle('norisk',NR());const na=$('navAccess');if(na)na.hidden=!(isCloud()&&(role==='owner'||role==='officer'))}
 async function loadRoster(){try{const d=await FB.db.doc('public/roster').get();roster=d.exists?(d.data().names||[]):[]}catch(e){roster=[]}}
 function renderGate(extra){
   if(!gate){$('gate').innerHTML='';return}
-  const head=`<div class="moon"></div><h1>TheMoon</h1>`,out=user?`<button class="ghost sm" id="logout">ออกจากระบบ (${esc(user.email)})</button>`:'';
-  const appWarn=inApp?`<div class="warnbox"><b>เปิดจากแอป LINE/Discord/Facebook อยู่</b> — Google ไม่อนุญาตให้ล็อกอินในแอปเหล่านี้ กด ⋮ หรือ ··· แล้วเลือก "เปิดในเบราว์เซอร์" (Chrome/Safari)<div class="row" style="justify-content:flex-start;margin-top:8px"><button class="sm" id="copyLink">คัดลอกลิงก์</button></div></div>`:'';
+  const head=`<div class="moon"></div><h1>TheMoon</h1>`,out=user?`<button class="ghost sm" id="logout">${T('ออกจากระบบ')}</button>`:'';
+  const appWarn=inApp?`<div class="warnbox"><b>${T('เปิดจากแอป LINE/Discord/Facebook อยู่')}</b><br>${T('Google ไม่อนุญาตให้ล็อกอินในแอปเหล่านี้ กด ⋮ หรือ ··· แล้วเลือก "เปิดในเบราว์เซอร์" (Chrome/Safari)')}<div class="row" style="justify-content:flex-start;margin-top:8px"><button class="sm" id="copyLink">${T('คัดลอกลิงก์')}</button></div></div>`:'';
   let h='';
-  if(gate==='checking')h=`${head}<p>กำลังตรวจสอบสิทธิ์…</p>`;
-  else if(gate==='login')h=`${head}<p>หน้านี้สำหรับสมาชิกกิลด์ TheMoon เท่านั้น<br>ล็อกอินด้วย Google แล้วขอเข้าดู หัวหน้าหรือรองหัวหน้าจะอนุมัติให้</p><div class="row"><button class="pri" id="login">เข้าสู่ระบบด้วย Google</button></div>${appWarn}`;
+  if(gate==='checking')h=`${head}<p>${T('กำลังตรวจสอบสิทธิ์…')}</p>`;
+  else if(gate==='login')h=`${head}<p>${T('หน้านี้สำหรับสมาชิกกิลด์ TheMoon เท่านั้น')}</p><p>${T('ล็อกอินด้วย Google แล้วเชื่อมตัวละครของคุณในกิลด์ ก็เข้าดูได้เลย')}</p><div class="row"><button class="pri" id="login">${T('เข้าสู่ระบบด้วย Google')}</button></div>${appWarn}`;
   else if(gate==='request'){
     if(!roster.length)loadRoster().then(()=>{if(gate==='request'&&roster.length)renderGate()});
-    h=`${head}<p>สวัสดี ${esc(user.displayName||user.email)}<br>เลือก<b>ชื่อตัวละครของคุณ</b>ในกิลด์ แล้วกดขอเข้าดู</p>
-    <div style="display:grid;gap:10px;text-align:left;margin-top:14px"><label class="note">ชื่อตัวละคร<input id="reqChar" list="rosterList" placeholder="พิมพ์ชื่อตัวละคร" style="width:100%;margin-top:4px"></label><datalist id="rosterList">${roster.map(r=>`<option value="${esc(r.n)}">${esc(r.c)}</option>`).join('')}</datalist>
-    <label class="note">ข้อความถึงหัวหน้า (ไม่บังคับ)<input id="reqNote" maxlength="120" style="width:100%;margin-top:4px"></label></div>
-    <div class="row"><button class="pri" id="reqBtn">ขอเข้าดู</button>${out}</div><p class="note" id="reqMsg"></p>`}
-  else if(gate==='pending')h=`${head}<p>ส่งคำขอแล้ว — รอหัวหน้าหรือรองหัวหน้าอนุมัติ</p><p>ตัวละคร: <b>${esc(myReq&&myReq.char)}</b></p><div class="row"><button class="sm" id="reqCancel">แก้ชื่อตัวละคร</button>${out}</div><p class="note">อนุมัติแล้วหน้านี้จะเปิดให้เองอัตโนมัติ</p>`;
-  else if(gate==='rejected')h=`${head}<p>คำขอเข้าดูถูกปฏิเสธ<br>ติดต่อหัวหน้ากิลด์ถ้าคิดว่าผิดพลาด</p><div class="row">${out}</div>`;
-  else h=`${head}<p>เกิดข้อผิดพลาด: ${esc(extra||'')}</p><div class="row"><button class="sm" onclick="location.reload()">ลองใหม่</button>${out}</div>`;
+    h=`${head}<p>${T('สวัสดี')} ${esc(user.displayName||user.email)}</p><p>${T('เลือกชื่อตัวละครของคุณในกิลด์ เพื่อเชื่อมกับบัญชีนี้')}</p>
+    <div style="display:grid;gap:10px;text-align:left;margin-top:14px"><label class="note">${T('ชื่อตัวละคร')}<input id="reqChar" list="rosterList" autocomplete="off" placeholder="${T('พิมพ์ชื่อตัวละคร')}" style="width:100%;margin-top:4px"></label><datalist id="rosterList">${roster.map(r=>`<option value="${esc(r.n)}">${esc(r.c)}</option>`).join('')}</datalist></div>
+    <div class="row"><button class="pri" id="reqBtn">${T('เชื่อมตัวละคร')}</button>${out}</div><p class="note" id="reqMsg"></p><p class="note">${T('1 บัญชีเชื่อมได้ 1 ตัวละคร · ถ้าชื่อคุณถูกคนอื่นเชื่อมไปแล้ว ติดต่อหัวหน้ากิลด์')}</p>`}
+  else if(gate==='pending')h=`${head}<p>${T('เชื่อมตัวละครแล้ว')}: <b>${esc(myReq&&myReq.char)}</b></p><p>${T('รอเปิดสิทธิ์ — ระบบจะเปิดให้อัตโนมัติเมื่อหัวหน้าหรือรองหัวหน้าออนไลน์')}</p><div class="row"><button class="sm" id="reqCancel">${T('เปลี่ยนตัวละคร')}</button>${out}</div>`;
+  else if(gate==='rejected')h=`${head}<p>${T('บัญชีนี้ถูกปฏิเสธการเข้าดู')}</p><p>${T('ติดต่อหัวหน้ากิลด์ถ้าคิดว่าผิดพลาด')}</p><div class="row">${out}</div>`;
+  else h=`${head}<p>${T('เกิดข้อผิดพลาด')}: ${esc(extra||'')}</p><div class="row"><button class="sm" onclick="location.reload()">${T('ลองใหม่')}</button>${out}</div>`;
+  h+=`<div class="row" style="margin-top:22px">${langSel('langGate')}</div>`;
   $('gate').innerHTML=h;
 }
 async function sendRequest(){
-  const c=$('reqChar').value.trim(),note=$('reqNote').value.trim();const m=$('reqMsg');
-  if(!c){m.textContent='ใส่ชื่อตัวละครก่อน';return}
-  if(roster.length&&!roster.some(r=>r.n===c)){m.textContent='ไม่พบชื่อนี้ในรายชื่อกิลด์ล่าสุด — เลือกจากรายการ หรือพิมพ์ให้ตรงตัวพิมพ์';return}
-  $('reqBtn').disabled=true;
-  try{await FB.db.doc('members/'+user.email).set({email:user.email,name:user.displayName||'',char:c,note,role:'member',status:'pending',ts:Date.now()})}catch(e){m.textContent='ส่งคำขอไม่สำเร็จ: '+e.message;$('reqBtn').disabled=false}
+  const c=$('reqChar').value.trim(),m=$('reqMsg');
+  if(!c){m.textContent=T('ใส่ชื่อตัวละครก่อน');return}
+  if(roster.length&&!roster.some(r=>r.n===c)){m.textContent=T('ไม่พบชื่อนี้ในรายชื่อกิลด์ล่าสุด — เลือกจากรายการ หรือพิมพ์ให้ตรงตัวพิมพ์');return}
+  $('reqBtn').disabled=true;const db=FB.db,k=ckey(c),base={email:user.email,name:user.displayName||'',char:c,key:k,note:'',role:'member',ts:Date.now()};
+  try{const cl=await db.doc('claims/'+k).get();if(cl.exists&&cl.data().email!==user.email){m.textContent=T('ตัวละครนี้มีคนเชื่อมไว้แล้ว — ติดต่อหัวหน้ากิลด์');$('reqBtn').disabled=false;return}}catch(e){}
+  try{const b=db.batch();b.set(db.doc('claims/'+k),{email:user.email,char:c,ts:Date.now()});b.set(db.doc('members/'+user.email),{...base,status:'approved',by:'self'});await b.commit()}
+  catch(e){try{await db.doc('members/'+user.email).set({...base,status:'pending'})}catch(e2){m.textContent=T('เชื่อมไม่สำเร็จ')+': '+e2.message;$('reqBtn').disabled=false}}
 }
+function unlink(email){const m=members.find(x=>x.email===email)||(myReq&&myReq.email===email?myReq:null);const ops=[mdoc(email).delete()];if(m&&(m.key||m.char))ops.push(FB.db.doc('claims/'+(m.key||ckey(m.char))).delete().catch(()=>{}));return Promise.all(ops)}
 function renderAccess(){
   const show=isCloud()&&(role==='owner'||role==='officer');$('access').hidden=!show;
   const pn=members.filter(m=>m.status==='pending').length;$('pendN').textContent=pn?`(${pn})`:'';
   if(!show)return;
   const names=model?new Map(model.P.map(p=>[p.name,p])):new Map(),find=c=>names.get(canon(c||''));
   const P=members.filter(m=>m.status==='pending').sort((a,b)=>a.ts-b.ts),A=members.filter(m=>m.status==='approved'),R=members.filter(m=>m.status==='rejected');
+  const dup={};A.concat(P).forEach(m=>{const k=canon(m.char||'');dup[k]=(dup[k]||0)+1});
   const gone=model?A.filter(m=>m.role!=='officer'&&!find(m.char)):[];
-  const who=m=>{const p=find(m.char);return p?`<span class="okc">✓ อยู่ในกิลด์</span> <span class="note">${esc(p.cls)} · Gear ${fmt(p.gear)}</span>`:`<span class="noc">✗ ไม่พบชื่อในกิลด์</span>`};
+  const who=m=>{const p=find(m.char);return (p?`<span class="okc">✓ ${T('อยู่ในกิลด์')}</span> <span class="note">${esc(p.cls)} · Gear ${fmt(p.gear)}</span>`:`<span class="noc">✗ ${T('ไม่พบชื่อในกิลด์')}</span>`)+(dup[canon(m.char||'')]>1?` <span class="noc">⚠ ${T('มีมากกว่า 1 บัญชีอ้างชื่อนี้')}</span>`:'')};
   const em=m=>esc(m.email);
-  let h=`<h3 class="note" style="margin:0 0 8px">รออนุมัติ (${P.length})</h3><ul class="list">${P.length?P.map(m=>`<li class="${find(m.char)?'':'k'}"><div class="grow"><b>${esc(m.char)}</b> ${who(m)}<div class="why">${em(m)}${m.name?' · '+esc(m.name):''} · ขอเมื่อ ${dtTh(m.ts)}${m.note?' · “'+esc(m.note)+'”':''}</div></div><button class="sm pri" data-ap="${em(m)}">อนุมัติ</button><button class="sm ghost" data-rj="${em(m)}">ปฏิเสธ</button></li>`).join(''):'<li><span class="note">ไม่มีคำขอใหม่</span></li>'}</ul>`;
-  h+=`<div class="head" style="margin:18px 0 8px"><h3 class="note" style="margin:0">เข้าดูได้ (${A.length+OWNERS.length})</h3>${gone.length?`<button class="sm" data-rvall="1">ถอนสิทธิ์คนที่ไม่อยู่ในกิลด์แล้ว (${gone.length})</button>`:''}</div>
-  <div class="scroll"><table><thead><tr><th>ตัวละคร</th><th>อีเมล</th><th>สิทธิ์</th><th></th></tr></thead><tbody>
-  ${OWNERS.map(o=>`<tr><td><b>หัวหน้า</b></td><td class="note">${esc(o)}</td><td><span class="tag t-ex">หัวหน้า</span></td><td></td></tr>`).join('')}
-  ${A.sort((a,b)=>(b.role==='officer')-(a.role==='officer')||String(a.char).localeCompare(String(b.char),'th')).map(m=>`<tr class="${find(m.char)||m.role==='officer'?'':'r1'}"><td><b>${esc(m.char)}</b><div class="why">${find(m.char)?esc(find(m.char).cls):'ไม่พบชื่อในกิลด์ล่าสุด'}</div></td><td class="note">${em(m)}</td><td>${m.role==='officer'?'<span class="tag t-new">รองหัวหน้า</span>':'<span class="tag" style="background:var(--card2)">สมาชิก</span>'}</td><td class="n">${role==='owner'?`<button class="sm ghost" data-promo="${em(m)}" data-to="${m.role==='officer'?'member':'officer'}">${m.role==='officer'?'ลดเป็นสมาชิก':'ตั้งเป็นรองหัวหน้า'}</button>`:''}${role==='owner'||m.role!=='officer'?`<button class="sm ghost" data-rv="${em(m)}">ถอนสิทธิ์</button>`:''}</td></tr>`).join('')}
-  </tbody></table></div>`;
-  if(R.length)h+=`<details><summary>ถูกปฏิเสธ (${R.length})</summary><ul class="list">${R.map(m=>`<li><div class="grow"><b>${esc(m.char)}</b><div class="why">${em(m)}</div></div><button class="sm ghost" data-ap="${em(m)}">อนุมัติ</button><button class="sm ghost" data-rv="${em(m)}">ลบ</button></li>`).join('')}</ul></details>`;
-  h+=`<details><summary>เพิ่มสมาชิกเองด้วยอีเมล</summary><div class="row"><input id="addEmail" placeholder="อีเมล Google" style="flex:1 1 14em"><input id="addChar" list="names" placeholder="ชื่อตัวละคร" style="flex:1 1 10em"><button class="sm pri" id="addBtn">เพิ่ม</button></div></details>`;
+  let h=`<p class="note" style="margin-top:0">${T('สมาชิกล็อกอินแล้วเชื่อมตัวละครเองได้ — ตรวจรายการที่มีเครื่องหมาย ⚠ หรือ ✗')}</p>`;
+  h+=`<h3 class="note" style="margin:0 0 8px">${T('รอเปิดสิทธิ์')} (${P.length})</h3><ul class="list">${P.length?P.map(m=>`<li class="${find(m.char)&&dup[canon(m.char)]<2?'':'k'}"><div class="grow"><b>${esc(m.char)}</b> ${who(m)}<div class="why">${em(m)}${m.name?' · '+esc(m.name):''} · ${dtTh(m.ts)}</div></div><button class="sm pri" data-ap="${em(m)}">${T('อนุมัติ')}</button><button class="sm ghost" data-rj="${em(m)}">${T('ปฏิเสธ')}</button></li>`).join(''):`<li><span class="note">${T('ไม่มีรายการรอ')}</span></li>`}</ul>`;
+  h+=`<div class="head" style="margin:18px 0 8px"><h3 class="note" style="margin:0">${T('เข้าดูได้')} (${A.length+OWNERS.length})</h3>${gone.length?`<button class="sm" data-rvall="1">${T('ถอนสิทธิ์คนที่ไม่อยู่ในกิลด์แล้ว')} (${gone.length})</button>`:''}</div>
+  <ul class="list">${OWNERS.map(o=>`<li><div class="grow"><b>${T('หัวหน้า')}</b><div class="why">${esc(o)}</div></div><span class="tag t-ex">${T('หัวหน้า')}</span></li>`).join('')}
+  ${A.sort((a,b)=>(b.role==='officer')-(a.role==='officer')||String(a.char).localeCompare(String(b.char),'th')).map(m=>`<li class="${find(m.char)&&dup[canon(m.char)]<2||m.role==='officer'?'':'k'}"><div class="grow"><b>${esc(m.char)}</b> ${m.role==='officer'?`<span class="tag t-new">${T('รองหัวหน้า')}</span>`:''}<div class="why">${who(m)} · ${em(m)}${m.by==='self'||m.by==='auto'?' · '+T('เชื่อมเอง'):''}</div></div><div class="row" style="gap:6px">${role==='owner'?`<button class="sm ghost" data-promo="${em(m)}" data-to="${m.role==='officer'?'member':'officer'}">${m.role==='officer'?T('ลดเป็นสมาชิก'):T('ตั้งเป็นรองหัวหน้า')}</button>`:''}${role==='owner'||m.role!=='officer'?`<button class="sm ghost" data-rv="${em(m)}">${T('ถอนสิทธิ์')}</button>`:''}</div></li>`).join('')}</ul>`;
+  if(R.length)h+=`<details><summary>${T('ถูกปฏิเสธ')} (${R.length})</summary><ul class="list">${R.map(m=>`<li><div class="grow"><b>${esc(m.char)}</b><div class="why">${em(m)}</div></div><button class="sm ghost" data-ap="${em(m)}">${T('อนุมัติ')}</button><button class="sm ghost" data-rv="${em(m)}">${T('ลบ')}</button></li>`).join('')}</ul></details>`;
+  h+=`<details><summary>${T('เพิ่มสมาชิกเองด้วยอีเมล')}</summary><div class="row"><input id="addEmail" placeholder="${T('อีเมล Google')}" style="flex:1 1 14em"><input id="addChar" list="names" placeholder="${T('ชื่อตัวละคร')}" style="flex:1 1 10em"><button class="sm pri" id="addBtn">${T('เพิ่ม')}</button></div></details>`;
+  if(role==='owner')h+=`<details><summary>${T('กฎ Firebase สำหรับเปิดสิทธิ์ทันทีหลังเชื่อมตัวละคร')}</summary><p class="note">${T('วางใน Firebase Console → Firestore → Rules แล้วกด Publish (ทำครั้งเดียว ทำจากมือถือก็ได้)')}</p><pre id="rulesTxt">${esc(RULES)}</pre><button class="sm" id="copyRules2">${T('คัดลอก')}</button></details>`;
   $('accessBody').innerHTML=h;
 }
+const RULES=`rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+    function email() { return request.auth.token.email; }
+    function isOwner() { return signedIn() && email() in ['grandlinez@gmail.com']; }
+    function memPath() { return /databases/$(database)/documents/members/$(email()); }
+    function isMember() { return isOwner() || (signedIn() && exists(memPath()) && get(memPath()).data.status == 'approved'); }
+    function isOfficer() { return isOwner() || (isMember() && get(memPath()).data.role == 'officer'); }
+    function inRoster(k) { return k in get(/databases/$(database)/documents/public/roster).data.keys; }
+
+    match /snapshots/{id} { allow read: if isMember(); allow write: if isOfficer(); }
+    match /meta/{id} { allow read: if isMember(); allow write: if isOfficer(); }
+    match /public/{id} { allow read: if true; allow write: if isOfficer(); }
+    match /claims/{k} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.email == email() && inRoster(k);
+      allow delete: if isOfficer() || (signedIn() && resource.data.email == email());
+    }
+    match /members/{mail} {
+      allow read: if isOfficer() || (signedIn() && mail == email());
+      allow create: if (signedIn() && mail == email() && request.resource.data.role == 'member'
+          && (request.resource.data.status == 'pending'
+            || (request.resource.data.status == 'approved'
+              && getAfter(/databases/$(database)/documents/claims/$(request.resource.data.key)).data.email == email())))
+        || (isOfficer() && (isOwner() || request.resource.data.role == 'member'));
+      allow update: if (isOfficer() && (isOwner() || (resource.data.role != 'officer' && request.resource.data.role == 'member')))
+        || (signedIn() && mail == email() && resource.data.status == 'pending'
+          && request.resource.data.status == 'pending' && request.resource.data.role == 'member');
+      allow delete: if isOwner() || (isOfficer() && resource.data.role != 'officer') || (signedIn() && mail == email());
+    }
+  }
+}`;
 const mdoc=e=>FB.db.doc('members/'+e);
-const merr=e=>say('ทำไม่สำเร็จ: '+(e.code==='permission-denied'?'ไม่มีสิทธิ์ทำรายการนี้':e.message));
-function parseCfg(t){const i=t.indexOf('{'),j=t.lastIndexOf('}');if(i<0||j<i)throw new Error('ไม่พบ { }');let s=t.slice(i,j+1).replace(/([{,]\s*)([A-Za-z_]\w*)\s*:/g,'$1"$2":').replace(/'/g,'"').replace(/,\s*}/g,'}');const o=JSON.parse(s);if(!o.apiKey||!o.projectId)throw new Error('ต้องมี apiKey และ projectId');return o}
+const merr=e=>say(T('ทำไม่สำเร็จ')+': '+(e.code==='permission-denied'?T('ไม่มีสิทธิ์ทำรายการนี้'):e.message));
 function renderStore(){
-  const cloud=store&&store.kind==='cloud';
-  $('storePill').textContent=cloud?'คลาวด์ · '+store.projectId:'เก็บในเครื่องนี้';$('storePill').classList.toggle('on',!!cloud);
-  $('auth').innerHTML=cloud&&user&&!gate?`<button class="sm ghost" id="logout" title="${esc(user.email)}">ออกจากระบบ</button>`:'';
+  const cloud=isCloud();
+  $('storePill').textContent=cloud?T('คลาวด์'):T('เก็บในเครื่องนี้');$('storePill').classList.toggle('on',!!cloud);
+  $('auth').innerHTML=cloud&&user&&!gate?`<button class="sm ghost" id="logout" title="${esc(user.email)}">${T('ออกจากระบบ')}</button>`:'';
   const have=new Set(snaps.map(x=>x.id)),local=(ls.get('tm-snaps')||[]).filter(x=>x&&!have.has(x.id)).length;
-  const rules=`rules_version = '2';\nservice cloud.firestore {\n  match /databases/{db}/documents {\n    match /{doc=**} {\n      allow read: if true;\n      allow write: if request.auth != null\n        && request.auth.token.email in ['อีเมลของคุณ@gmail.com'];\n    }\n  }\n}`;
-  $('storeBox').innerHTML=cloud?`<p style="margin-top:0">ใช้ <b>Firebase</b> (${esc(store.projectId)}) — เฉพาะคนที่ได้รับอนุมัติเห็นข้อมูล${user?` · เข้าสู่ระบบเป็น ${esc(user.email)}`:' · <b>เข้าสู่ระบบ</b>เพื่ออัปโหลด/แก้ไข'}</p>
-    ${local&&user&&isStaff()?`<button class="sm pri" id="migrate">ย้ายข้อมูลจากเครื่องนี้ขึ้นคลาวด์ (${local} วันที่ยังไม่มีบนคลาวด์)</button>`:''}
-    ${FB_CONFIG?'':'<p class="note">config อยู่ในเบราว์เซอร์นี้เท่านั้น — ถ้าจะให้ทุกคนใช้คลาวด์อัตโนมัติ ให้วาง config ในตัวแปร FB_CONFIG บนสุดของสคริปต์</p><button class="sm ghost" id="fbOff">เลิกใช้คลาวด์ในเครื่องนี้</button>'}`
-   :`<p style="margin-top:0">ตอนนี้ข้อมูลเก็บใน<b>เบราว์เซอร์เครื่องนี้</b> คนอื่นเปิดลิงก์จะไม่เห็น — กด "สำรองข้อมูล" เป็นระยะ</p>
-    <details><summary>เชื่อม Firebase ให้ทุกคนเห็นข้อมูลชุดเดียวกัน</summary>
-    <ol class="note" style="padding-left:1.2em"><li>สร้างโปรเจกต์ที่ console.firebase.google.com แล้วเพิ่ม Web app</li><li>เปิด Firestore Database และ Authentication → Google</li><li>Authentication → Settings → Authorized domains เพิ่มโดเมนของเว็บนี้ (${esc(location.hostname||'')})</li><li>ตั้ง Firestore Rules ตามนี้ (ใส่อีเมลคนที่อัปโหลดได้)</li></ol>
-    <pre id="rules">${esc(rules)}</pre><button class="sm" id="copyRules">คัดลอก Rules</button>
-    <p class="note">5. วาง firebaseConfig ที่ได้จาก Firebase:</p><textarea id="cfg" placeholder="const firebaseConfig = { apiKey: ..., projectId: ... }"></textarea><div class="row" style="margin-top:8px"><button class="pri sm" id="fbOn">เชื่อมต่อ</button></div></details>`;
+  $('storeBox').innerHTML=cloud?`<p style="margin-top:0">${T('ข้อมูลเก็บบน Firebase — เฉพาะคนที่ได้รับสิทธิ์เห็นข้อมูล')}</p>${user?`<p class="note">${T('เข้าสู่ระบบเป็น')} ${esc(user.email)}</p>`:''}${local&&user&&isStaff()?`<button class="sm pri" id="migrate">${T('ย้ายข้อมูลจากเครื่องนี้ขึ้นคลาวด์')} (${local})</button>`:''}`
+   :`<p style="margin-top:0">${T('ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ — กด "สำรองข้อมูล" เป็นระยะ')}</p>`;
 }
 
 /* ---------- upload ---------- */
@@ -620,14 +984,15 @@ document.addEventListener('click',e=>{
   if(el=cl('[data-del]')){const id=el.dataset.del;if(delArm!==id){delArm=id;renderSnaps();return}delArm=null;store.delSnap(id).catch(er=>say('ลบไม่สำเร็จ: '+er.message));return}
   if(el=cl('[data-x]')){pend.splice(+el.dataset.x,1);renderPend();return}
   if(t.id==='reqBtn'){sendRequest();return}
-  if(t.id==='reqCancel'){mdoc(user.email).delete().catch(merr);return}
+  if(t.id==='reqCancel'){unlink(user.email).catch(merr);return}
+  if(t.id==='copyRules2'){navigator.clipboard.writeText(RULES).then(()=>say(T('คัดลอกแล้ว')),()=>{});return}
   if(t.id==='copyLink'){navigator.clipboard.writeText(location.href.split('#')[0]).then(()=>{t.textContent='คัดลอกแล้ว'},()=>{});return}
   if(el=cl('[data-ap]')){mdoc(el.dataset.ap).update({status:'approved',role:'member',by:user.email,at:Date.now()}).catch(merr);return}
   if(el=cl('[data-rj]')){mdoc(el.dataset.rj).update({status:'rejected',role:'member',by:user.email,at:Date.now()}).catch(merr);return}
   if(el=cl('[data-promo]')){mdoc(el.dataset.promo).update({role:el.dataset.to,by:user.email,at:Date.now()}).catch(merr);return}
-  if(el=cl('[data-rv]')){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent='ยืนยันถอน';return}mdoc(el.dataset.rv).delete().catch(merr);return}
+  if(el=cl('[data-rv]')){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent='ยืนยันถอน';return}unlink(el.dataset.rv).catch(merr);return}
   if(el=cl('[data-rvall]')){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent='ยืนยันถอนสิทธิ์ทั้งหมด';return}
-    const names=new Set(model.P.map(p=>p.name));Promise.all(members.filter(m=>m.status==='approved'&&m.role!=='officer'&&!names.has(canon(m.char||''))).map(m=>mdoc(m.email).delete())).then(()=>say('ถอนสิทธิ์แล้ว')).catch(merr);return}
+    const names=new Set(model.P.map(p=>p.name));Promise.all(members.filter(m=>m.status==='approved'&&m.role!=='officer'&&!names.has(canon(m.char||''))).map(m=>unlink(m.email))).then(()=>say('ถอนสิทธิ์แล้ว')).catch(merr);return}
   if(t.id==='addBtn'){const e=$('addEmail').value.trim().toLowerCase(),c=$('addChar').value.trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)||!c){say('ใส่อีเมลและชื่อตัวละครให้ครบ');return}
     mdoc(e).set({email:e,name:'',char:c,note:'',role:'member',status:'approved',ts:Date.now(),by:user.email}).then(()=>say(`เพิ่ม ${c} แล้ว`)).catch(merr);return}
   if(t.id==='login'){store.login().catch(er=>{const m=er.code==='auth/popup-blocked'?'เบราว์เซอร์บล็อกหน้าต่างล็อกอิน — อนุญาตป๊อปอัปแล้วลองใหม่':er.code==='auth/popup-closed-by-user'?'':'เข้าสู่ระบบไม่สำเร็จ: '+er.message;say(m);if(gate&&m)$('gate').insertAdjacentHTML('beforeend',`<p class="note">${esc(m)}</p>`)});return}
@@ -639,6 +1004,7 @@ document.addEventListener('click',e=>{
     saveSnaps(arr).then(()=>{if(m)return store.saveMeta()}).then(()=>say(`ย้าย ${arr.length} วันขึ้นคลาวด์แล้ว`)).catch(()=>{});return}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('modal').hidden)closeProfile()});
+$('sortSel').onchange=e=>{sortK=e.target.value;sortD=['name'].includes(sortK)?1:-1;if(sortK==='away')sortD=-1;renderTable()};
 $('q').oninput=renderTable;$('fStat').onchange=renderTable;$('fClass').onchange=e=>{fClass=e.target.value;render()};
 for(const k of Object.keys(DEF)){$('s'+k).onchange=e=>{const v=+e.target.value;if(!isNaN(v)&&v>=0){meta.settings={...meta.settings,[k]:v};S={...DEF,...meta.settings};saveMeta()}}}
 const syncSettings=()=>{for(const k of Object.keys(DEF))if(document.activeElement!==$('s'+k))$('s'+k).value=S[k]};
@@ -662,6 +1028,9 @@ $('save').onclick=async()=>{
 };
 
 /* ---------- start ---------- */
+$('langTop').innerHTML=langSel('langTopSel');document.documentElement.lang=LANG==='ph'?'fil':LANG;
+document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList.contains('langsel'))setLang(e.target.value)});
+startTr();
 const cfg=FB_CONFIG||ls.get('tm-fb');
 if(cfg){setMeta(null);render();useCloud(cfg).catch(er=>{say('เชื่อม Firebase ไม่ได้ ใช้ข้อมูลในเครื่องแทน: '+er.message);useLocal()})}else useLocal();
 }
