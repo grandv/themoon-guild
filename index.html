@@ -382,7 +382,7 @@ function drawChart(){
       if(picked==null)picked=[...model.P].sort((a,b)=>(b.dG??0)-(a.dG??0)||b.gear-a.gear).slice(0,5).map(p=>p.name);
       ds=picked.map((n,i)=>({label:n,data:R(s=>{const r=s.rows.find(r=>canon(r[0])===n);return r?r[6]:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]}));
     }
-    ds.forEach(d=>Object.assign(d,{tension:.3,pointRadius:D0.length<20?3.5:1.5,borderWidth:2.2,spanGaps:true,segment:{borderDash:c=>c.p1DataIndex-c.p0DataIndex>1?[5,5]:undefined}}));
+    ds.forEach(d=>Object.assign(d,{tension:.3,pointRadius:D0.length<20?3.5:1.5,borderWidth:2.2,spanGaps:true,segment:{borderDash:c=>(c.p0.skip||c.p1.skip||c.p1DataIndex-c.p0DataIndex>1)?[6,6]:undefined}}));
   }
   $('pickWrap').hidden=mode!=='person';
   $('picked').innerHTML=mode==='person'&&picked?picked.map(n=>`<span class="chip">${esc(n)}<button data-rm="${esc(n)}" aria-label="เอาออก">×</button></span>`).join(''):'';
