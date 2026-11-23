@@ -120,6 +120,27 @@ body.viewer .staffonly,body.norisk .riskonly{display:none!important}
 #gate .row{justify-content:center;margin-top:16px}
 .warnbox{background:var(--y1);border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);border-radius:12px;padding:10px 12px;font-size:14px;text-align:left;margin-top:14px}
 .okc{color:var(--good);font-weight:700}.noc{color:var(--bad);font-weight:700}
+
+body[data-view="auction"] main>section:not(.v-auction):not(#gate),body[data-view="party"] main>section:not(.v-party):not(#gate),body[data-view="dash"] main>section.v-auction,body[data-view="dash"] main>section.v-party,body:not([data-view]) main>section.v-auction,body:not([data-view]) main>section.v-party{display:none!important}
+body[data-view="auction"] #msg,body[data-view="party"] #msg{display:block}
+body.localmode .cloudonly{display:none}
+nav a.on{background:var(--accbg);color:var(--acc);font-weight:600}
+.grid-auto{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.queue{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.queue li{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--card2)}
+.queue li.me,.party.mine{outline:2px solid var(--acc);outline-offset:-2px}
+.chip.on{background:var(--acc);color:light-dark(#fff,#0b0d16);border-color:var(--acc)}
+button.chip{min-height:36px;cursor:pointer}
+.mysign{background:var(--accbg);border-color:transparent;margin:6px 0 14px;padding:12px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:10px}
+.party{background:var(--card2);border-radius:14px;padding:10px}
+.party .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.party ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.party li{display:flex;gap:6px;align-items:center;font-size:14px;min-height:30px}
+.party li.emptyslot{color:var(--mute);justify-content:center;border:1px dashed var(--line);border-radius:8px}
+.rt{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:6px;letter-spacing:.3px}
+.r-tank{background:#3b82f633;color:#3b82f6}.r-heal{background:#10b98133;color:var(--good)}.r-melee{background:#f43f5e2e;color:var(--bad)}.r-ranged{background:#f59e0b33;color:var(--warn)}
+.x2{min-height:26px;padding:0 6px}
 #msg{min-height:1.4em;font-size:14px;margin-top:10px;color:var(--acc)}
 details summary{cursor:pointer;color:var(--acc);font-weight:600;margin:8px 0}
 pre{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12.5px;overflow-x:auto;white-space:pre}
@@ -157,6 +178,11 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   .head{margin-bottom:10px}
   .tools{width:100%}.tools .seg{flex:1 1 auto}.seg button{flex:1;padding:4px 6px;font-size:13.5px}
   .fig{height:260px}.fig.s{height:200px}
+  .seg button{white-space:nowrap}
+  .party li.emptyslot{display:none}
+  .party{padding:8px 10px}
+  .pgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .party li{font-size:13px}
   .list li{flex-wrap:wrap;padding:9px 10px}
   .list li>.row{width:100%;justify-content:flex-end}
   #sortSel{display:inline-block}
@@ -189,7 +215,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 <body>
 <div class="bar"><div class="wrap">
   <div class="brand"><span class="moon"></span>TheMoon</div>
-  <nav><a href="#overview">ภาพรวม</a><a href="#classes">อาชีพ</a><a href="#members">สมาชิก</a><a href="#log" class="riskonly">ประวัติ</a><a href="#access" class="staffonly" id="navAccess" hidden>สิทธิ์เข้าดู <span id="pendN"></span></a><a href="#settings" class="staffonly">ตั้งค่า</a></nav>
+  <nav><a href="#overview" data-view="dash">ภาพรวม</a><a href="#classes" data-view="dash">อาชีพ</a><a href="#members" data-view="dash">สมาชิก</a><a href="#log" class="riskonly" data-view="dash">ประวัติ</a><a href="#auction" data-view="auction" class="cloudonly">ประมูล</a><a href="#party" data-view="party" class="cloudonly">ปาร์ตี้</a><a href="#access" class="staffonly" id="navAccess" data-view="dash" hidden>สิทธิ์เข้าดู <span id="pendN"></span></a><a href="#settings" class="staffonly" data-view="dash">ตั้งค่า</a></nav>
   <div class="right"><span id="langTop"></span><span class="pill hide-s" id="storePill">เก็บในเครื่องนี้</span><span id="auth"></span>
     <label class="btn pri staffonly">อัปโหลด CSV<input type="file" id="file" accept=".csv,text/csv" multiple></label></div>
 </div></div>
@@ -264,6 +290,35 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   </div>
   <div class="card"><div class="head"><h2>ที่เก็บข้อมูล</h2></div><div id="storeBox"></div></div>
 </section>
+
+<section id="auction" class="v-auction" style="margin-top:0">
+  <div class="hero"><div><h1>จองคิวประมูล</h1><p>เลือกไอเทมที่อยากได้แล้วกด "จองคิว" — คิวเรียงตามเวลาที่จอง หัวหน้า/รองหัวหน้าเป็นคนกดให้ไอเทม</p></div></div>
+  <div id="aucTop" style="margin-top:14px"></div>
+  <details class="card" id="aucAdd" hidden style="margin-top:12px"><summary>+ เพิ่มไอเทม</summary>
+    <div class="set" style="margin-top:10px"><label>ไอเทม<input id="aucName" list="aucPresets" placeholder="เช่น Mythic Pet"></label><datalist id="aucPresets"></datalist>
+      <label>จำนวน<input id="aucQty" type="number" min="1" value="1"></label>
+      <label>ได้จากกิจกรรม<select id="aucSrc"><option value="gl">Guild League</option><option value="siege">Siege War</option><option value="polar">Polarity Zone</option><option value="other">อื่นๆ</option></select></label>
+      <label>วันที่ประมูล<input id="aucDate" type="date"></label>
+      <label style="grid-column:1/-1">หมายเหตุ<input id="aucNote" placeholder="เช่น กติกา หรือราคาเริ่ม"></label></div>
+    <div class="row" style="margin-top:10px"><button class="pri" id="aucAddBtn">เพิ่มไอเทม</button></div></details>
+  <div class="row" style="margin:14px 0"><div class="seg" id="aucSeg"><button data-f="open" aria-pressed="true">เปิดจอง</button><button data-f="closed" aria-pressed="false">ปิดแล้ว</button><button data-f="all" aria-pressed="false">ทั้งหมด</button></div></div>
+  <div class="grid-auto" id="aucList"></div>
+</section>
+
+<section id="party" class="v-party" style="margin-top:0">
+  <div class="hero"><div><h1>จัดปาร์ตี้กิจกรรม</h1><p>ลงชื่อว่าจะไปไหม เลือกตำแหน่งที่ถนัด แล้วหัวหน้าจัดลงปาร์ตี้ — Guild League ใช้ 12 ปาร์ตี้ × 5 คน (60 คน)</p></div></div>
+  <div id="evTop" style="margin-top:14px"></div>
+  <details class="card" id="evAdd" hidden style="margin-top:12px"><summary>+ สร้างกิจกรรม</summary>
+    <div class="set" style="margin-top:10px"><label>ประเภท<select id="evType"><option value="glm">Guild League – สนามหลัก</option><option value="gls">Guild League – สนามรอง</option><option value="siege">Siege War</option><option value="polar">Polarity Zone</option><option value="other">กิจกรรมอื่น</option></select></label>
+      <label>ชื่อ (ไม่บังคับ)<input id="evTitle" placeholder="เช่น GL รอบรองชนะเลิศ"></label>
+      <label>วันเวลา<input id="evAt" type="datetime-local"></label>
+      <label>จำนวนปาร์ตี้<input id="evParties" type="number" min="1" max="20" value="12"></label>
+      <label>คนต่อปาร์ตี้<input id="evSize" type="number" min="1" max="10" value="5"></label>
+      <label style="grid-column:1/-1">หมายเหตุ<input id="evNote" placeholder="เช่น จุดนัดพบ, ของที่ต้องเตรียม"></label></div>
+    <div class="row" style="margin-top:10px"><button class="pri" id="evAddBtn">สร้างกิจกรรม</button></div></details>
+  <div class="chips" id="evTabs" style="margin:14px 0"></div>
+  <div class="card" id="evView"></div>
+</section>
 </main>
 
 <div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pName">
@@ -286,6 +341,86 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"คนนี้ลงชื่อแล้ว":["Already signed up","Sudah terdaftar","Naka-sign up na"],
+"ประมูล":["Auction", "Lelang", "Auction"],
+"ปาร์ตี้":["Party", "Party", "Party"],
+"จองคิวประมูล":["Auction queue", "Antrean lelang", "Pila sa auction"],
+"เลือกไอเทมที่อยากได้แล้วกด \"จองคิว\" — คิวเรียงตามเวลาที่จอง หัวหน้า/รองหัวหน้าเป็นคนกดให้ไอเทม":["Pick an item you want and press \"Reserve\" — the queue is first come, first served; the leader/officers hand out items", "Pilih item yang kamu mau lalu tekan \"Antre\" — urutan sesuai waktu antre; ketua/wakil yang membagikan item", "Piliin ang gusto mong item at pindutin ang \"Pumila\" — una-unahan ang pila; leader/officer ang magbibigay"],
+"+ เพิ่มไอเทม":["+ Add item", "+ Tambah item", "+ Magdagdag ng item"],
+"ไอเทม":["Item", "Item", "Item"],
+"จำนวน":["Qty", "Jumlah", "Dami"],
+"ได้จากกิจกรรม":["From event", "Dari event", "Mula sa event"],
+"วันที่ประมูล":["Auction date", "Tanggal lelang", "Petsa ng auction"],
+"หมายเหตุ":["Note", "Catatan", "Tala"],
+"เช่น Mythic Pet":["e.g. Mythic Pet", "mis. Mythic Pet", "hal. Mythic Pet"],
+"เช่น กติกา หรือราคาเริ่ม":["e.g. rules or starting price", "mis. aturan atau harga awal", "hal. patakaran o panimulang presyo"],
+"เพิ่มไอเทม":["Add item", "Tambah item", "Magdagdag ng item"],
+"เปิดจอง":["Open", "Dibuka", "Bukas"],
+"ปิดแล้ว":["Closed", "Ditutup", "Sarado"],
+"จัดปาร์ตี้กิจกรรม":["Event parties", "Party event", "Party sa event"],
+"ลงชื่อว่าจะไปไหม เลือกตำแหน่งที่ถนัด แล้วหัวหน้าจัดลงปาร์ตี้ — Guild League ใช้ 12 ปาร์ตี้ × 5 คน (60 คน)":["Sign up, pick your role, and the leader builds parties — Guild League uses 12 parties × 5 (60 players)", "Daftar, pilih peran, lalu ketua menyusun party — Guild League memakai 12 party × 5 (60 pemain)", "Mag-sign up, piliin ang role, at ang leader ang bubuo ng party — 12 party × 5 (60 player) ang Guild League"],
+"+ สร้างกิจกรรม":["+ Create event", "+ Buat event", "+ Gumawa ng event"],
+"ประเภท":["Type", "Jenis", "Uri"],
+"Guild League – สนามหลัก":["Guild League – Main Battlefield", "Guild League – Medan Utama", "Guild League – Main Battlefield"],
+"Guild League – สนามรอง":["Guild League – Sub Battlefield", "Guild League – Medan Kedua", "Guild League – Sub Battlefield"],
+"กิจกรรมอื่น":["Other event", "Event lain", "Ibang event"],
+"ชื่อ (ไม่บังคับ)":["Title (optional)", "Judul (opsional)", "Pamagat (opsyonal)"],
+"เช่น GL รอบรองชนะเลิศ":["e.g. GL semifinal", "mis. GL semifinal", "hal. GL semifinal"],
+"วันเวลา":["Date & time", "Tanggal & jam", "Petsa at oras"],
+"จำนวนปาร์ตี้":["Parties", "Jumlah party", "Bilang ng party"],
+"คนต่อปาร์ตี้":["Players per party", "Pemain per party", "Player bawat party"],
+"เช่น จุดนัดพบ, ของที่ต้องเตรียม":["e.g. meeting point, items to prepare", "mis. titik kumpul, item yang disiapkan", "hal. tagpuan, gamit na ihahanda"],
+"สร้างกิจกรรม":["Create event", "Buat event", "Gumawa ng event"],
+"อื่นๆ":["Other", "Lainnya", "Iba pa"],
+"แทงค์":["Tank", "Tank", "Tank"],
+"ฮีล/ซัพพอร์ต":["Healer/Support", "Healer/Support", "Healer/Support"],
+"DPS ระยะประชิด":["Melee DPS", "DPS jarak dekat", "Melee DPS"],
+"DPS ระยะไกล/AOE":["Ranged DPS/AOE", "DPS jarak jauh/AOE", "Ranged DPS/AOE"],
+"ต้องอัปเดตกฎ Firebase ก่อน (เมนู สิทธิ์เข้าดู)":["Firebase rules need updating first (Access menu)", "Aturan Firebase perlu diperbarui dulu (menu Akses)", "Kailangan munang i-update ang Firebase rules (Access menu)"],
+"ตัวละครของฉัน":["My character", "Karakter saya", "Aking character"],
+"เปลี่ยน":["Change", "Ganti", "Palitan"],
+"เลือกตัวละครของคุณก่อน":["Pick your character first", "Pilih karaktermu dulu", "Piliin muna ang character mo"],
+"ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะลงชื่อได้ — เมนู \"สิทธิ์เข้าดู\" → กฎ Firebase → คัดลอกไปวางใน Firebase Console":["Update the Firebase rules before members can sign up — Access menu → Firebase rules → paste into Firebase Console", "Perbarui aturan Firebase agar anggota bisa mendaftar — menu Akses → aturan Firebase → tempel di Firebase Console", "I-update ang Firebase rules para makapag-sign up ang miyembro — Access menu → Firebase rules → i-paste sa Firebase Console"],
+"ระบบลงชื่อยังไม่เปิด — รอหัวหน้าตั้งค่า":["Sign-up is not open yet — waiting for the leader", "Pendaftaran belum dibuka — menunggu ketua", "Hindi pa bukas ang sign-up — hinihintay ang leader"],
+"ใช้ได้เมื่อเชื่อม Firebase":["Available when connected to Firebase", "Tersedia saat terhubung ke Firebase", "Magagamit kapag naka-connect sa Firebase"],
+"ได้รับแล้ว":["Given to", "Sudah diberikan", "Naibigay kay"],
+"ได้ไปแล้ว":["already got", "sudah dapat", "nakakuha na"],
+"ให้ไอเทม":["Give item", "Beri item", "Ibigay"],
+"ยังไม่มีคนจอง":["No one in queue yet", "Belum ada antrean", "Wala pang nakapila"],
+"คุณอยู่คิวที่":["You are #", "Kamu di antrean ke-", "Ikaw ay #"],
+"ยกเลิกคิว":["Leave queue", "Keluar antrean", "Umalis sa pila"],
+"จองคิว":["Reserve", "Antre", "Pumila"],
+"เพิ่มคนเข้าคิว":["Add to queue", "Tambah ke antrean", "Idagdag sa pila"],
+"ปิดรับจอง":["Close", "Tutup", "Isara"],
+"เปิดรับจอง":["Reopen", "Buka lagi", "Buksan ulit"],
+"ยังไม่มีไอเทม":["No items yet", "Belum ada item", "Wala pang item"],
+"กด \"เพิ่มไอเทม\" ด้านบน":["use \"Add item\" above", "pakai \"Tambah item\" di atas", "gamitin ang \"Magdagdag ng item\" sa itaas"],
+"ยืนยัน":["Confirm", "Yakin", "Kumpirmahin"],
+"ยืนยันให้":["Confirm give to", "Yakin beri ke", "Kumpirmahing ibigay kay"],
+"ใส่ชื่อไอเทม":["Enter an item name", "Isi nama item", "Ilagay ang pangalan ng item"],
+"เพิ่มไอเทมแล้ว":["Item added", "Item ditambahkan", "Naidagdag ang item"],
+"ยังไม่มีกิจกรรม":["No events yet", "Belum ada event", "Wala pang event"],
+"กด \"สร้างกิจกรรม\" ด้านบน":["use \"Create event\" above", "pakai \"Buat event\" di atas", "gamitin ang \"Gumawa ng event\" sa itaas"],
+"คน":["players", "pemain", "player"],
+"ไป":["Going", "Ikut", "Sasama"],
+"ไม่แน่ใจ":["Maybe", "Mungkin", "Baka"],
+"ไม่ไป":["Not going", "Tidak ikut", "Hindi sasama"],
+"จัดแล้ว":["Assigned", "Ditempatkan", "Naitalaga"],
+"คุณอยู่ปาร์ตี้":["You are in party", "Kamu di party", "Nasa party ka"],
+"ไม่มีแทงค์":["no tank", "tanpa tank", "walang tank"],
+"ไม่มีฮีล":["no healer", "tanpa healer", "walang healer"],
+"จัดอัตโนมัติ":["Auto-assign", "Susun otomatis", "Auto-assign"],
+"คัดลอกรายชื่อปาร์ตี้":["Copy party list", "Salin daftar party", "Kopyahin ang party list"],
+"ล้างปาร์ตี้":["Clear parties", "Kosongkan party", "I-clear ang party"],
+"ลบกิจกรรม":["Delete event", "Hapus event", "Burahin ang event"],
+"ลงชื่อแล้วแต่ยังไม่ได้จัด":["Signed up, not assigned", "Sudah daftar, belum ditempatkan", "Naka-sign up, wala pang party"],
+"ใส่ปาร์ตี้":["Put in party", "Masukkan ke party", "Ilagay sa party"],
+"เพิ่มคนที่ยังไม่ลงชื่อ":["Add someone who has not signed up", "Tambah yang belum daftar", "Magdagdag ng hindi pa naka-sign up"],
+"ยังไม่ตอบ":["No reply yet:", "Belum menjawab:", "Wala pang sagot:"],
+"ใส่วันเวลาของกิจกรรม":["Set the event date & time", "Isi tanggal & jam event", "Ilagay ang petsa at oras"],
+"สร้างกิจกรรมแล้ว":["Event created", "Event dibuat", "Nagawa ang event"],
+"จัดปาร์ตี้แล้ว":["Parties assigned", "Party disusun", "Naitalaga ang party"],
+"ยืนยันล้าง":["Confirm clear", "Yakin kosongkan", "Kumpirmahin"],
 'ภาพรวม':['Overview','Ringkasan','Overview'],
 'อาชีพ':['Classes','Kelas','Mga Class'],
 'สมาชิก':['Members','Anggota','Miyembro'],
@@ -555,6 +690,7 @@ const hasTh=s=>/[฀-๿]/.test(s);
 function T(s){if(LANG==='th'||!s||!hasTh(s))return s;const k=LI[LANG],t=s.trim();if(D[t])return s.replace(t,D[t][k]);
   for(const [re,arr] of P_){const m=t.match(re);if(m)return s.replace(t,arr[k].replace(/\$(\d)/g,(_,n)=>T(m[+n]||'')))}
   if(t.includes(' · ')){const parts=t.split(' · ');const out=parts.map(x=>T(x));if(out.some((x,i)=>x!==parts[i]))return s.replace(t,out.join(' · '))}
+  if(t.includes(' — ')){const parts=t.split(' — ');const out=parts.map(x=>T(x));if(out.some((x,i)=>x!==parts[i]))return s.replace(t,out.join(' — '))}
   if(t.includes(', ')){const parts=t.split(', ');const out=parts.map(x=>T(x));if(out.every((x,i)=>x!==parts[i]||!hasTh(x)))return s.replace(t,out.join(', '))}
   return s}
 function trNode(n){
@@ -669,7 +805,7 @@ function build(){
 
 /* ---------- render ---------- */
 function render(){
-  build();renderStore();syncSettings();applyRole();renderAccess();
+  build();renderStore();syncSettings();applyRole();renderAccess();if(view==='auction')renderAuction();if(view==='party')renderParty();
   if(!model){$('kpis').innerHTML='';$('title').textContent='TheMoon · ภาพรวมกิลด์';$('subtitle').textContent='ยังไม่มีข้อมูล — กด "อัปโหลด CSV" หรือลากไฟล์ CSV มาวางในหน้านี้ (หลายไฟล์พร้อมกันได้)';
     for(const id of ['classList','kick','improved','moves','rows','kicks','snaps'])$(id).innerHTML='';$('classList').innerHTML='<div class="empty">ยังไม่มีข้อมูล</div>';drawChart();return}
   const {L,P,prevS,elapsed}=model,cnt=[0,0,0];P.forEach(p=>cnt[p.sev]++);
@@ -831,7 +967,7 @@ const localStore={kind:'local',
   saveSnaps:async list=>{const m=new Map(snaps.map(s=>[s.id,s]));list.forEach(s=>m.set(s.id,s));snaps=[...m.values()].sort(byTs);ls.set('tm-snaps',snaps);render()},
   delSnap:async id=>{snaps=snaps.filter(s=>s.id!==id);ls.set('tm-snaps',snaps);render()},
   saveMeta:async()=>{ls.set('tm-meta',meta)}};
-function useLocal(){store=localStore;snaps=(ls.get('tm-snaps')||[]).filter(valid).sort(byTs);setMeta(ls.get('tm-meta'));render()}
+function useLocal(){document.body.classList.add('localmode');store=localStore;snaps=(ls.get('tm-snaps')||[]).filter(valid).sort(byTs);setMeta(ls.get('tm-meta'));render()}
 const SDK='https://www.gstatic.com/firebasejs/10.12.2/';
 const loadJS=u=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=()=>no(new Error('โหลด '+u+' ไม่ได้'));document.head.appendChild(s)});
 async function useCloud(cfg){
@@ -856,13 +992,16 @@ async function useCloud(cfg){
     },e=>setGate('error',e.message)));
   });
 }
-function stopData(){const had=dataOn||snaps.length;dataUnsubs.forEach(f=>{try{f()}catch(e){}});dataUnsubs=[];dataOn=false;snaps=[];members=[];rosterSynced=false;setMeta(null);closeProfileSafe();if(had)render()}
+function stopData(){const had=dataOn||snaps.length;aucItems=[];events=[];aucQ=[];signups=[];dataUnsubs.forEach(f=>{try{f()}catch(e){}});dataUnsubs=[];dataOn=false;snaps=[];members=[];rosterSynced=false;setMeta(null);closeProfileSafe();if(had)render()}
 function closeProfileSafe(){try{if(!$('modal').hidden)closeProfile()}catch(e){}}
 function startData(){
   if(dataOn){setGate(null);return}dataOn=true;setGate(null);const db=FB.db;
   const t=setTimeout(()=>say('ยังโหลดข้อมูลจากคลาวด์ไม่ได้ ตรวจอินเทอร์เน็ต'),10000);
   dataUnsubs.push(db.collection('snapshots').onSnapshot(q=>{clearTimeout(t);snaps=q.docs.map(d=>{const x=d.data();if(x&&typeof x.rows==='string'){try{x.rows=JSON.parse(x.rows)}catch(e){x.rows=null}}return x}).filter(valid).sort(byTs);render();syncRoster()},e=>{clearTimeout(t);say('อ่านข้อมูลไม่ได้: '+(e.code==='permission-denied'?'ไม่มีสิทธิ์':e.message))}));
   dataUnsubs.push(db.doc('meta/state').onSnapshot(d=>{setMeta(d.exists?d.data():null);render()},()=>{}));
+  dataUnsubs.push(db.collection('meta').onSnapshot(q=>{aucItems=[];events=[];q.docs.forEach(d=>{const x={...d.data(),id:d.id};if(d.id.startsWith('auc_'))aucItems.push(x);else if(d.id.startsWith('evt_'))events.push(x)});renderAuction();renderParty()},()=>{}));
+  dataUnsubs.push(db.collection('auction_queue').onSnapshot(q=>{aucQ=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.q=false;renderAuction()},()=>{rulesOld.q=true;renderAuction()}));
+  dataUnsubs.push(db.collection('event_signups').onSnapshot(q=>{signups=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.s=false;renderParty()},()=>{rulesOld.s=true;renderParty()}));
   if(role==='owner'||role==='officer'){
     dataUnsubs.push(db.collection('members').onSnapshot(q=>{members=q.docs.map(d=>({...d.data(),email:d.id}));render();autoApprove()},e=>say('อ่านรายชื่อผู้ขอเข้าดูไม่ได้: '+e.message)));
     dataUnsubs.push(db.doc('public/roster').onSnapshot(d=>{roster=d.exists?(d.data().names||[]):[];rosterTs=d.exists?d.data().ts:0;const k=d.exists&&d.data().keys;if(!k)rosterTs=0;rosterSynced=false;syncRoster();autoApprove()},()=>{}));
@@ -954,6 +1093,17 @@ service cloud.firestore {
       allow create: if signedIn() && request.resource.data.email == email() && inRoster(k);
       allow delete: if isOfficer() || (signedIn() && resource.data.email == email());
     }
+    match /auction_queue/{id} {
+      allow read: if isMember();
+      allow create: if isOfficer() || (isMember() && request.resource.data.email == email() && id == request.resource.data.itemId + '__' + email());
+      allow update: if isOfficer();
+      allow delete: if isOfficer() || (isMember() && resource.data.email == email());
+    }
+    match /event_signups/{id} {
+      allow read: if isMember();
+      allow create, update: if isOfficer() || (isMember() && request.resource.data.email == email() && id == request.resource.data.eventId + '__' + email());
+      allow delete: if isOfficer() || (isMember() && resource.data.email == email());
+    }
     match /members/{mail} {
       allow read: if isOfficer() || (signedIn() && mail == email());
       allow create: if (signedIn() && mail == email() && request.resource.data.role == 'member'
@@ -977,6 +1127,145 @@ function renderStore(){
   const have=new Set(snaps.map(x=>x.id)),local=(ls.get('tm-snaps')||[]).filter(x=>x&&!have.has(x.id)).length;
   $('storeBox').innerHTML=cloud?`<p style="margin-top:0">${T('ข้อมูลเก็บบน Firebase — เฉพาะคนที่ได้รับสิทธิ์เห็นข้อมูล')}</p>${user?`<p class="note">${T('เข้าสู่ระบบเป็น')} ${esc(user.email)}</p>`:''}${local&&user&&isStaff()?`<button class="sm pri" id="migrate">${T('ย้ายข้อมูลจากเครื่องนี้ขึ้นคลาวด์')} (${local})</button>`:''}`
    :`<p style="margin-top:0">${T('ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ — กด "สำรองข้อมูล" เป็นระยะ')}</p>`;
+}
+
+/* ---------- auction queue + party organizer ---------- */
+const aucActionSync=t=>{const hit=t.closest('[data-qjoin],[data-qcancel],[data-qdel],[data-qadd],[data-give],[data-itoggle],[data-idel],#aucAddBtn,#aucSeg [data-f]');if(!hit)return false;aucAction(t);return true};
+const partyActionSync=t=>{const hit=t.closest('[data-evsel],#evAddBtn,[data-sg],[data-unas],[data-auto],[data-clear],[data-evdel],[data-evcopy],[data-evaddp]');if(!hit)return false;partyAction(t);return true};
+let aucItems=[],events=[],aucQ=[],signups=[],rulesOld={q:false,s:false},selEvt=null,aucFilter='open',view='dash';
+const PRESET_ITEMS=['Mythic Pet','Adv Gem','Title Upgrade Cert','MVP Card','Card Shard','Feather','Pet Shard','Imprint Shard'];
+const SRC={gl:'Guild League',siege:'Siege War',polar:'Polarity Zone',other:'อื่นๆ'};
+const EVT={glm:{n:'Guild League – สนามหลัก',p:12},gls:{n:'Guild League – สนามรอง',p:12},siege:{n:'Siege War',p:12},polar:{n:'Polarity Zone',p:6},other:{n:'กิจกรรมอื่น',p:4}};
+const ROLES=[['tank','แทงค์'],['heal','ฮีล/ซัพพอร์ต'],['melee','DPS ระยะประชิด'],['ranged','DPS ระยะไกล/AOE']];
+const RSHORT={tank:'TANK',heal:'HEAL',melee:'MELEE',ranged:'RANGE'};
+const CLASS_ROLE={'Paladin':'tank','Lord Knight':'tank','High Priest':'heal','Clown':'heal','Minstrel':'heal','Gypsy':'heal','Professor':'heal','Scholar':'heal','Champion':'melee','Assassin Cross':'melee','Stalker':'melee','Whitesmith':'melee','Mastersmith':'melee','High Wizard':'ranged','Sniper':'ranged','Night Walker':'ranged','Creator':'ranged','Biochemist':'ranged','อาลิเทีย':'ranged'};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const pInfo=c=>model?model.P.find(p=>p.name===canon(c||'')):null;
+const myChar=()=>role==='owner'?(ls.get('tm-mychar')||''):(myReq&&myReq.char)||'';
+const ferr=e=>say(T('ทำไม่สำเร็จ')+': '+(e.code==='permission-denied'?T('ต้องอัปเดตกฎ Firebase ก่อน (เมนู สิทธิ์เข้าดู)'):e.message));
+const stfx=()=>isCloud()&&isStaff();
+function myCharBox(){
+  if(role!=='owner')return '';const c=myChar();
+  return c?`<p class="note" style="margin:0 0 10px">${T('ตัวละครของฉัน')}: <b>${esc(c)}</b> <button class="sm ghost" data-mychar="">${T('เปลี่ยน')}</button></p>`
+   :`<div class="warnbox" style="margin:0 0 12px"><b>${T('เลือกตัวละครของคุณก่อน')}</b><div class="row" style="justify-content:flex-start;margin-top:8px"><input class="mycharIn" list="names" placeholder="${T('ชื่อตัวละคร')}" style="flex:1 1 12em"><button class="sm pri" data-mycharsave="1">${T('บันทึก')}</button></div></div>`}
+function setView(v){view=v;document.body.dataset.view=v;document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',(a.dataset.view||'dash')===v));if(v==='auction')renderAuction();if(v==='party')renderParty()}
+function rulesBanner(old){if(!old)return '';return `<div class="warnbox" style="margin-bottom:12px">${stfx()?T('ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะลงชื่อได้ — เมนู "สิทธิ์เข้าดู" → กฎ Firebase → คัดลอกไปวางใน Firebase Console'):T('ระบบลงชื่อยังไม่เปิด — รอหัวหน้าตั้งค่า')}</div>`}
+
+/* auction */
+function renderAuction(){
+  if(!$('aucList'))return;
+  if(!isCloud()){$('aucList').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อม Firebase')}</p>`;return}
+  const me=myChar(),staff=stfx(),now=Date.now(),got={};
+  aucItems.forEach(it=>(it.winners||[]).forEach(w=>{if(now-w.ts<30*DAY)got[w.char]=(got[w.char]||0)+1}));
+  $('aucTop').innerHTML=rulesBanner(rulesOld.q)+myCharBox();
+  $('aucAdd').hidden=!staff;
+  const L=aucItems.filter(it=>aucFilter==='all'||(aucFilter==='open'?it.status!=='closed':it.status==='closed')).sort((a,b)=>(a.status==='closed')-(b.status==='closed')||b.ts-a.ts);
+  [...$('aucSeg').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===aucFilter));
+  $('aucList').innerHTML=L.length?L.map(it=>{
+    const Q=aucQ.filter(q=>q.itemId===it.id).sort((a,b)=>a.ts-b.ts),mine=Q.findIndex(q=>q.email===user.email),open=it.status!=='closed';
+    return `<div class="card ic"><div class="head" style="align-items:flex-start"><div><h3 style="margin:0;font-size:18px">${esc(it.name)} <span class="note">×${it.qty||1}</span></h3><div class="note">${esc(T(SRC[it.src]||it.src||''))}${it.date?' · '+esc(it.date):''}${it.note?' · '+esc(it.note):''}</div></div><span class="st ${open?'s0':'s1'}">${open?T('เปิดจอง'):T('ปิดแล้ว')}</span></div>
+    ${(it.winners||[]).length?`<p class="note" style="margin:0 0 8px">🏆 ${T('ได้รับแล้ว')}: ${it.winners.map(w=>`<b>${esc(w.char)}</b>`).join(', ')}</p>`:''}
+    <ol class="queue">${Q.length?Q.map((q,i)=>{const p=pInfo(q.char);return `<li class="${q.email===user.email?'me':''}"><span class="rank">${i+1}</span>${p?ico(p.cls,24):''}<div class="grow"><b>${esc(q.char)}</b>${got[q.char]?` <span class="tag t-back">${T('ได้ไปแล้ว')} ${got[q.char]}</span>`:''}<div class="why">${p?esc(p.cls)+' · Gear '+fmt(p.gear):''} · ${dtTh(q.ts)}</div></div>${staff&&open?`<button class="sm pri" data-give="${esc(q.id)}">${T('ให้ไอเทม')}</button>`:''}${staff?`<button class="sm ghost" data-qdel="${esc(q.id)}" aria-label="remove">×</button>`:''}</li>`}).join(''):`<li><span class="note">${T('ยังไม่มีคนจอง')}</span></li>`}</ol>
+    <div class="row" style="margin-top:10px">${open&&me?(mine>=0?`<span class="note">${T('คุณอยู่คิวที่')} ${mine+1}</span><button class="sm ghost" data-qcancel="${esc(it.id)}">${T('ยกเลิกคิว')}</button>`:`<button class="sm pri" data-qjoin="${esc(it.id)}" ${rulesOld.q?'disabled':''}>${T('จองคิว')}</button>`):''}
+    ${staff?`<span style="flex:1"></span>${open?`<input class="qaddIn" data-for="${esc(it.id)}" list="names" placeholder="${T('เพิ่มคนเข้าคิว')}" style="width:10em"><button class="sm ghost" data-qadd="${esc(it.id)}">${T('เพิ่ม')}</button>`:''}<button class="sm ghost" data-itoggle="${esc(it.id)}">${open?T('ปิดรับจอง'):T('เปิดรับจอง')}</button><button class="sm ghost" data-idel="${esc(it.id)}">${T('ลบ')}</button>`:''}</div></div>`}).join(''):`<div class="empty">${T('ยังไม่มีไอเทม')}${staff?' — '+T('กด "เพิ่มไอเทม" ด้านบน'):''}</div>`;
+}
+async function aucAction(t){
+  const db=FB.db;let el;const cl=s=>t.closest(s);
+  if(el=cl('[data-qjoin]')){const me=myChar();if(!me){say(T('เลือกตัวละครของคุณก่อน'));return true}const id=el.dataset.qjoin;db.doc(`auction_queue/${id}__${user.email}`).set({itemId:id,email:user.email,char:me,ts:Date.now()}).catch(ferr);return true}
+  if(el=cl('[data-qcancel]')){db.doc(`auction_queue/${el.dataset.qcancel}__${user.email}`).delete().catch(ferr);return true}
+  if(el=cl('[data-qdel]')){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยัน');return true}db.doc('auction_queue/'+el.dataset.qdel).delete().catch(ferr);return true}
+  if(el=cl('[data-qadd]')){const id=el.dataset.qadd,inp=document.querySelector(`.qaddIn[data-for="${CSS.escape(id)}"]`),c=inp&&inp.value.trim();if(!c)return true;db.doc(`auction_queue/${id}__manual:${c}`).set({itemId:id,email:'manual:'+c,char:c,ts:Date.now(),by:user.email}).catch(ferr);inp.value='';return true}
+  if(el=cl('[data-give]')){const q=aucQ.find(x=>x.id===el.dataset.give);if(!q)return true;const it=aucItems.find(x=>x.id===q.itemId);if(!it)return true;
+    if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยันให้')+' '+q.char;return true}
+    const w=[...(it.winners||[]),{char:q.char,ts:Date.now(),by:user.email}];
+    try{await db.doc('meta/'+it.id).update({winners:w,status:w.length>=(it.qty||1)?'closed':'open'});await db.doc('auction_queue/'+q.id).delete()}catch(e){ferr(e)}return true}
+  if(el=cl('[data-itoggle]')){const it=aucItems.find(x=>x.id===el.dataset.itoggle);db.doc('meta/'+it.id).update({status:it.status==='closed'?'open':'closed'}).catch(ferr);return true}
+  if(el=cl('[data-idel]')){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยันลบ');return true}const id=el.dataset.idel;
+    try{await Promise.all(aucQ.filter(q=>q.itemId===id).map(q=>db.doc('auction_queue/'+q.id).delete()));await db.doc('meta/'+id).delete()}catch(e){ferr(e)}return true}
+  if(t.id==='aucAddBtn'){const name=$('aucName').value.trim();if(!name){say(T('ใส่ชื่อไอเทม'));return true}
+    db.doc('meta/auc_'+uid()).set({name,qty:Math.max(1,+$('aucQty').value||1),src:$('aucSrc').value,date:$('aucDate').value,note:$('aucNote').value.trim(),status:'open',winners:[],ts:Date.now(),by:user.email}).then(()=>{$('aucName').value='';$('aucNote').value='';say(T('เพิ่มไอเทมแล้ว'))}).catch(ferr);return true}
+  if(el=cl('#aucSeg [data-f]')){aucFilter=el.dataset.f;renderAuction();return true}
+  return false;
+}
+
+/* party */
+function evSigs(eid){const m=new Map();for(const s of signups){if(s.eventId!==eid)continue;const k=canon(s.char),o=m.get(k);if(!o||(String(o.email).startsWith('manual:')&&!String(s.email).startsWith('manual:'))||(String(o.email).startsWith('manual:')===String(s.email).startsWith('manual:')&&s.ts>o.ts))m.set(k,s)}return [...m.values()]}
+const sigOf=(eid,c)=>evSigs(eid).find(s=>canon(s.char)===canon(c));
+const roleOf=s=>s&&s.role||CLASS_ROLE[(pInfo(s&&s.char)||{}).cls]||'melee';
+const rName=r=>T((ROLES.find(x=>x[0]===r)||['',r])[1]);
+function evtList(){return [...events].sort((a,b)=>a.at-b.at)}
+function renderParty(){
+  if(!$('evView'))return;
+  if(!isCloud()){$('evView').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อม Firebase')}</p>`;return}
+  const staff=stfx(),now=Date.now(),E=evtList(),up=E.filter(e=>e.at>=now-6*36e5),past=E.filter(e=>e.at<now-6*36e5).reverse();
+  $('evTop').innerHTML=rulesBanner(rulesOld.s)+myCharBox();$('evAdd').hidden=!staff;
+  if(!selEvt||!E.some(e=>e.id===selEvt))selEvt=(up[0]||past[0]||{}).id||null;
+  $('evTabs').innerHTML=E.length?[...up,...past].map(e=>`<button class="chip ${e.id===selEvt?'on':''}" data-evsel="${esc(e.id)}">${esc(e.title||T(EVT[e.type].n))} · ${dTh(e.at)}${e.at<now-6*36e5?' ✓':''}</button>`).join(''):'';
+  const e=E.find(x=>x.id===selEvt);
+  if(!e){$('evView').innerHTML=`<div class="empty">${T('ยังไม่มีกิจกรรม')}${staff?' — '+T('กด "สร้างกิจกรรม" ด้านบน'):''}</div>`;return}
+  const S_=evSigs(e.id),A=e.assign||{},n=e.parties||4,size=e.size||5,me=myChar(),my=me?sigOf(e.id,me):null;
+  const inParty=Object.keys(A).find(k=>(A[k]||[]).some(c=>canon(c)===canon(me)));
+  const cnt={yes:0,maybe:0,no:0};S_.forEach(s=>cnt[s.status]=(cnt[s.status]||0)+1);
+  const assigned=new Set(Object.values(A).flat().map(canon));
+  let h=`<div class="head" style="align-items:flex-start"><div><h2>${esc(e.title||T(EVT[e.type].n))}</h2><div class="note">${esc(T(EVT[e.type].n))} · ${dtTh(e.at)} · ${n} ${T('ปาร์ตี้')} × ${size} ${T('คน')}${e.note?' · '+esc(e.note):''}</div></div>
+   <div class="row"><span class="chip">✅ ${T('ไป')} ${cnt.yes}</span><span class="chip">❔ ${T('ไม่แน่ใจ')} ${cnt.maybe}</span><span class="chip">✖ ${T('ไม่ไป')} ${cnt.no}</span><span class="chip">${T('จัดแล้ว')} ${assigned.size}/${n*size}</span></div></div>`;
+  if(me)h+=`<div class="card mysign"><div class="row" style="justify-content:space-between"><div><b>${esc(me)}</b> ${inParty?`<span class="tag t-new">${T('คุณอยู่ปาร์ตี้')} ${inParty}</span>`:''}</div>
+    <div class="row"><div class="seg">${[['yes','ไป'],['maybe','ไม่แน่ใจ'],['no','ไม่ไป']].map(([k,l])=>`<button data-sg="${k}" aria-pressed="${my&&my.status===k}" ${rulesOld.s?'disabled':''}>${T(l)}</button>`).join('')}</div>
+    <select id="myRole" ${rulesOld.s?'disabled':''}>${ROLES.map(([k,l])=>`<option value="${k}" ${roleOf(my||{char:me})===k?'selected':''}>${T(l)}</option>`).join('')}</select></div></div></div>`;
+  h+=`<div class="pgrid">${[...Array(n)].map((_,i)=>{const k=String(i+1),L=(A[k]||[]),rs=L.map(c=>roleOf(sigOf(e.id,c)||{char:c})),avg=L.length?L.reduce((t,c)=>t+((pInfo(c)||{}).gear||0),0)/L.length:0;
+    const warn=[!rs.includes('tank')&&L.length?T('ไม่มีแทงค์'):'',!rs.includes('heal')&&L.length?T('ไม่มีฮีล'):''].filter(Boolean);
+    return `<div class="party ${L.some(c=>canon(c)===canon(me))?'mine':''}"><div class="ph"><b>${T('ปาร์ตี้')} ${k}</b><span class="note">${L.length}/${size}${avg?' · '+fmt(avg):''}</span></div>${warn.length?`<div class="why noc">⚠ ${warn.join(' · ')}</div>`:''}
+    <ul>${L.map((c,j)=>{const p=pInfo(c),s=sigOf(e.id,c);return `<li>${p?ico(p.cls,22):''}<span class="grow"><b>${esc(c)}</b>${s&&s.status==='no'?` <span class="noc">✖</span>`:''}</span><span class="rt r-${rs[j]}">${RSHORT[rs[j]]}</span>${staff?`<button class="sm ghost x2" data-unas="${k}|${esc(c)}" aria-label="remove">×</button>`:''}</li>`}).join('')}${[...Array(Math.max(0,size-L.length))].map(()=>`<li class="emptyslot">—</li>`).join('')}</ul></div>`}).join('')}</div>`;
+  if(staff){
+    const pool=S_.filter(s=>s.status!=='no'&&!assigned.has(canon(s.char))).sort((a,b)=>(a.status==='yes'?0:1)-(b.status==='yes'?0:1)||((pInfo(b.char)||{}).gear||0)-((pInfo(a.char)||{}).gear||0));
+    const free=[...Array(n)].map((_,i)=>String(i+1)).filter(k=>(A[k]||[]).length<size);
+    h+=`<div class="row" style="margin:14px 0"><button class="pri" data-auto="1">${T('จัดอัตโนมัติ')}</button><button data-evcopy="1">${T('คัดลอกรายชื่อปาร์ตี้')}</button><button class="ghost" data-clear="1">${T('ล้างปาร์ตี้')}</button><button class="ghost" data-evdel="1">${T('ลบกิจกรรม')}</button></div>
+    <h3 class="note" style="margin:0 0 6px">${T('ลงชื่อแล้วแต่ยังไม่ได้จัด')} (${pool.length})</h3>
+    <ul class="list">${pool.length?pool.map(s=>{const p=pInfo(s.char);return `<li>${p?ico(p.cls,24):''}<div class="grow"><b>${esc(s.char)}</b> <span class="tag ${s.status==='yes'?'t-ex':'t-new'}">${s.status==='yes'?T('ไป'):T('ไม่แน่ใจ')}</span><div class="why">${rName(roleOf(s))}${p?' · Gear '+fmt(p.gear):''}</div></div><select data-as="${esc(s.char)}"><option value="">${T('ใส่ปาร์ตี้')}…</option>${free.map(k=>`<option value="${k}">${T('ปาร์ตี้')} ${k}</option>`).join('')}</select></li>`}).join(''):`<li><span class="note">${T('ไม่มี')}</span></li>`}</ul>
+    <div class="row" style="margin-top:10px"><input id="evAddName" list="names" placeholder="${T('เพิ่มคนที่ยังไม่ลงชื่อ')}" style="flex:1 1 12em"><button class="sm" data-evaddp="1">${T('เพิ่ม')}</button></div>`;
+    const notYet=model?model.P.filter(p=>!S_.some(s=>canon(s.char)===p.name)).length:0;
+    h+=`<p class="note">${T('ยังไม่ตอบ')} ${notYet} ${T('คน')}</p>`;
+  }
+  $('evView').innerHTML=h;
+}
+function autoAssign(e){
+  const n=e.parties||4,size=e.size||5,A={};for(let i=1;i<=n;i++)A[i]=[...((e.assign||{})[i]||[])];
+  const assigned=new Set(Object.values(A).flat().map(canon));
+  const pool=evSigs(e.id).filter(s=>s.status!=='no'&&!assigned.has(canon(s.char))).map(s=>({...s,gear:(pInfo(s.char)||{}).gear||0}))
+    .sort((a,b)=>(a.status==='yes'?0:1)-(b.status==='yes'?0:1)||b.gear-a.gear);
+  const has=(p,r)=>A[p].some(c=>roleOf(sigOf(e.id,c)||{char:c})===r),sum=p=>A[p].reduce((t,c)=>t+((pInfo(c)||{}).gear||0),0);
+  const m=Math.min(n,Math.max(1,Math.ceil((assigned.size+pool.length)/size)));
+  const place=(x,want)=>{const c=Object.keys(A).filter(p=>+p<=m&&A[p].length<size&&(!want||!has(p,want)));if(!c.length)return false;c.sort((a,b)=>A[a].length-A[b].length||sum(a)-sum(b));A[c[0]].push(x.char);return true};
+  for(const r of ['tank','heal'])for(const x of pool.filter(x=>!x._p&&roleOf(x)===r))if(place(x,r))x._p=1;
+  for(const x of pool.filter(x=>!x._p))if(place(x,null))x._p=1;
+  return A;
+}
+async function partyAction(t){
+  const db=FB.db;let el;const cl=s=>t.closest(s);const e=events.find(x=>x.id===selEvt);
+  if(el=cl('[data-evsel]')){selEvt=el.dataset.evsel;renderParty();return true}
+  if(t.id==='evType'){return false}
+  if(t.id==='evAddBtn'){const ty=$('evType').value,at=new Date($('evAt').value).getTime();if(isNaN(at)){say(T('ใส่วันเวลาของกิจกรรม'));return true}
+    const id='evt_'+uid();db.doc('meta/'+id).set({type:ty,title:$('evTitle').value.trim(),at,parties:Math.max(1,Math.min(20,+$('evParties').value||EVT[ty].p)),size:Math.max(1,Math.min(10,+$('evSize').value||5)),note:$('evNote').value.trim(),assign:{},ts:Date.now(),by:user.email}).then(()=>{selEvt=id;$('evTitle').value='';$('evNote').value='';say(T('สร้างกิจกรรมแล้ว'))}).catch(ferr);return true}
+  if(!e)return false;
+  if(el=cl('[data-sg]')){const me=myChar();if(!me){say(T('เลือกตัวละครของคุณก่อน'));return true}db.doc(`event_signups/${e.id}__${user.email}`).set({eventId:e.id,email:user.email,char:me,status:el.dataset.sg,role:$('myRole').value,ts:Date.now()}).catch(ferr);return true}
+  if(el=cl('[data-unas]')){const [k,c]=el.dataset.unas.split(/\|(.*)/s);const A={...(e.assign||{})};A[k]=(A[k]||[]).filter(x=>x!==c);db.doc('meta/'+e.id).update({assign:A}).catch(ferr);return true}
+  if(el=cl('[data-auto]')){db.doc('meta/'+e.id).update({assign:autoAssign(e)}).then(()=>say(T('จัดปาร์ตี้แล้ว'))).catch(ferr);return true}
+  if(el=cl('[data-clear]')){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยันล้าง');return true}db.doc('meta/'+e.id).update({assign:{}}).catch(ferr);return true}
+  if(el=cl('[data-evdel]')){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยันลบ');return true}
+    try{await Promise.all(signups.filter(s=>s.eventId===e.id).map(s=>db.doc('event_signups/'+s.id).delete()));await db.doc('meta/'+e.id).delete();selEvt=null}catch(er){ferr(er)}return true}
+  if(el=cl('[data-evcopy]')){const A=e.assign||{};const txt=`${e.title||T(EVT[e.type].n)} · ${dtTh(e.at)}\n`+Object.keys(A).sort((a,b)=>a-b).filter(k=>(A[k]||[]).length).map(k=>`${T('ปาร์ตี้')} ${k}: ${A[k].map(c=>`${c} (${RSHORT[roleOf(sigOf(e.id,c)||{char:c})]})`).join(', ')}`).join('\n');
+    navigator.clipboard.writeText(txt).then(()=>say(T('คัดลอกแล้ว — วางใน Discord/LINE ได้เลย')),()=>say(T('คัดลอกไม่ได้ในหน้านี้')));return true}
+  if(el=cl('[data-evaddp]')){const c=$('evAddName').value.trim();if(!c)return true;const p=pInfo(c);if(sigOf(e.id,c)){say(T('คนนี้ลงชื่อแล้ว'));$('evAddName').value='';return true}
+    db.doc(`event_signups/${e.id}__manual:${c}`).set({eventId:e.id,email:'manual:'+c,char:p?p.name:c,status:'yes',role:CLASS_ROLE[p&&p.cls]||'melee',ts:Date.now(),by:user.email}).catch(ferr);$('evAddName').value='';return true}
+  return false;
+}
+function partyChange(t){
+  const e=events.find(x=>x.id===selEvt);
+  if(t.id==='evType'){$('evParties').value=EVT[t.value].p;return true}
+  if(!e)return false;
+  if(t.dataset&&t.dataset.as!==undefined){const k=t.value;if(!k)return true;const A={...(e.assign||{})};if(Object.values(A).flat().some(c=>canon(c)===canon(t.dataset.as)))return true;A[k]=[...(A[k]||[]),t.dataset.as];FB.db.doc('meta/'+e.id).update({assign:A}).catch(ferr);return true}
+  if(t.id==='myRole'){const me=myChar(),my=me&&sigOf(e.id,me);FB.db.doc(`event_signups/${e.id}__${user.email}`).set({eventId:e.id,email:user.email,char:me,status:my?my.status:'maybe',role:t.value,ts:Date.now()}).catch(ferr);return true}
+  return false;
 }
 
 /* ---------- upload ---------- */
@@ -1008,6 +1297,9 @@ $('mode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dat
 $('range').onclick=e=>{const b=e.target.closest('button');if(!b)return;range=+b.dataset.v;setSeg('range',range);render()};
 $('pick').onchange=e=>{const n=e.target.value;picked=picked||[];if(model&&model.P.some(p=>p.name===n)&&!picked.includes(n)){picked.push(n);if(picked.length>10)picked.shift()}e.target.value='';drawChart()};
 document.addEventListener('click',e=>{
+  if(FB&&user&&(e.target.closest('#auction')&&aucActionSync(e.target)||e.target.closest('#party')&&partyActionSync(e.target)))return;
+  {const a=e.target.closest('nav a[data-view]');if(a){setView(a.dataset.view)}}
+  {const m=e.target.closest('[data-mychar]');if(m){ls.set('tm-mychar','');renderAuction();renderParty();return}const ms=e.target.closest('[data-mycharsave]');if(ms){const v=ms.parentElement.querySelector('.mycharIn').value.trim();if(v){ls.set('tm-mychar',v);renderAuction();renderParty()}return}}
   const t=e.target,cl=s=>t.closest(s);let el;
   if(t.id==='modal'||cl('#pClose')){closeProfile();return}
   if(el=cl('[data-p]')){openProfile(el.dataset.p);return}
@@ -1067,7 +1359,10 @@ $('save').onclick=async()=>{
 
 /* ---------- start ---------- */
 $('langTop').innerHTML=langSel('langTopSel');document.documentElement.lang=LANG==='ph'?'fil':LANG;
-document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList.contains('langsel'))setLang(e.target.value)});
+document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList.contains('langsel')){setLang(e.target.value);return}if(FB&&user&&e.target.closest&&e.target.closest('#party'))partyChange(e.target)});
+$('aucPresets').innerHTML=PRESET_ITEMS.map(x=>`<option value="${x}">`).join('');
+{const d=new Date();d.setDate(d.getDate()+((2-d.getDay()+7)%7));d.setHours(21,30,0,0);$('evAt').value=toLocal(d);$('aucDate').value=dstr(Date.now())}
+const hv=()=>{const h=location.hash.slice(1);setView(h==='auction'||h==='party'?h:'dash')};window.addEventListener('hashchange',hv);hv();
 startTr();
 const cfg=FB_CONFIG||ls.get('tm-fb');
 if(cfg){setMeta(null);render();useCloud(cfg).catch(er=>{say('เชื่อม Firebase ไม่ได้ ใช้ข้อมูลในเครื่องแทน: '+er.message);useLocal()})}else useLocal();
