@@ -455,13 +455,13 @@ async function useCloud(cfg){
   await loadJS(SDK+'firebase-app-compat.js');await loadJS(SDK+'firebase-auth-compat.js');await loadJS(SDK+'firebase-firestore-compat.js');
   const app=firebase.apps.length?firebase.app():firebase.initializeApp(cfg),db=firebase.firestore(),auth=firebase.auth();
   store={kind:'cloud',projectId:cfg.projectId,
-    saveSnaps:async list=>{for(let i=0;i<list.length;i+=20){const b=db.batch();list.slice(i,i+20).forEach(s=>b.set(db.collection('snapshots').doc(s.id),s));await b.commit()}},
+    saveSnaps:async list=>{for(let i=0;i<list.length;i+=20){const b=db.batch();list.slice(i,i+20).forEach(s=>b.set(db.collection('snapshots').doc(s.id),{id:s.id,ts:s.ts,file:s.file||'',rows:JSON.stringify(s.rows)}));await b.commit()}},
     delSnap:id=>db.collection('snapshots').doc(id).delete(),
     saveMeta:()=>db.doc('meta/state').set(JSON.parse(JSON.stringify(meta))),
     login:()=>auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()),logout:()=>auth.signOut()};
   auth.onAuthStateChanged(u=>{user=u;render()});
   const t=setTimeout(()=>say('ยังโหลดข้อมูลจากคลาวด์ไม่ได้ ตรวจอินเทอร์เน็ตหรือการตั้งค่า Firebase'),10000);
-  db.collection('snapshots').onSnapshot(q=>{clearTimeout(t);snaps=q.docs.map(d=>d.data()).filter(valid).sort(byTs);render()},e=>{clearTimeout(t);say('อ่านข้อมูลคลาวด์ไม่ได้: '+e.message)});
+  db.collection('snapshots').onSnapshot(q=>{clearTimeout(t);snaps=q.docs.map(d=>{const x=d.data();if(x&&typeof x.rows==='string'){try{x.rows=JSON.parse(x.rows)}catch(e){x.rows=null}}return x}).filter(valid).sort(byTs);render()},e=>{clearTimeout(t);say('อ่านข้อมูลคลาวด์ไม่ได้: '+e.message)});
   db.doc('meta/state').onSnapshot(d=>{setMeta(d.exists?d.data():null);render()},()=>{});
 }
 function parseCfg(t){const i=t.indexOf('{'),j=t.lastIndexOf('}');if(i<0||j<i)throw new Error('ไม่พบ { }');let s=t.slice(i,j+1).replace(/([{,]\s*)([A-Za-z_]\w*)\s*:/g,'$1"$2":').replace(/'/g,'"').replace(/,\s*}/g,'}');const o=JSON.parse(s);if(!o.apiKey||!o.projectId)throw new Error('ต้องมี apiKey และ projectId');return o}
