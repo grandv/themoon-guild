@@ -205,6 +205,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   </div>
   <div id="msg" role="status"></div>
   <div class="kpis" id="kpis"></div>
+  <div class="card staffonly" id="renCard" hidden style="margin-top:16px;border-color:color-mix(in srgb,var(--warn) 55%,var(--line))"><div class="head"><h2>ยืนยันการเปลี่ยนชื่อ <span class="note" id="renN"></span></h2></div><p class="note" style="margin:-6px 0 10px">คนเหล่านี้อาจเป็นคนเดิมที่เปลี่ยนชื่อ (อาชีพเดียวกัน Gear และแต้มสะสมใกล้กัน) — กดยืนยันแล้วประวัติจะรวมกัน และจะไม่นับเป็นคนใหม่</p><ul class="list" id="renList"></ul></div>
 </section>
 
 <section class="card">
@@ -486,6 +487,19 @@ const D={
 'สมาชิกทั่วไป':['Member','Anggota','Miyembro'],
 '(นี้)':['(now)','(ini)','(ngayon)'],
 'ไม่มีใครเข้าเกณฑ์ ':['No one meets the criteria','Tidak ada yang memenuhi kriteria','Walang pasok sa pamantayan'],
+'ยืนยันการเปลี่ยนชื่อ':['Confirm name changes','Konfirmasi ganti nama','Kumpirmahin ang pagpalit ng pangalan'],
+'คนเหล่านี้อาจเป็นคนเดิมที่เปลี่ยนชื่อ (อาชีพเดียวกัน Gear และแต้มสะสมใกล้กัน) — กดยืนยันแล้วประวัติจะรวมกัน และจะไม่นับเป็นคนใหม่':['These may be existing players who renamed (same class, similar Gear & contribution). Confirm to merge history so they are not counted as new','Mereka mungkin pemain lama yang ganti nama (kelas sama, Gear & kontribusi mirip). Konfirmasi untuk menggabungkan riwayat','Maaaring dating player na nagpalit ng pangalan (parehong class, malapit ang Gear at contribution). Kumpirmahin para pagsamahin ang history'],
+'เพศไม่ตรงกัน':['gender differs','jenis kelamin beda','magkaiba ang kasarian'],
+'ชื่อเดิมเห็นล่าสุด':['old name last seen','nama lama terakhir terlihat','huling nakita ang dating pangalan'],
+'ชื่อใหม่เห็นครั้งแรก':['new name first seen','nama baru pertama terlihat','unang nakita ang bagong pangalan'],
+'ห่างกัน':['gap','selisih','pagitan'],
+'วัน':['days','hari','araw'],
+'ใช่ คนเดียวกัน':['Yes, same player','Ya, orang yang sama','Oo, parehong player'],
+'ยกเลิกการรวม':['Undo merge','Batalkan gabung','I-undo'],
+'คนนี้เปลี่ยนชื่อมาหรือเปล่า?':['Did this player rename?','Apakah pemain ini ganti nama?','Nagpalit ba ng pangalan ang player na ito?'],
+'เลือกชื่อเดิม แล้วกดยืนยัน — ประวัติจะรวมกัน':['Pick the old name and confirm — history will be merged','Pilih nama lama lalu konfirmasi — riwayat akan digabung','Piliin ang dating pangalan at kumpirmahin — pagsasamahin ang history'],
+'ยืนยันว่าเป็นคนเดียวกัน':['Confirm same player','Konfirmasi orang yang sama','Kumpirmahing iisang player'],
+'รวมประวัติแล้ว':['History merged','Riwayat digabung','Napagsama ang history'],
 'ภาษา':['Language','Bahasa','Wika'],
 'เสี่ยงเตะ = ไม่ทำกิจกรรมเลยในสัปดาห์นี้ (ตั้งแต่วันที่ 3 ของสัปดาห์), กิจกรรมต่ำติดกันตามจำนวนสัปดาห์ที่ตั้ง, ไม่ออนไลน์ 7 วันขึ้นไป หรือติดเงื่อนไขเฝ้าระวังตั้งแต่ 2 ข้อ':['Kick risk = no activity this week (from day 3), low activity for the set number of weeks, offline 7+ days, or 2+ watch conditions','Risiko kick = tanpa aktivitas minggu ini (mulai hari ke-3), aktivitas rendah sesuai jumlah minggu, offline 7+ hari, atau 2+ kondisi pantau','Risk ma-kick = walang activity ngayong linggo (mula ika-3 araw), mababang activity ayon sa itinakdang linggo, offline 7+ araw, o 2+ kondisyong bantayan'],
 'เฝ้าระวัง = กิจกรรมต่ำ, ไม่ออนไลน์นาน, Gear ไม่ขึ้น, แต้มสะสมไม่เพิ่ม, สนับสนุนสัปดาห์นี้ 0':['Watch = low activity, long offline, no Gear gain, no contribution gain, 0 contribution this week','Pantau = aktivitas rendah, lama offline, Gear tak naik, kontribusi tak naik, kontribusi minggu ini 0','Bantayan = mababang activity, matagal offline, walang angat sa Gear o contribution, 0 contribution ngayong linggo'],
@@ -637,10 +651,20 @@ function build(){
   let left=[],joined=[],sugg=[];
   if(N>1){const pm=maps[N-2];left=[...pm.keys()].filter(n=>!lm.has(n));joined=[...lm.keys()].filter(n=>!pm.has(n));
   }
-  if(N>1){const fI=new Map(),lI=new Map();maps.forEach((m,i)=>{for(const n of m.keys()){if(!fI.has(n))fI.set(n,i);lI.set(n,i)}});
-    const gone=[...lI].filter(([,i])=>i<N-1).map(([n])=>n),fresh=[...fI].filter(([n,i])=>i>0&&lm.has(n)).map(([n])=>n);
-    for(const j of fresh){const fi=fI.get(j),r=maps[fi].get(j);let best=null,bd=1e12;for(const l of gone){const li=lI.get(l);if(li!==fi-1||meta.notRename[l+'>'+j])continue;const o=maps[li].get(l);if(o[2]!==r[2])continue;const dg=r[6]-o[6],dc=r[9]-o[9];if(dg<-300||dg>o[6]*.06+800||dc<0||dc>6000)continue;const d=Math.abs(dg)+dc/10;if(d<bd){bd=d;best=l}}if(best)sugg.push([best,j])}}
-  model={L,N,maps,daySn:[...days.values()],P,left,joined,sugg,prevS:N>1?snaps[N-2]:null,ws,elapsed,curThr,kicked};
+  const fI=new Map(),lI=new Map();maps.forEach((m,i)=>{for(const n of m.keys()){if(!fI.has(n))fI.set(n,i);lI.set(n,i)}});
+  const gone=[...lI].filter(([,i])=>i<N-1).map(([n,i])=>({n,i,r:maps[i].get(n),ts:snaps[i].ts}));
+  if(N>1){
+    const fresh=[...fI].filter(([n,i])=>i>0&&lm.has(n)).map(([n,i])=>({n,i,r:maps[i].get(n),ts:snaps[i].ts}));
+    const pairs=[];
+    for(const j of fresh)for(const g of gone){
+      if(g.i>=j.i||meta.notRename[g.n+'>'+j.n])continue;const o=g.r,r=j.r;if(o[2]!==r[2]||r[1]<o[1])continue;
+      const days=Math.max(1,(j.ts-g.ts)/DAY),dg=r[6]-o[6],dc=r[9]-o[9];
+      if(dg<-500||dg>o[6]*.015*days+2000||dc<-50||dc>500*days+3000)continue;
+      const score=Math.abs(dg-o[6]*.006*days)/(o[6]*.02+500)+(o[4]!==r[4]?2:0)+(o[3]!==r[3]?.5:0)+Math.max(0,dc)/(400*days+2000);
+      pairs.push({o:g.n,n:j.n,cls:r[2],og:o[6],ng:r[6],oct:o[9],nct:r[9],ots:g.ts,nts:j.ts,days:Math.round(days),score,sex:o[4]===r[4]})}
+    pairs.sort((a,b)=>a.score-b.score);const uo=new Set(),un=new Set();
+    for(const x of pairs){if(uo.has(x.o)||un.has(x.n))continue;uo.add(x.o);un.add(x.n);sugg.push(x)}}
+  model={L,N,maps,gone,daySn:[...days.values()],P,left,joined,sugg,prevS:N>1?snaps[N-2]:null,ws,elapsed,curThr,kicked};
 }
 
 /* ---------- render ---------- */
@@ -678,9 +702,17 @@ function renderImproved(){
   $('impNote').textContent=span?`ช่วง ${span} วัน`:'';
   $('improved').innerHTML=!span?'<li><span class="note">ต้องมีข้อมูลอย่างน้อย 2 วัน</span></li>':I.length?I.map((p,i)=>`<li><span class="rank">${i+1}</span>${ico(p.cls,26)}<div class="grow"><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button> <span class="note">${esc(p.cls)}</span></div><span class="r"><b class="up num">${sgn(p.dG)}</b><div class="why">${((p.dG/(p.gear-p.dG))*100).toFixed(1)}% · ${fmt(p.dG/span)}/วัน</div></span></li>`).join(''):'<li><span class="note">ยังไม่มีใคร Gear เพิ่มในช่วงนี้</span></li>';
 }
+function renderRenames(){
+  const L=model.sugg,show=isStaff()&&L.length>0;$('renCard').hidden=!show;if(!show)return;
+  $('renN').textContent=`(${L.length})`;
+  $('renList').innerHTML=L.map(x=>`<li>${ico(x.cls,30)}<div class="grow"><div><b>${esc(x.o)}</b> → <b>${esc(x.n)}</b> <span class="note">${esc(x.cls)}</span>${x.sex?'':` <span class="noc">⚠ ${T('เพศไม่ตรงกัน')}</span>`}</div>
+   <div class="why">Gear ${fmt(x.og)} → ${fmt(x.ng)} (${sgn(x.ng-x.og)}) · ${T('แต้มสะสม')} ${fmt(x.oct)} → ${fmt(x.nct)} (${sgn(x.nct-x.oct)})</div>
+   <div class="why">${T('ชื่อเดิมเห็นล่าสุด')} ${dTh(x.ots)} · ${T('ชื่อใหม่เห็นครั้งแรก')} ${dTh(x.nts)} · ${T('ห่างกัน')} ${x.days} ${T('วัน')}</div></div>
+   <div class="row" style="gap:6px"><button class="sm pri" data-ren="${esc(x.o)}" data-to="${esc(x.n)}">${T('ใช่ คนเดียวกัน')}</button><button class="sm ghost" data-noren="${esc(x.o)}" data-to="${esc(x.n)}">${T('ไม่ใช่')}</button></div></li>`).join('');
+}
 function renderMoves(){
   const {left,joined,sugg,prevS,P}=model;const back=P.filter(p=>p.tags.includes('back'));let h='';
-  if(sugg.length&&isStaff())h+=`<p class="note" style="margin:0 0 6px">อาจเปลี่ยนชื่อ (อาชีพเดียวกัน Gear และแต้มสะสมใกล้กัน)</p><ul class="list" style="margin-bottom:12px">${sugg.map(([o,n])=>`<li><div class="grow"><b>${esc(o)}</b> → <b>${esc(n)}</b></div><button class="sm pri" data-ren="${esc(o)}" data-to="${esc(n)}">ใช่ รวมประวัติ</button><button class="sm ghost" data-noren="${esc(o)}" data-to="${esc(n)}">ไม่ใช่</button></li>`).join('')}</ul>`;
+  renderRenames();
   if(back.length&&!NR())h+=`<ul class="list" style="margin-bottom:12px">${back.map(p=>`<li class="k"><div class="grow"><b>${esc(p.name)}</b> <span class="tag t-back">เคยถูกเตะ</span><div class="why">ถูกเตะเมื่อ ${dTh(model.kicked.get(p.name).ts)} — ${esc(model.kicked.get(p.name).reason||'')}</div></div></li>`).join('')}</ul>`;
   h+=prevS?`<p class="note" style="margin:0">เทียบกับ ${dtTh(prevS.ts)}</p><p style="margin:6px 0"><b class="dn">ออก ${left.length} คน</b>${left.length?': '+left.map(esc).join(', '):''}</p><p style="margin:6px 0"><b class="up">เข้าใหม่ ${joined.length} คน</b>${joined.length?': '+joined.map(esc).join(', '):''}</p>`:'<p class="note">ต้องมีข้อมูลอย่างน้อย 2 ครั้งเพื่อเทียบ</p>';
   $('moves').innerHTML=h;
@@ -750,7 +782,11 @@ function openProfile(name){
   $('pBody').innerHTML=`<div class="g2 staffonly" style="margin-top:16px;gap:14px;${canWrite()?'':'display:none'}">
    <div class="card" style="padding:14px"><b>ยกเว้นการตัดสิน</b><p class="note" style="margin:4px 0 8px">เช่น แจ้งลา, ตำแหน่งบริหาร</p><div class="row"><input id="exReason" placeholder="เหตุผล" value="${esc(p.ex?p.ex.reason:'')}" style="flex:1"><button class="sm ${p.ex?'':'pri'}" id="exBtn" ${canWrite()?'':'disabled'}>${p.ex?'ยกเลิกยกเว้น':'ยกเว้น'}</button></div></div>
    <div class="card" style="padding:14px"><b>บันทึกการเตะ</b><p class="note" style="margin:4px 0 8px">${kicked?`บันทึกไว้แล้ว ${dtTh(kicked.ts)}`:'เก็บไว้ดูว่าเคยเตะใคร ด้วยเหตุผลอะไร'}</p><div class="row"><input id="kReason" placeholder="เหตุผล" value="${esc(p.why.join(', '))}" style="flex:1"><button class="sm" id="kBtn" ${canWrite()?'':'disabled'}>บันทึกเตะ</button></div></div></div>
-   ${names.length>1?`<p class="note">ชื่อเดิม: ${names.filter(n=>n!==name).map(esc).join(', ')}</p>`:''}
+   ${(()=>{const olds=Object.keys(meta.renames).filter(o=>canon(o)===name&&o!==name);let h='';
+     if(olds.length)h+=`<p class="note">${T('ชื่อเดิม:')} ${olds.map(o=>`<b>${esc(o)}</b>${canWrite()?` <button class="sm ghost" data-unren="${esc(o)}">${T('ยกเลิกการรวม')}</button>`:''}`).join(' ')}</p>`;
+     if(canWrite()&&p.joinTs>snaps[0].ts){const H0=model.maps.findIndex(m=>m.has(name));const cand=model.gone.filter(g=>g.i<H0&&canon(g.n)===g.n).map(g=>({...g,d:Math.abs(g.r[6]-p.gear)+(g.r[2]===p.cls?0:1e9)})).sort((a,b)=>a.d-b.d).slice(0,40);
+       if(cand.length)h+=`<div class="card" style="padding:14px;margin-top:14px"><b>${T('คนนี้เปลี่ยนชื่อมาหรือเปล่า?')}</b><p class="note" style="margin:4px 0 8px">${T('เลือกชื่อเดิม แล้วกดยืนยัน — ประวัติจะรวมกัน')}</p><div class="row"><select id="renFrom" style="flex:1 1 14em">${cand.map(g=>`<option value="${esc(g.n)}">${esc(g.n)} · ${esc(g.r[2])} · Gear ${fmt(g.r[6])} · ${dTh(g.ts)}</option>`).join('')}</select><button class="sm pri" id="renBtn">${T('ยืนยันว่าเป็นคนเดียวกัน')}</button></div></div>`}
+     return h})()}
    <h3 class="note" style="margin:18px 0 6px">ประวัติ (ล่าสุดก่อน)</h3><div class="scroll" style="max-height:260px;overflow-y:auto"><table><thead><tr><th>วันที่</th><th class="r">Gear</th><th class="r">กิจกรรม</th><th class="r">สนับสนุน</th><th class="r">สะสม</th><th>สถานะ</th></tr></thead><tbody>${[...H].reverse().map(h=>`<tr><td>${dtTh(h.ts)}</td><td class="n">${fmt(h.gear)}</td><td class="n">${h.act}</td><td class="n">${fmt(h.cw)}</td><td class="n">${fmt(h.ct)}</td><td class="note">${esc(h.st)}</td></tr>`).join('')}</tbody></table></div>`;
   $('modal').hidden=false;document.body.style.overflow='hidden';
   pCharts.forEach(c=>c.destroy());pCharts=[];
@@ -764,6 +800,7 @@ function openProfile(name){
   }
   $('exBtn').onclick=()=>{if(meta.exempt[name])delete meta.exempt[name];else meta.exempt[name]={reason:$('exReason').value.trim(),ts:Date.now()};saveMeta()};
   $('kBtn').onclick=()=>{recordKick(name,$('kReason').value.trim())};
+  const rb=$('renBtn');if(rb)rb.onclick=()=>{const o=$('renFrom').value;if(!o)return;meta.renames[o]=name;delete meta.notRename[o+'>'+name];saveMeta();say(T('รวมประวัติแล้ว'))};
 }
 function closeProfile(){$('modal').hidden=true;document.body.style.overflow='';openName=null;pCharts.forEach(c=>c.destroy());pCharts=[]}
 function recordKick(name,reason){if(isCloud()&&FB)members.filter(m=>canon(m.char||'')===name&&m.role!=='officer').forEach(m=>unlink(m.email).catch(()=>{}));const p=model.P.find(x=>x.name===name);meta.kicks=meta.kicks.filter(k=>k.name!==name).concat({name,cls:p?p.cls:'',gear:p?p.gear:null,reason:reason||(p?p.why.join(', '):''),ts:Date.now()});saveMeta();say(`บันทึกการเตะ ${name} แล้ว`)}
@@ -980,6 +1017,7 @@ document.addEventListener('click',e=>{
   if(el=cl('[data-kick]')){if(!canWrite()){say('ต้องเข้าสู่ระบบก่อน');return}recordKick(el.dataset.kick);return}
   if(el=cl('[data-unkick]')){if(!canWrite())return;meta.kicks=meta.kicks.filter(k=>String(k.ts)!==el.dataset.unkick);saveMeta();return}
   if(el=cl('[data-ren]')){if(!canWrite()){say('ต้องเข้าสู่ระบบก่อน');return}meta.renames[el.dataset.ren]=el.dataset.to;for(const k of ['exempt']){if(meta[k][el.dataset.ren]&&!meta[k][el.dataset.to]){meta[k][el.dataset.to]=meta[k][el.dataset.ren]}}saveMeta();return}
+  if(el=cl('[data-unren]')){if(!canWrite())return;delete meta.renames[el.dataset.unren];saveMeta();return}
   if(el=cl('[data-noren]')){if(!canWrite())return;meta.notRename[el.dataset.noren+'>'+el.dataset.to]=1;saveMeta();return}
   if(el=cl('[data-del]')){const id=el.dataset.del;if(delArm!==id){delArm=id;renderSnaps();return}delArm=null;store.delSnap(id).catch(er=>say('ลบไม่สำเร็จ: '+er.message));return}
   if(el=cl('[data-x]')){pend.splice(+el.dataset.x,1);renderPend();return}
