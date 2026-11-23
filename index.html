@@ -66,6 +66,8 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .snaps td{font-size:14px}
 .empty{padding:48px 16px;text-align:center;color:var(--mute)}
 #msg{min-height:1.5em;font-size:14px}
+body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (หลายไฟล์ได้)';position:fixed;inset:12px;border:3px dashed var(--acc);border-radius:16px;background:color-mix(in srgb,var(--bg) 85%,transparent);display:grid;place-items:center;font:700 24px 'Chakra Petch','IBM Plex Sans Thai',sans-serif;z-index:9;pointer-events:none}
+.drop td input{width:auto}
 @media(max-width:600px){.crow{grid-template-columns:7.5em minmax(0,1fr) 4em}.hide-s{display:none}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -74,14 +76,12 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 <header class="band"><div class="wrap">
   <div class="top">
     <div><h1><span class="moon"></span><span id="title">TheMoon · ภาพรวมกิลด์</span></h1>
-      <p class="sub" id="subtitle">อัปโหลดไฟล์ CSV รายชื่อกิลด์ทุกวัน แล้วระบบจะเก็บประวัติให้</p></div>
-    <label class="btn pri">อัปโหลด CSV<input type="file" id="file" accept=".csv,text/csv"></label>
+      <p class="sub" id="subtitle">อัปโหลดหรือลากไฟล์ CSV รายชื่อกิลด์มาวาง ได้ทีละหลายไฟล์ แล้วระบบจะเก็บประวัติให้</p></div>
+    <label class="btn pri">อัปโหลด CSV<input type="file" id="file" accept=".csv,text/csv" multiple></label>
   </div>
   <div class="drop" id="drop">
-    <span id="dropInfo"></span>
-    <label class="set"><span class="note">วันเวลาของข้อมูล</span></label>
-    <input type="datetime-local" id="when">
-    <button class="pri" id="save">บันทึก</button><button id="cancel">ยกเลิก</button>
+    <div class="scroll" style="width:100%"><table><thead><tr><th>ไฟล์</th><th class="r">จำนวนคน</th><th>วันเวลาของข้อมูล</th><th></th></tr></thead><tbody id="dropList"></tbody></table></div>
+    <button class="pri" id="save">บันทึก</button><button id="cancel">ยกเลิก</button><span class="note">ลากไฟล์ CSV หลายไฟล์มาวางที่ไหนก็ได้ในหน้านี้ · ไฟล์วันเวลาซ้ำจะบันทึกทับของเดิม</span>
   </div>
   <div id="msg" class="note"></div>
   <div class="kpis" id="kpis"></div>
@@ -228,24 +228,27 @@ function drawChart(){
   const ink=cssv('--ink')||'#888',line=cssv('--line')||'#ddd',mute=cssv('--mute')||'#888';
   let labels=[],ds=[];
   if(model){
-    const D=model.daySn;labels=D.map(s=>dTh(s.ts));
+    const D0=model.daySn,byDay=new Map(D0.map(s=>[dstr(s.ts),s])),D=[];
+    if(D0.length){const a=new Date(D0[0].ts),b=new Date(D0[D0.length-1].ts);a.setHours(12,0,0,0);b.setHours(12,0,0,0);for(let t=a.getTime();t<=b.getTime()+1;t+=DAY){const k=dstr(t);D.push(byDay.get(k)||{ts:t,rows:null})}}
+    labels=D.map(s=>dTh(s.ts));const R=f=>D.map(s=>s.rows?f(s):null);
     if(mode==='guild'){
-      const avg=D.map(s=>s.rows.reduce((a,r)=>a+r[6],0)/s.rows.length);
-      const med=D.map(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>a-b);return g[g.length>>1]});
-      const top=D.map(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>b-a).slice(0,10);return g.reduce((a,b)=>a+b,0)/g.length});
+      const avg=R(s=>s.rows.reduce((a,r)=>a+r[6],0)/s.rows.length);
+      const med=R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>a-b);return g[g.length>>1]});
+      const top=R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>b-a).slice(0,10);return g.reduce((a,b)=>a+b,0)/g.length});
       ds=[['เฉลี่ยทั้งกิลด์',avg,PAL[0]],['มัธยฐาน',med,PAL[3]],['เฉลี่ย Top 10',top,PAL[2]]].map(([l,d,c])=>({label:l,data:d,borderColor:c,backgroundColor:c}));
     }else if(mode==='class'){
       const cls=[...new Set(model.P.map(p=>p.cls))].sort((a,b)=>model.P.filter(p=>p.cls===b).length-model.P.filter(p=>p.cls===a).length);
-      ds=cls.map((c,i)=>({label:c,data:D.map(s=>{const g=s.rows.filter(r=>r[2]===c);return g.length?g.reduce((a,r)=>a+r[6],0)/g.length:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],hidden:!!fClass&&c!==fClass}));
+      ds=cls.map((c,i)=>({label:c,data:R(s=>{const g=s.rows.filter(r=>r[2]===c);return g.length?g.reduce((a,r)=>a+r[6],0)/g.length:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],hidden:!!fClass&&c!==fClass}));
     }else{
       if(picked==null)picked=[...model.P].sort((a,b)=>(b.dG??0)-(a.dG??0)||b.gear-a.gear).slice(0,5).map(p=>p.name);
-      ds=picked.map((n,i)=>({label:n,data:D.map(s=>{const r=s.rows.find(r=>r[0]===n);return r?r[6]:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]}));
+      ds=picked.map((n,i)=>({label:n,data:R(s=>{const r=s.rows.find(r=>r[0]===n);return r?r[6]:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]}));
     }
-    ds.forEach(d=>Object.assign(d,{tension:.25,pointRadius:D.length<15?4:2,borderWidth:2,spanGaps:true}));
+    ds.forEach(d=>Object.assign(d,{tension:.25,pointRadius:D0.length<15?4:2,borderWidth:2,spanGaps:true,segment:{borderDash:c=>c.p1DataIndex-c.p0DataIndex>1?[5,5]:undefined}}));
   }
   $('pickWrap').hidden=mode!=='person';
   $('picked').innerHTML=mode==='person'&&picked?picked.map(n=>`<span class="chip">${esc(n)}<button data-rm="${esc(n)}" aria-label="เอาออก">×</button></span>`).join(''):'';
-  $('chartNote').textContent=!model?'':model.daySn.length<2?'มีข้อมูลวันเดียว — อัปโหลดไฟล์ใหม่ทุกวันเพื่อให้เห็นเส้นแนวโน้ม':`${model.daySn.length} วัน · ใช้ข้อมูลครั้งล่าสุดของแต่ละวัน · กดชื่อในคำอธิบายกราฟเพื่อซ่อน/แสดงเส้น`;
+  let miss=[];if(model&&model.daySn.length>1){const have=new Set(model.daySn.map(s=>dstr(s.ts)));const a=new Date(model.daySn[0].ts);a.setHours(12,0,0,0);for(let t=a.getTime();t<model.daySn[model.daySn.length-1].ts;t+=DAY){if(!have.has(dstr(t)))miss.push(t)}}
+  $('chartNote').textContent=!model?'':model.daySn.length<2?'มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม':`มีข้อมูล ${model.daySn.length} วัน`+(miss.length?` · ขาด ${miss.length} วัน (${miss.slice(0,12).map(dTh).join(', ')}${miss.length>12?' …':''}) เส้นประ = ช่วงที่ไม่มีไฟล์`:'')+' · ใช้ไฟล์ล่าสุดของแต่ละวัน · กดชื่อใต้กราฟเพื่อซ่อน/แสดงเส้น';
   const opt={responsive:true,maintainAspectRatio:false,animation:matchMedia('(prefers-reduced-motion: reduce)').matches?false:{duration:300},interaction:{mode:'nearest',intersect:false},
     plugins:{legend:{position:'bottom',labels:{color:ink,boxWidth:12,font:{family:'IBM Plex Sans Thai',size:13}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
     scales:{x:{ticks:{color:mute},grid:{color:line}},y:{ticks:{color:mute,callback:v=>fmt(v)},grid:{color:line}}}};
@@ -269,24 +272,43 @@ $('copyKick').onclick=async()=>{if(!model)return;const t=model.P.filter(p=>p.sev
 
 function say(t){$('msg').textContent=t}
 function pad(n){return String(n).padStart(2,'0')}
-function loadFile(f){
-  if(!f)return;const rd=new FileReader();
-  rd.onload=()=>{try{const rows=toRows(rd.result);const m=f.name.match(/(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})/);const d=new Date();
-    $('when').value=m?`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}`:`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    pending={rows,file:f.name};$('dropInfo').textContent=`${f.name} — พบ ${rows.length} คน`;$('drop').classList.add('on');say('')}catch(er){say('อ่านไฟล์ไม่ได้: '+er.message)}};
-  rd.readAsText(f,'utf-8');
+const readText=f=>new Promise((ok,no)=>{const rd=new FileReader();rd.onload=()=>ok(rd.result);rd.onerror=()=>no(rd.error);rd.readAsText(f,'utf-8')});
+const toLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+let pend=[];
+async function loadFiles(list){
+  const fs=[...list];if(!fs.length)return;
+  const js=fs.filter(f=>/\.json$/i.test(f.name));if(js.length){const dt=new DataTransfer();js.forEach(f=>dt.items.add(f));$('imp').files=dt.files;$('imp').dispatchEvent(new Event('change'))}
+  const bad=[];
+  for(const f of fs.filter(f=>!/\.json$/i.test(f.name))){
+    try{const rows=toRows(await readText(f));const m=f.name.match(/(\d{4})(\d{2})(\d{2})[_-]?(\d{2})(\d{2})/);
+      const when=m?`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}`:toLocal(new Date(f.lastModified||Date.now()));
+      pend=pend.filter(p=>p.file!==f.name).concat({file:f.name,rows,when,guess:!m})}catch(er){bad.push(f.name)}
+  }
+  pend.sort((a,b)=>a.when.localeCompare(b.when));renderPend();
+  say(bad.length?`อ่านไม่ได้ ${bad.length} ไฟล์: ${bad.join(', ')}`:'');
 }
-$('file').onchange=e=>{loadFile(e.target.files[0]);e.target.value=''};
-document.addEventListener('dragover',e=>{e.preventDefault();$('drop').classList.add('hot')});
-document.addEventListener('drop',e=>{e.preventDefault();$('drop').classList.remove('hot');loadFile(e.dataTransfer.files[0])});
-$('cancel').onclick=()=>{pending=null;$('drop').classList.remove('on')};
-$('save').onclick=async()=>{
-  if(!pending)return;const v=$('when').value;const ts=new Date(v).getTime();if(!v||isNaN(ts)){say('ใส่วันเวลาให้ถูกต้อง');return}
-  const id=v.replace(/[-:T]/g,'').slice(0,12),doc={id,ts,file:pending.file,rows:pending.rows};
-  $('save').disabled=true;
-  try{snaps=snaps.filter(s=>s.id!==id).concat(doc).sort((a,b)=>a.ts-b.ts);persist();render();say(col?`บันทึกข้อมูล ${dtTh(ts)} แล้ว`:'แสดงผลแล้ว แต่เบราว์เซอร์นี้บันทึกถาวรไม่ได้')
-    pending=null;$('drop').classList.remove('on')}catch(er){say('บันทึกไม่สำเร็จ: '+(er&&er.message||er))}
-  $('save').disabled=false;
+function renderPend(){
+  $('drop').classList.toggle('on',pend.length>0);
+  const ex=new Set(snaps.map(s=>s.id));
+  $('dropList').innerHTML=pend.map((p,i)=>`<tr><td>${esc(p.file)}${p.guess?'<div class="why">ชื่อไฟล์ไม่มีวันที่ — ใช้วันที่แก้ไขไฟล์ ตรวจให้ถูกก่อนบันทึก</div>':''}${ex.has(p.when.replace(/[-:T]/g,''))?'<div class="why">มีข้อมูลเวลานี้แล้ว — จะบันทึกทับ</div>':''}</td><td class="n">${p.rows.length}</td><td><input type="datetime-local" data-w="${i}" value="${esc(p.when)}"></td><td><button data-x="${i}" aria-label="เอาออก">×</button></td></tr>`).join('');
+  $('save').textContent=`บันทึก ${pend.length} ไฟล์`;
+}
+$('dropList').onchange=e=>{const i=e.target.dataset.w;if(i!=null){pend[i].when=e.target.value;pend[i].guess=false;renderPend()}};
+$('dropList').onclick=e=>{const b=e.target.closest('[data-x]');if(b){pend.splice(+b.dataset.x,1);renderPend()}};
+$('file').onchange=e=>{loadFiles(e.target.files);e.target.value=''};
+let dragN=0;
+document.addEventListener('dragenter',e=>{e.preventDefault();dragN++;document.body.classList.add('dragging')});
+document.addEventListener('dragleave',()=>{if(--dragN<=0){dragN=0;document.body.classList.remove('dragging')}});
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('drop',e=>{e.preventDefault();dragN=0;document.body.classList.remove('dragging');loadFiles(e.dataTransfer.files)});
+$('cancel').onclick=()=>{pend=[];renderPend()};
+$('save').onclick=()=>{
+  if(!pend.length)return;
+  for(const p of pend){if(!p.when||isNaN(new Date(p.when).getTime())){say('ใส่วันเวลาให้ครบทุกไฟล์');return}}
+  const m=new Map(snaps.map(s=>[s.id,s]));
+  for(const p of pend){const ts=new Date(p.when).getTime(),id=p.when.replace(/[-:T]/g,'').slice(0,12);m.set(id,{id,ts,file:p.file,rows:p.rows})}
+  const n=pend.length;snaps=[...m.values()].sort((a,b)=>a.ts-b.ts);persist();pend=[];renderPend();render();
+  say(col?`บันทึก ${n} ไฟล์แล้ว`:'แสดงผลแล้ว แต่เบราว์เซอร์นี้บันทึกถาวรไม่ได้');
 };
 
 function persist(){if(!col)return;try{localStorage.setItem('tm-snaps',JSON.stringify(snaps))}catch(e){say('พื้นที่เก็บข้อมูลในเบราว์เซอร์เต็ม — สำรองข้อมูลแล้วลบวันที่เก่าออก')}}
