@@ -5,302 +5,540 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TheMoon Guild Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* VOICE: guild officer's war room — clear, quick, decisive
-   IDEA: a moon-phase roster ledger; each upload is one night's reading
-   PICTURE: the Gear-over-time chart, large, under the title
-   COLOUR and TYPE: white / night ink, moon silver support, signal red for kick; Chakra Petch + IBM Plex Sans Thai
-   LAYOUT: title + upload, KPI strip, big chart, class rows beside kick list, full roster table */
-:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0e0f13);--panel:light-dark(#f3f3f5,#17191f);--ink:light-dark(#14151a,#ecedf1);--mute:light-dark(#5d6170,#9a9fae);--line:light-dark(#dcdde3,#2a2d36);--moon:light-dark(#8a90a6,#c9cddb);--good:light-dark(#13845a,#3fc58f);--warn:light-dark(#b86e00,#f0a73a);--bad:#e4002b;--acc:light-dark(#3b4bd8,#8f9bff)}
+/* VOICE: guild officer's command console — quick, clear, decisive
+   IDEA: a night-watch roster: moonlit cards, risk rows lit in warning yellow
+   PICTURE: the Gear-over-time chart and the yellow-banded roster
+   COLOUR and TYPE: night ink / white, moon indigo accent, warning yellow for risk; Chakra Petch + IBM Plex Sans Thai
+   LAYOUT: sticky top bar, KPI strip, chart, class + kick cards, improved + changes, roster, log, settings */
+:root{color-scheme:light dark;--bg:light-dark(#f3f4f8,#08090d);--card:light-dark(#ffffff,#10131a);--card2:light-dark(#f6f7fb,#151923);--ink:light-dark(#10121a,#eef0f6);--mute:light-dark(#5d6375,#8b93a7);--line:light-dark(#e3e5ee,#1f2431);--acc:light-dark(#4b57d6,#8e9aff);--accbg:light-dark(#eceefe,#1a1f3a);--good:light-dark(#0b8f5a,#34d399);--warn:light-dark(#b45309,#fbbf24);--bad:light-dark(#d61f3c,#fb4f6b);--y1:light-dark(#fff6d1,rgba(250,204,21,.10));--y2:light-dark(#fde58a,rgba(250,204,21,.24));--sh:light-dark(0 1px 2px rgba(16,18,26,.05),0 0 0 transparent)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans Thai",system-ui,sans-serif;overflow-x:clip}
-h1,h2,.num{font-family:"Chakra Petch","IBM Plex Sans Thai",sans-serif}
-h1{font-size:clamp(28px,4.2vw,44px);line-height:1.05;margin:0;text-wrap:balance}
-h2{font-size:22px;margin:0 0 12px;line-height:1.2}
-.band{padding:clamp(20px,3.4vw,48px) max(5vw,16px)}
-.wrap{max-width:1240px;margin:0 auto}
-.top{display:flex;gap:20px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;border-top:6px solid var(--ink);padding-top:18px}
-.sub{color:var(--mute);margin:8px 0 0}
-.moon{display:inline-block;width:.8em;height:.8em;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,var(--moon) 60%,#6f7488);box-shadow:inset -.18em -.1em 0 rgba(0,0,0,.25);margin-right:.25em;vertical-align:-.05em}
-button,.btn,select,input{font:inherit;font-size:16px;min-height:44px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:8px 14px}
-button,.btn{cursor:pointer;font-weight:600}
-.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-button:focus-visible,select:focus-visible,input:focus-visible,.btn:focus-within{outline:3px solid var(--acc);outline-offset:2px}
+html{scroll-padding-top:84px;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 "IBM Plex Sans Thai",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,.num{font-family:"Chakra Petch","IBM Plex Sans Thai",sans-serif;letter-spacing:.2px}
+h1{font-size:clamp(26px,3.6vw,40px);line-height:1.08;margin:0;text-wrap:balance}
+h2{font-size:19px;margin:0;line-height:1.25}
+.wrap{max-width:1280px;margin:0 auto;padding:0 max(3.5vw,14px)}
+/* top bar */
+.bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:14px;min-height:64px;flex-wrap:wrap;padding-block:8px}
+.brand{display:flex;align-items:center;gap:10px;font:700 20px "Chakra Petch",sans-serif;white-space:nowrap}
+.moon{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 34% 32%,#fff,#c8cde0 45%,#6d7390);box-shadow:inset -6px -3px 0 rgba(0,0,0,.28),0 0 18px rgba(142,154,255,.35);flex:none}
+nav{display:flex;gap:4px;overflow-x:auto;flex:1 1 auto;scrollbar-width:none}
+nav a{color:var(--mute);text-decoration:none;padding:8px 12px;border-radius:10px;font-weight:500;white-space:nowrap;font-size:14.5px}
+nav a:hover{background:var(--card2);color:var(--ink)}
+.right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{font-size:12.5px;padding:4px 10px;border-radius:99px;background:var(--card2);border:1px solid var(--line);color:var(--mute);white-space:nowrap}
+.pill.on{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+button,.btn,select,input,textarea{font:inherit;font-size:15px;color:var(--ink)}
+button,.btn{min-height:40px;padding:8px 14px;border-radius:11px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;justify-content:center;transition:background .15s,border-color .15s,transform .1s}
+button:hover,.btn:hover{border-color:color-mix(in srgb,var(--acc) 45%,var(--line))}
+button:active,.btn:active{transform:translateY(1px)}
+.pri{background:var(--acc);border-color:var(--acc);color:light-dark(#fff,#0b0d16)}
+.pri:hover{filter:brightness(1.08)}
+.ghost{background:transparent}
+.sm{min-height:32px;padding:4px 10px;font-size:13.5px;border-radius:9px}
+select,input,textarea{min-height:40px;border-radius:11px;border:1px solid var(--line);background:var(--card);padding:8px 12px}
+textarea{width:100%;min-height:120px;font:13px/1.45 ui-monospace,monospace}
+button:focus-visible,.btn:focus-within,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--acc) 60%,transparent);outline-offset:2px}
 .btn input{display:none}
-.drop{margin-top:18px;border:2px dashed var(--line);border-radius:12px;padding:16px;display:none;gap:12px;align-items:center;flex-wrap:wrap}
-.drop.on{display:flex}.drop.hot{border-color:var(--acc)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:22px}
-.kpi{background:var(--bg);padding:14px 16px}
-.kpi b{display:block;font-family:"Chakra Petch",sans-serif;font-size:clamp(26px,3vw,36px);line-height:1.1;white-space:nowrap}
-.kpi span{color:var(--mute);font-size:14px}.kpi i{font-style:normal;font-size:14px;margin-left:6px}
+main{padding:22px 0 60px}
+section{margin-top:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,2vw,22px);box-shadow:var(--sh)}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.note{font-size:13.5px;color:var(--mute)}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.hero p{margin:6px 0 0;color:var(--mute)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:18px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;position:relative;overflow:hidden}
+.kpi span{font-size:13px;color:var(--mute);display:flex;align-items:center;gap:6px}
+.kpi span i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.kpi b{display:block;font:700 clamp(24px,2.6vw,32px)/1.15 "Chakra Petch",sans-serif;margin-top:4px;white-space:nowrap}
+.kpi small{font-size:12.5px;font-weight:600;margin-left:6px}
+.kpi.risk{background:linear-gradient(135deg,var(--y2),var(--card) 70%)}
 .up{color:var(--good)}.dn{color:var(--bad)}
-.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:20px 0 10px}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.seg button{border:0;border-radius:0;min-height:40px}.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-.fig{position:relative;height:clamp(300px,42vw,440px)}.fig>canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
-.note{font-size:14px;color:var(--mute)}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{font-size:13px;padding:2px 9px;border-radius:99px;background:var(--panel);border:1px solid var(--line);white-space:nowrap}
-.chip button{min-height:0;border:0;background:none;padding:0 0 0 4px;font-size:13px}
-.grid2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px}
-@media(max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
-.crow{display:grid;grid-template-columns:12em minmax(0,1fr) 4.5em;gap:10px;align-items:center;padding:7px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;border-radius:0;width:100%;text-align:left;font-weight:400;min-height:44px}
-.crow:hover,.crow[aria-pressed=true]{background:var(--panel)}
-.track{height:12px;display:flex;border-radius:3px;overflow:hidden;background:var(--panel)}
+.g2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px}
+@media(max-width:900px){.g2{grid-template-columns:minmax(0,1fr)}}
+.seg{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
+.seg button{border:0;background:none;min-height:34px;border-radius:9px;font-weight:500;color:var(--mute);padding:4px 12px}
+.seg button[aria-pressed=true]{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fig{position:relative;height:clamp(280px,38vw,420px);margin-top:12px}.fig>canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+.fig.s{height:220px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:12.5px;padding:3px 10px;border-radius:99px;background:var(--card2);border:1px solid var(--line);white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.chip button{min-height:0;border:0;background:none;padding:0 0 0 2px;font-size:14px;color:var(--mute)}
+.tag{font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:99px;white-space:nowrap;margin-left:6px;vertical-align:1px}
+.t-new{background:var(--accbg);color:var(--acc)}.t-ex{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}.t-back{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.crow{display:grid;grid-template-columns:13em minmax(0,1fr) 4.6em;gap:12px;align-items:center;padding:8px 8px;border-radius:12px;cursor:pointer;background:none;border:0;width:100%;text-align:left;font-weight:400;min-height:46px}
+.crow:hover,.crow[aria-pressed=true]{background:var(--card2)}
+.track{height:10px;display:flex;border-radius:99px;overflow:hidden;background:var(--card2)}
 .track i{display:block;height:100%}
 .r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.kick{background:var(--panel);border-radius:12px;padding:18px}
-.kick ol{margin:0;padding-left:1.4em}.kick li{padding:6px 0;border-bottom:1px solid var(--line)}
-.st{font-size:13px;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap;color:#fff}
-.s0{background:var(--good)}.s1{background:var(--warn)}.s2{background:var(--bad)}
-table{border-collapse:collapse;width:100%;font-size:15px}
-th{font-weight:600;color:var(--mute);font-size:13px;text-align:left;padding:8px;border-bottom:2px solid var(--ink);cursor:pointer;white-space:nowrap;user-select:none}
-td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
-td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.why{font-size:12.5px;color:var(--mute)}
-.lnk{background:none;border:0;padding:0;min-height:0;color:var(--ink);font-weight:600;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;text-align:left}
-.scroll{overflow-x:auto}
-.set{display:flex;gap:12px;flex-wrap:wrap;align-items:end}.set label{font-size:13px;color:var(--mute);display:grid;gap:4px}.set input{width:7em}
-.snaps td{font-size:14px}
-.empty{padding:48px 16px;text-align:center;color:var(--mute)}
-#msg{min-height:1.5em;font-size:14px}
-.job{vertical-align:middle;margin-right:6px;border-radius:50%;flex:none}
+.job{vertical-align:middle;margin-right:7px;border-radius:50%;flex:none}
 .cls{display:inline-flex;align-items:center;white-space:nowrap}
-body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (หลายไฟล์ได้)';position:fixed;inset:12px;border:3px dashed var(--acc);border-radius:16px;background:color-mix(in srgb,var(--bg) 85%,transparent);display:grid;place-items:center;font:700 24px 'Chakra Petch','IBM Plex Sans Thai',sans-serif;z-index:9;pointer-events:none}
-.drop td input{width:auto}
-@media(max-width:600px){.crow{grid-template-columns:10em minmax(0,1fr) 4em}.hide-s{display:none}}
-@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.list li{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:12px;background:var(--card2)}
+.list li.k{background:var(--y2);box-shadow:inset 4px 0 0 var(--bad)}
+.list .grow{flex:1;min-width:0}
+.why{font-size:12.5px;color:var(--mute);margin-top:1px}
+.list li.k .why{color:light-dark(#7a2e0e,#fcd9a8)}
+.rank{font:700 15px "Chakra Petch",sans-serif;color:var(--mute);width:1.6em;flex:none;text-align:right}
+.lnk{background:none;border:0;padding:0;min-height:0;color:var(--ink);font-weight:600;text-align:left;border-radius:4px;justify-content:flex-start}
+.lnk:hover{color:var(--acc)}
+.st{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.s0{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.s1{background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn)}
+.s2{background:var(--bad);color:#fff}
+.scroll{overflow-x:auto}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:14.5px}
+th{font-weight:600;color:var(--mute);font-size:12.5px;text-align:left;padding:10px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap;user-select:none;position:sticky;top:0;background:var(--card)}
+th.r{text-align:right}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr:hover td{background:var(--card2)}
+tr.r1 td{background:var(--y1)}
+tr.r2 td{background:var(--y2)}
+tr.r1 td:first-child{box-shadow:inset 4px 0 0 var(--warn)}
+tr.r2 td:first-child{box-shadow:inset 4px 0 0 var(--bad)}
+tr.r1:hover td,tr.r2:hover td{filter:brightness(.97)}
+tr.r2 .why{color:light-dark(#7a2e0e,#fcd9a8)}
+.set{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.set label{font-size:13px;color:var(--mute);display:grid;gap:5px}
+.set input,.set select{width:100%}
+.drop{display:none;margin-top:16px}.drop.on{display:block}
+.drop td input{min-height:36px;padding:4px 8px}
+.empty{padding:40px 16px;text-align:center;color:var(--mute)}
+#msg{min-height:1.4em;font-size:14px;margin-top:10px;color:var(--acc)}
+details summary{cursor:pointer;color:var(--acc);font-weight:600;margin:8px 0}
+pre{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12.5px;overflow-x:auto;white-space:pre}
+body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (หลายไฟล์ได้)';position:fixed;inset:12px;border:3px dashed var(--acc);border-radius:20px;background:color-mix(in srgb,var(--bg) 82%,transparent);display:grid;place-items:center;font:700 26px "Chakra Petch","IBM Plex Sans Thai",sans-serif;z-index:50;pointer-events:none}
+/* modal */
+.modal{position:fixed;inset:0;z-index:40;background:rgba(5,6,10,.6);display:grid;place-items:center;padding:16px}
+.modal[hidden]{display:none}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:22px;width:min(920px,100%);max-height:92vh;overflow:auto;padding:clamp(16px,2.4vw,26px);position:relative}
+.x{position:absolute;top:12px;right:12px;width:40px;height:40px;padding:0;border-radius:50%;font-size:20px}
+.phead{display:flex;gap:14px;align-items:center;padding-right:48px}
+.phead img{border-radius:50%}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:16px 0}
+.stats div{background:var(--card2);border-radius:12px;padding:10px 12px}
+.stats b{display:block;font:700 20px "Chakra Petch",sans-serif}
+.stats span{font-size:12px;color:var(--mute)}
+.pg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media(max-width:700px){.pg{grid-template-columns:minmax(0,1fr)}}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media(max-width:700px){.bar{position:static}.bar .wrap{gap:8px}html{scroll-padding-top:12px}}
+@media(max-width:600px){.crow{grid-template-columns:10.5em minmax(0,1fr) 4em}.hide-s{display:none}table{font-size:13px}td,th{padding:8px 6px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
-<header class="band"><div class="wrap">
-  <div class="top">
-    <div><h1><span class="moon"></span><span id="title">TheMoon · ภาพรวมกิลด์</span></h1>
-      <p class="sub" id="subtitle">อัปโหลดหรือลากไฟล์ CSV รายชื่อกิลด์มาวาง ได้ทีละหลายไฟล์ แล้วระบบจะเก็บประวัติให้</p></div>
-    <label class="btn pri">อัปโหลด CSV<input type="file" id="file" accept=".csv,text/csv" multiple></label>
-  </div>
-  <div class="drop" id="drop">
-    <div class="scroll" style="width:100%"><table><thead><tr><th>ไฟล์</th><th class="r">จำนวนคน</th><th>วันเวลาของข้อมูล</th><th></th></tr></thead><tbody id="dropList"></tbody></table></div>
-    <button class="pri" id="save">บันทึก</button><button id="cancel">ยกเลิก</button><span class="note">ลากไฟล์ CSV หลายไฟล์มาวางที่ไหนก็ได้ในหน้านี้ · ไฟล์วันเวลาซ้ำจะบันทึกทับของเดิม</span>
-  </div>
-  <div id="msg" class="note"></div>
-  <div class="kpis" id="kpis"></div>
-</div></header>
+<div class="bar"><div class="wrap">
+  <div class="brand"><span class="moon"></span>TheMoon</div>
+  <nav><a href="#overview">ภาพรวม</a><a href="#classes">อาชีพ</a><a href="#members">สมาชิก</a><a href="#log">ประวัติ</a><a href="#settings">ตั้งค่า</a></nav>
+  <div class="right"><span class="pill" id="storePill">เก็บในเครื่องนี้</span><span id="auth"></span>
+    <label class="btn pri">อัปโหลด CSV<input type="file" id="file" accept=".csv,text/csv" multiple></label></div>
+</div></div>
 
-<section class="band" style="padding-top:0"><div class="wrap">
-  <h2>ค่าพลัง (Gear) ตามวัน</h2>
-  <div class="bar">
-    <div class="seg" id="mode"><button data-v="guild" aria-pressed="true">ทั้งกิลด์</button><button data-v="class" aria-pressed="false">แยกอาชีพ</button><button data-v="person" aria-pressed="false">รายคน</button></div>
-    <div class="seg" id="range"><button data-v="7" aria-pressed="false">7 วัน</button><button data-v="30" aria-pressed="false">30 วัน</button><button data-v="0" aria-pressed="true">ทั้งหมด</button></div>
-    <span id="pickWrap" hidden><input list="names" id="pick" placeholder="พิมพ์ชื่อผู้เล่น" style="width:13em"><datalist id="names"></datalist></span>
+<main class="wrap">
+<section id="overview" style="margin-top:0">
+  <div class="hero"><div><h1 id="title">TheMoon · ภาพรวมกิลด์</h1><p id="subtitle">อัปโหลดหรือลากไฟล์ CSV รายชื่อกิลด์มาวาง ได้ทีละหลายไฟล์</p></div></div>
+  <div class="card drop" id="drop">
+    <div class="head"><h2>ไฟล์ที่รอบันทึก</h2><div class="row"><button class="pri" id="save">บันทึก</button><button id="cancel">ยกเลิก</button></div></div>
+    <div class="scroll"><table><thead><tr><th>ไฟล์</th><th class="r">จำนวนคน</th><th>วันเวลาของข้อมูล</th><th></th></tr></thead><tbody id="dropList"></tbody></table></div>
+    <p class="note">ไฟล์ที่วันเวลาซ้ำกับของเดิมจะบันทึกทับ</p>
   </div>
+  <div id="msg" role="status"></div>
+  <div class="kpis" id="kpis"></div>
+</section>
+
+<section class="card">
+  <div class="head"><h2>ค่าพลัง (Gear) ตามวัน</h2>
+    <div class="tools"><div class="seg" id="mode"><button data-v="guild" aria-pressed="true">ทั้งกิลด์</button><button data-v="class" aria-pressed="false">แยกอาชีพ</button><button data-v="person" aria-pressed="false">รายคน</button></div>
+    <div class="seg" id="range"><button data-v="7" aria-pressed="false">7 วัน</button><button data-v="30" aria-pressed="false">30 วัน</button><button data-v="0" aria-pressed="true">ทั้งหมด</button></div></div></div>
+  <div class="row" id="pickWrap" hidden><input list="names" id="pick" placeholder="พิมพ์ชื่อผู้เล่นเพื่อเพิ่มเส้น" style="width:16em"><datalist id="names"></datalist></div>
   <div class="chips" id="picked"></div>
   <div class="fig"><canvas id="chart"></canvas></div>
   <p class="note" id="chartNote"></p>
-</div></section>
+</section>
 
-<section class="band" style="padding-top:0"><div class="wrap grid2">
-  <div><h2>แยกตามอาชีพ</h2><p class="note" style="margin-top:-6px">แถบสี = สัดส่วน <b class="up">Active</b> · <b style="color:var(--warn)">เฝ้าระวัง</b> · <b class="dn">เสี่ยงเตะ</b> · ตัวเลขขวา = Gear เฉลี่ย · กดเพื่อกรองตาราง</p><div id="classes"></div></div>
-  <div class="kick"><h2>รายชื่อเสี่ยงเตะ</h2><div id="kick"></div>
-    <button id="copyKick" style="margin-top:12px">คัดลอกรายชื่อ</button> <span class="note" id="copied"></span>
-    <div id="moves" style="margin-top:16px"></div></div>
-</div></section>
+<section id="classes" class="g2">
+  <div class="card"><div class="head"><h2>แยกตามอาชีพ</h2><span class="note">แถบ = <b class="up">Active</b> · <b style="color:var(--warn)">เฝ้าระวัง</b> · <b class="dn">เสี่ยงเตะ</b> · ขวา = Gear เฉลี่ย</span></div><div id="classList"></div></div>
+  <div class="card"><div class="head"><h2>รายชื่อเสี่ยงเตะ <span class="note" id="kickN"></span></h2>
+    <div class="row"><button class="sm" id="copyKick">คัดลอกข้อความ</button><button class="sm" id="imgKick">บันทึกเป็นรูป</button></div></div>
+    <ul class="list" id="kick"></ul><p class="note" id="copied"></p></div>
+</section>
 
-<section class="band" style="padding-top:0"><div class="wrap">
-  <h2>สมาชิกทั้งหมด</h2>
-  <div class="bar">
-    <input id="q" placeholder="ค้นหาชื่อ" style="width:12em">
-    <select id="fClass"><option value="">ทุกอาชีพ</option></select>
-    <select id="fStat"><option value="">ทุกสถานะ</option><option value="0">Active</option><option value="1">เฝ้าระวัง</option><option value="2">เสี่ยงเตะ</option></select>
-    <span class="note" id="count"></span>
-  </div>
+<section class="g2">
+  <div class="card"><div class="head"><h2>พัฒนาเร็วที่สุด</h2><span class="note" id="impNote"></span></div><ul class="list" id="improved"></ul></div>
+  <div class="card"><div class="head"><h2>ความเคลื่อนไหวสมาชิก</h2></div><div id="moves"></div></div>
+</section>
+
+<section id="members" class="card">
+  <div class="head"><h2>สมาชิกทั้งหมด</h2>
+    <div class="tools"><input id="q" placeholder="ค้นหาชื่อ" style="width:11em"><select id="fClass"><option value="">ทุกอาชีพ</option></select>
+      <select id="fStat"><option value="">ทุกสถานะ</option><option value="0">Active</option><option value="1">เฝ้าระวัง</option><option value="2">เสี่ยงเตะ</option><option value="risk">มีความเสี่ยง (เหลือง)</option><option value="new">คนใหม่</option><option value="ex">ยกเว้น</option></select></div></div>
+  <p class="note" id="count" style="margin:-6px 0 8px"></p>
   <div class="scroll"><table><thead><tr id="thead"></tr></thead><tbody id="rows"></tbody></table></div>
-</div></section>
+</section>
 
-<section class="band" style="padding-top:0"><div class="wrap grid2">
-  <div><h2>เกณฑ์ตัดสิน</h2>
+<section id="log" class="g2">
+  <div class="card"><div class="head"><h2>ประวัติการเตะ</h2></div><ul class="list" id="kicks"></ul></div>
+  <div class="card"><div class="head"><h2>ข้อมูลที่บันทึกไว้</h2><div class="row"><button class="sm" id="exp">สำรองข้อมูล</button><label class="btn sm">นำเข้าไฟล์สำรอง<input type="file" id="imp" accept=".json,application/json"></label></div></div>
+    <div class="scroll" style="max-height:340px;overflow-y:auto"><table><tbody id="snaps"></tbody></table></div></div>
+</section>
+
+<section id="settings" class="g2">
+  <div class="card"><div class="head"><h2>เกณฑ์ตัดสิน</h2></div>
     <div class="set">
-      <label>กิจกรรมขั้นต่ำ/สัปดาห์<input type="number" id="sAct" min="0" max="205"></label>
-      <label>ออฟไลน์เกิน (วัน)<input type="number" id="sOff" min="1"></label>
-      <label>Gear ไม่ขึ้นเลยภายใน (วัน)<input type="number" id="sStag" min="1"></label>
+      <label>กิจกรรมขั้นต่ำ/สัปดาห์<input type="number" id="sminAct" min="0" max="205"></label>
+      <label>ต่ำติดกันกี่สัปดาห์ = เสี่ยงเตะ<input type="number" id="slowWeeks" min="1" max="8"></label>
+      <label>ไม่ออนไลน์เกิน (วัน) = เฝ้าระวัง<input type="number" id="soffDays" min="1"></label>
+      <label>Gear/แต้มสะสมไม่ขึ้นภายใน (วัน)<input type="number" id="sstagDays" min="2"></label>
+      <label>ผ่อนผันคนเข้าใหม่ (วัน)<input type="number" id="sgrace" min="0"></label>
+      <label>วันรีเซ็ตกิจกรรมรายสัปดาห์<select id="sresetDay"><option value="1">จันทร์</option><option value="2">อังคาร</option><option value="3">พุธ</option><option value="4">พฤหัสบดี</option><option value="5">ศุกร์</option><option value="6">เสาร์</option><option value="0">อาทิตย์</option></select></label>
     </div>
-    <p class="note">เสี่ยงเตะ = กิจกรรม 0 หรือออฟไลน์เกิน 7 วัน หรือติดเงื่อนไขเฝ้าระวังตั้งแต่ 2 ข้อ · เฝ้าระวัง = ติด 1 ข้อ (กิจกรรมต่ำ, ออฟไลน์นาน, Gear ไม่ขึ้น, แต้มสนับสนุนสัปดาห์นี้ 0)</p>
+    <p class="note">เสี่ยงเตะ = ไม่ทำกิจกรรมเลยในสัปดาห์นี้ (ตั้งแต่วันที่ 3 ของสัปดาห์), กิจกรรมต่ำติดกันตามจำนวนสัปดาห์ที่ตั้ง, ไม่ออนไลน์ 7 วันขึ้นไป หรือติดเงื่อนไขเฝ้าระวังตั้งแต่ 2 ข้อ · เฝ้าระวัง = กิจกรรมต่ำ, ไม่ออนไลน์นาน, Gear ไม่ขึ้น, แต้มสะสมไม่เพิ่ม, สนับสนุนสัปดาห์นี้ 0 · สัปดาห์ที่ยังไม่จบ เกณฑ์กิจกรรมคิดตามสัดส่วนวันที่ผ่านไป · คนใหม่และคนที่ยกเว้นไม่ถูกนับ</p>
   </div>
-  <div><h2>ข้อมูลที่บันทึกไว้</h2><p class="note" style="margin-top:-6px">ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ — กดสำรองไว้เป็นระยะ หรือใช้ย้ายไปเครื่องอื่น</p><div class="bar" style="margin-top:0"><button id="exp">สำรองข้อมูล (.json)</button><label class="btn">นำเข้าไฟล์สำรอง<input type="file" id="imp" accept=".json,application/json"></label></div><div class="scroll"><table class="snaps"><tbody id="snaps"></tbody></table></div></div>
-</div></section>
+  <div class="card"><div class="head"><h2>ที่เก็บข้อมูล</h2></div><div id="storeBox"></div></div>
+</section>
+</main>
+
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pName">
+  <button class="x" id="pClose" aria-label="ปิด">×</button>
+  <div id="pHead"></div>
+  <div class="pg"><div><h3 class="note" style="margin:0">Gear และแต้มสนับสนุนสะสม</h3><div class="fig s"><canvas id="pc1"></canvas></div></div><div><h3 class="note" style="margin:0">กิจกรรมรายสัปดาห์</h3><div class="fig s"><canvas id="pc2"></canvas></div></div></div>
+  <div id="pBody"></div>
+</div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 {
+/* วาง Firebase config ตรงนี้ เพื่อให้ทุกคนที่เปิดลิงก์เห็นข้อมูลชุดเดียวกัน (หรือวางในหน้า ตั้งค่า) */
+const FB_CONFIG=null;
+
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>n==null||isNaN(n)?'–':Math.round(n).toLocaleString('en-US');
 const sgn=n=>n==null?'–':(n>0?'+':'')+fmt(n);
-const DAY=864e5;
-const ST=['Active','เฝ้าระวัง','เสี่ยงเตะ'];
+const DAY=864e5,ST=['Active','เฝ้าระวัง','เสี่ยงเตะ'];
+const PAL=['#6d7cff','#f43f5e','#10b981','#f59e0b','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#3b82f6','#14b8a6','#eab308','#94a3b8','#d946ef','#22c55e'];
 const JOB={'Lord Knight':213,'Paladin':223,'High Wizard':313,'Professor':323,'Scholar':323,'Sniper':413,'Clown':423,'Minstrel':423,'Gypsy':433,'High Priest':513,'Champion':523,'Assassin Cross':613,'Stalker':623,'Whitesmith':713,'Mastersmith':713,'Creator':723,'Biochemist':723,'Night Walker':813,'อาลิเทีย':913,
  'Knight':212,'Crusader':222,'Wizard':312,'Sage':322,'Hunter':412,'Bard':422,'Dancer':432,'Priest':512,'Monk':522,'Assassin':612,'Rogue':622,'Blacksmith':712,'Alchemist':722,'Rebel':812,'คานอส':912};
-const ico=(c,sz=24)=>{const id=JOB[c];return id?`<img class="job" src="https://roworlddb.com/media/images/job/icon_jsxq_big_${id}.webp" width="${sz}" height="${sz}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''};
-const PAL=['#3b4bd8','#e4002b','#13a36b','#e08a00','#8e44ad','#0aa4c2','#d6336c','#6b7a00','#7a5230','#5c6bc0','#00897b','#b0662c','#7d8597'];
-let S={minAct:150,offDays:3,stagDays:7};
-try{Object.assign(S,JSON.parse(localStorage.getItem('tm-set')||'{}'))}catch(e){}
-let snaps=[],col=null,pending=null,mode='guild',range=0,picked=null,fClass='',sortK='gear',sortD=-1,chart=null,model=null,delArm=null;
-
-function parseCSV(t){const out=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==','){row.push(f);f=''}else if(c=='\n'||c=='\r'){if(c=='\r'&&t[i+1]=='\n')i++;row.push(f);out.push(row);row=[];f=''}else f+=c}if(f||row.length){row.push(f);out.push(row)}return out.filter(r=>r.some(x=>x.trim()))}
-const COLS=[['name','ชื่อผู้เล่น'],['lv','Lv'],['cls','คลาส'],['title','Title'],['sex','เพศ'],['rank','ตำแหน่ง'],['gear','Gear'],['act','กิจกรรม'],['cw','สนับสนุนสัปดาห์'],['ct','สนับสนุนสะสม'],['st','สถานะ']];
-function toRows(text){const t=parseCSV(text.replace(/^﻿/,''));if(t.length<2)throw new Error('ไฟล์ว่าง');const h=t[0].map(x=>x.replace(/\s|แต้ม|นี้/g,''));const idx=COLS.map(([k,lab])=>h.findIndex(x=>x.includes(lab.replace(/\s|แต้ม|นี้/g,''))));if(idx[0]<0||idx[6]<0)throw new Error('ไม่พบคอลัมน์ ชื่อผู้เล่น / คะแนน Gear');return t.slice(1).map(r=>idx.map((i,j)=>{const v=i<0?'':(r[i]||'').trim();return [1,6,7,8,9].includes(j)?(+v||0):v})).filter(r=>r[0])}
-function offH(s){s=s||'';if(s.includes('ออนไลน์'))return 0;if(/เกิน/.test(s))return 24*7+1;const m=s.match(/(\d+)\s*(นาที|ชม|ชั่วโมง|วัน)/);if(!m)return null;return m[2]=='นาที'?m[1]/60:m[2]=='วัน'?m[1]*24:+m[1]}
-function offTxt(h){return h==null?'–':h===0?'ออนไลน์':h<1?Math.round(h*60)+' นาที':h<24?Math.round(h)+' ชม.':h>168?'เกิน 7 วัน':Math.round(h/24)+' วัน'}
-const dstr=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const icoUrl=id=>`https://roworlddb.com/media/images/job/icon_jsxq_big_${id}.webp`;
+const ico=(c,sz=24)=>{const id=JOB[c];return id?`<img class="job" src="${icoUrl(id)}" width="${sz}" height="${sz}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''};
+const DEF={minAct:150,offDays:3,stagDays:7,grace:7,lowWeeks:2,resetDay:1};
+let snaps=[],meta=blankMeta(),S={...DEF},store=null,user=null,model=null,pend=[],mode='guild',range=0,picked=null,fClass='',sortK='sev',sortD=-1,chart=null,delArm=null,pCharts=[],openName=null;
+function blankMeta(){return {exempt:{},kicks:[],renames:{},notRename:{},settings:{}}}
+function setMeta(m){meta={...blankMeta(),...(m||{})};S={...DEF,...(meta.settings||{})}}
+const ls={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){say('พื้นที่เก็บในเบราว์เซอร์เต็ม — สำรองข้อมูลแล้วลบวันที่เก่าออก');return false}}};
+const valid=x=>x&&Array.isArray(x.rows)&&typeof x.ts=='number'&&x.id;
+const byTs=(a,b)=>a.ts-b.ts;
+function say(t){$('msg').textContent=t||''}
+const pad=n=>String(n).padStart(2,'0');
+const dstr=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
 const dTh=ts=>new Date(ts).toLocaleDateString('th-TH',{day:'numeric',month:'short'});
 const dtTh=ts=>new Date(ts).toLocaleString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+const toLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+let probe=null;const cssv=n=>{if(!probe){probe=document.createElement('i');probe.style.display='none';document.body.appendChild(probe)}probe.style.color=`var(${n})`;return getComputedStyle(probe).color};
 
+/* ---------- CSV ---------- */
+function parseCSV(t){const out=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==','){row.push(f);f=''}else if(c=='\n'||c=='\r'){if(c=='\r'&&t[i+1]=='\n')i++;row.push(f);out.push(row);row=[];f=''}else f+=c}if(f||row.length){row.push(f);out.push(row)}return out.filter(r=>r.some(x=>x.trim()))}
+const COLS=['ชื่อผู้เล่น','Lv','คลาส','Title','เพศ','ตำแหน่ง','Gear','กิจกรรม','สนับสนุนสัปดาห์','สนับสนุนสะสม','สถานะ'];
+const norm=x=>x.replace(/\s|แต้ม|นี้/g,'');
+function toRows(text){const t=parseCSV(text.replace(/^﻿/,''));if(t.length<2)throw new Error('ไฟล์ว่าง');const h=t[0].map(norm);const idx=COLS.map(l=>h.findIndex(x=>x.includes(norm(l))));if(idx[0]<0||idx[6]<0)throw new Error('ไม่พบคอลัมน์');return t.slice(1).map(r=>idx.map((i,j)=>{const v=i<0?'':(r[i]||'').trim();return [1,6,7,8,9].includes(j)?(+v||0):v})).filter(r=>r[0])}
+function offH(s){s=s||'';if(s.includes('ออนไลน์]')||s.trim()==='ออนไลน์')return 0;if(/เกิน/.test(s))return 24*7+1;const m=s.match(/(\d+)\s*(นาที|ชม|ชั่วโมง|วัน)/);if(!m)return null;return m[2]=='นาที'?m[1]/60:m[2]=='วัน'?m[1]*24:+m[1]}
+function awayTxt(d){if(d==null)return '–';if(d<0.02)return 'ออนไลน์';if(d<1)return Math.max(1,Math.round(d*24))+' ชม.';return Math.floor(d)+' วัน'}
+function weekStart(ts){const d=new Date(ts);d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()-S.resetDay+7)%7));return d.getTime()}
+function canon(n){let k=0;while(meta.renames[n]&&k++<20)n=meta.renames[n];return n}
+
+/* ---------- model ---------- */
 function build(){
   if(!snaps.length){model=null;return}
-  const L=snaps[snaps.length-1],cut=range?L.ts-range*DAY:-Infinity;
-  const inR=snaps.filter(s=>s.ts>=cut-1);
-  const days=new Map();for(const s of inR)days.set(dstr(s.ts),s);
-  const daySn=[...days.values()];
-  const maps=snaps.map(s=>new Map(s.rows.map(r=>[r[0],r])));
-  const base=inR[0],bi=snaps.indexOf(base),prev=snaps.length>1?maps[snaps.length-2]:null;
-  const P=L.rows.map(r=>{
-    const [name,lv,cls,title,sex,rank,gear,act,cw,ct,st]=r;
-    let g0=null,g0ts=null;for(let i=bi;i<snaps.length;i++){const x=maps[i].get(name);if(x){g0=x[6];g0ts=snaps[i].ts;break}}
-    const dG=g0==null?null:gear-g0;const span=(L.ts-g0ts)/DAY;
-    let stagSpan=null;for(let i=0;i<snaps.length;i++){if(snaps[i].ts>L.ts-S.stagDays*DAY)break;const x=maps[i].get(name);if(x&&x[6]===gear)stagSpan=(L.ts-snaps[i].ts)/DAY;else if(x)stagSpan=null}
-    const oh=offH(st),why=[];let sev=0;
-    if(act===0){why.push('ไม่ทำกิจกรรม');sev=2}else if(act<S.minAct){why.push('กิจกรรม '+act);sev=Math.max(sev,1)}
-    if(oh!=null&&oh>168){why.push('ออฟไลน์เกิน 7 วัน');sev=2}else if(oh!=null&&oh>=S.offDays*24){why.push('ออฟไลน์ '+offTxt(oh));sev=Math.max(sev,1)}
-    if(cw===0&&act!==0){why.push('สนับสนุน 0');sev=Math.max(sev,1)}
-    if(stagSpan!=null){why.push('Gear ไม่ขึ้น '+Math.round(stagSpan)+' วัน');sev=Math.max(sev,1)}
+  const N=snaps.length,L=snaps[N-1];
+  const maps=snaps.map(s=>{const m=new Map();for(const r of s.rows)m.set(canon(r[0]),r);return m});
+  const cut=range?L.ts-range*DAY:-Infinity;let bi=snaps.findIndex(s=>s.ts>=cut-1);if(bi<0)bi=N-1;
+  const days=new Map();for(let i=bi;i<N;i++)days.set(dstr(snaps[i].ts),snaps[i]);
+  const ws=weekStart(L.ts),elapsed=(L.ts-ws)/DAY,curThr=S.minAct*Math.min(1,Math.max(elapsed,.5)/7);
+  const kicked=new Map(meta.kicks.map(k=>[k.name,k])),lm=maps[N-1];
+  const at=(name,maxTs)=>{for(let i=N-1;i>=0;i--){if(snaps[i].ts<=maxTs){const x=maps[i].get(name);if(x)return [i,x]}}return null};
+  const P=[...lm.entries()].map(([name,r])=>{
+    const [,lv,cls,title,sex,rank,gear,act,cw,ct,st]=r;
+    let first=-1,g0=null,c0=null,seen=null;const wk=new Map();
+    for(let i=0;i<N;i++){const x=maps[i].get(name);if(!x)continue;if(first<0)first=i;if(i>=bi&&g0==null){g0=x[6];c0=x[9]}
+      const h=offH(x[10]);if(h!=null){const t=snaps[i].ts-Math.min(h,169)*36e5;if(seen==null||t>seen)seen=t}
+      wk.set(weekStart(snaps[i].ts),x[7])}
+    const weeks=[...wk.entries()].sort((a,b)=>b[0]-a[0]);
+    const away=seen==null?null:Math.max(0,(L.ts-seen)/DAY);
+    let streak=0;const lows=[];for(const [w,a] of weeks){if(w===ws&&elapsed<1)continue;const thr=w===ws?curThr:S.minAct;if(a<thr){streak++;lows.push([w,a])}else break}
+    const g=at(name,L.ts-S.stagDays*DAY),stag=g&&g[1][6]===gear?(L.ts-snaps[g[0]].ts)/DAY:null;
+    const c=at(name,L.ts-Math.min(3,S.stagDays)*DAY),ctStall=c&&c[1][9]===ct?(L.ts-snaps[c[0]].ts)/DAY:null;
+    const why=[],tags=[];let sev=0;const up=(n,t)=>{why.push(t);sev=Math.max(sev,n)};
+    if(act===0&&elapsed>=2)up(2,'ไม่ทำกิจกรรมสัปดาห์นี้');
+    else if(streak>=S.lowWeeks)up(2,`กิจกรรมต่ำ ${streak} สัปดาห์ติด`);
+    else if(streak>=1)up(1,lows[0][0]===ws?`กิจกรรม ${act} (เกณฑ์ตอนนี้ ${Math.round(curThr)})`:`กิจกรรมสัปดาห์ก่อน ${lows[0][1]}`);
+    if(away!=null&&away>=7)up(2,`ไม่ออนไลน์ ${away>=7&&offH(st)>168?'เกิน ':''}${Math.floor(away)} วัน`);
+    else if(away!=null&&away>=S.offDays)up(1,`ไม่ออนไลน์ ${Math.floor(away)} วัน`);
+    if(cw===0&&act>0&&elapsed>=2)up(1,'สนับสนุนสัปดาห์นี้ 0');
+    if(stag!=null)up(1,`Gear ไม่ขึ้น ${Math.round(stag)} วัน`);
+    if(ctStall!=null)up(1,`แต้มสะสมไม่เพิ่ม ${Math.round(ctStall)} วัน`);
     if(sev===1&&why.length>=2)sev=2;
-    const pv=prev&&prev.get(name);
-    return {name,lv,cls,title,sex,rank,gear,act,cw,ct,oh,dG,span,sev,why,dCt:pv?ct-pv[9]:null};
+    const raw=sev,joinTs=snaps[first].ts,isNew=first>0&&(L.ts-joinTs)<S.grace*DAY,ex=meta.exempt[name];
+    if(isNew){tags.push('new');sev=0}
+    if(ex){tags.push('ex');sev=0}
+    if(kicked.has(name)&&L.ts>kicked.get(name).ts)tags.push('back');
+    return {name,lv,cls,title,sex,rank,gear,act,cw,ct,st,dG:g0==null?null:gear-g0,dCt:c0==null?null:ct-c0,away,sev,raw,why,tags,weeks,ex,joinTs,isNew};
   });
-  const left=prev?[...prev.keys()].filter(n=>!maps[snaps.length-1].has(n)):[];
-  const joined=prev?P.filter(p=>!prev.has(p.name)).map(p=>p.name):[];
-  model={L,daySn,P,left,joined,prevS:snaps.length>1?snaps[snaps.length-2]:null};
+  let left=[],joined=[],sugg=[];
+  if(N>1){const pm=maps[N-2];left=[...pm.keys()].filter(n=>!lm.has(n));joined=[...lm.keys()].filter(n=>!pm.has(n));
+  }
+  if(N>1){const fI=new Map(),lI=new Map();maps.forEach((m,i)=>{for(const n of m.keys()){if(!fI.has(n))fI.set(n,i);lI.set(n,i)}});
+    const gone=[...lI].filter(([,i])=>i<N-1).map(([n])=>n),fresh=[...fI].filter(([n,i])=>i>0&&lm.has(n)).map(([n])=>n);
+    for(const j of fresh){const fi=fI.get(j),r=maps[fi].get(j);let best=null,bd=1e12;for(const l of gone){const li=lI.get(l);if(li!==fi-1||meta.notRename[l+'>'+j])continue;const o=maps[li].get(l);if(o[2]!==r[2])continue;const dg=r[6]-o[6],dc=r[9]-o[9];if(dg<-300||dg>o[6]*.06+800||dc<0||dc>6000)continue;const d=Math.abs(dg)+dc/10;if(d<bd){bd=d;best=l}}if(best)sugg.push([best,j])}}
+  model={L,N,maps,daySn:[...days.values()],P,left,joined,sugg,prevS:N>1?snaps[N-2]:null,ws,elapsed,curThr,kicked};
 }
 
-function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+/* ---------- render ---------- */
 function render(){
-  build();
-  if(!model){$('kpis').innerHTML='';$('classes').innerHTML='<div class="empty">ยังไม่มีข้อมูล — กด “อัปโหลด CSV”</div>';$('kick').innerHTML='';$('rows').innerHTML='';$('snaps').innerHTML='';$('moves').innerHTML='';drawChart();return}
-  const {L,P,prevS}=model,cnt=[0,0,0];P.forEach(p=>cnt[p.sev]++);
-  const avg=P.reduce((a,p)=>a+p.gear,0)/P.length;
-  let pAvg=null;if(prevS)pAvg=prevS.rows.reduce((a,r)=>a+r[6],0)/prevS.rows.length;
-  const on=P.filter(p=>p.oh===0).length,full=P.filter(p=>p.act>=205).length;
-  $('title').textContent=`TheMoon · ${P.length} คน · เสี่ยงเตะ ${cnt[2]} คน`;
-  $('subtitle').textContent=`ข้อมูลล่าสุด ${dtTh(L.ts)} · บันทึกแล้ว ${snaps.length} ครั้ง`+(col?'':' · เบราว์เซอร์นี้บันทึกถาวรไม่ได้ (ข้อมูลจะหายเมื่อปิดหน้า)');
-  const d=(a,b)=>b==null?'':`<i class="${a-b>=0?'up':'dn'}">${sgn(a-b)}</i>`;
-  $('kpis').innerHTML=[
-    [P.length,'สมาชิก',prevS?d(P.length,prevS.rows.length):''],
-    [fmt(avg),'Gear เฉลี่ย',pAvg==null?'':d(avg,pAvg)],
-    [cnt[0],'Active',''],[cnt[1],'เฝ้าระวัง',''],[cnt[2],'เสี่ยงเตะ',''],
-    [full,'กิจกรรมเต็ม 205',''],[on,'ออนไลน์ตอนดึงข้อมูล','']
-  ].map(([v,l,x],i)=>`<div class="kpi"><b ${i==4?'class="dn"':''}>${v}${x}</b><span>${l}</span></div>`).join('');
-  // classes
-  const C={};P.forEach(p=>{(C[p.cls]=C[p.cls]||{n:0,g:0,s:[0,0,0]});C[p.cls].n++;C[p.cls].g+=p.gear;C[p.cls].s[p.sev]++});
-  const cl=Object.entries(C).sort((a,b)=>b[1].n-a[1].n);
-  $('classes').innerHTML=cl.map(([k,v])=>`<button class="crow" data-c="${esc(k)}" aria-pressed="${fClass===k}"><span class="cls">${ico(k,30)}<span><b>${esc(k)}</b> <span class="note">${v.n} คน</span></span></span><span class="track">${v.s.map((x,i)=>`<i style="width:${x/v.n*100}%;background:var(${['--good','--warn','--bad'][i]})"></i>`).join('')}</span><span class="r num">${fmt(v.g/v.n)}</span></button>`).join('');
-  const fc=$('fClass'),cur=fc.value;fc.innerHTML='<option value="">ทุกอาชีพ</option>'+cl.map(([k])=>`<option>${esc(k)}</option>`).join('');fc.value=fClass||cur;
-  // kick
-  const K=P.filter(p=>p.sev===2).sort((a,b)=>a.act-b.act||b.oh-a.oh);
-  $('kick').innerHTML=K.length?`<ol>${K.map(p=>`<li><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button> <span class="note cls">${ico(p.cls,20)}${esc(p.cls)} · ${esc(p.rank)}</span><div class="why">${p.why.map(esc).join(' · ')}</div></li>`).join('')}</ol>`:'<p class="note">ไม่มีใครเข้าเกณฑ์ 🎉</p>';
-  $('moves').innerHTML=model.prevS?`<p class="note" style="margin:0">เทียบกับ ${dtTh(model.prevS.ts)}: ออกไป ${model.left.length} คน${model.left.length?' ('+model.left.map(esc).join(', ')+')':''} · เข้าใหม่ ${model.joined.length} คน${model.joined.length?' ('+model.joined.map(esc).join(', ')+')':''}</p>`:'';
+  build();renderStore();syncSettings();
+  if(!model){$('kpis').innerHTML='';$('title').textContent='TheMoon · ภาพรวมกิลด์';$('subtitle').textContent='ยังไม่มีข้อมูล — กด "อัปโหลด CSV" หรือลากไฟล์ CSV มาวางในหน้านี้ (หลายไฟล์พร้อมกันได้)';
+    for(const id of ['classList','kick','improved','moves','rows','kicks','snaps'])$(id).innerHTML='';$('classList').innerHTML='<div class="empty">ยังไม่มีข้อมูล</div>';drawChart();return}
+  const {L,P,prevS,elapsed}=model,cnt=[0,0,0];P.forEach(p=>cnt[p.sev]++);
+  const avg=P.reduce((a,p)=>a+p.gear,0)/P.length,pAvg=prevS?prevS.rows.reduce((a,r)=>a+r[6],0)/prevS.rows.length:null;
+  $('title').textContent=`TheMoon · ${P.length} คน · เสี่ยงเตะ ${cnt[2]} · เฝ้าระวัง ${cnt[1]}`;
+  $('subtitle').textContent=`ข้อมูลล่าสุด ${dtTh(L.ts)} · บันทึกแล้ว ${snaps.length} ครั้ง · วันที่ ${Math.min(7,Math.floor(elapsed)+1)}/7 ของสัปดาห์กิจกรรม`;
+  const d=(a,b)=>b==null?'':`<small class="${a-b>=0?'up':'dn'}">${sgn(a-b)}</small>`;
+  const nNew=P.filter(p=>p.isNew).length,nEx=P.filter(p=>p.ex).length;
+  $('kpis').innerHTML=[['สมาชิก',P.length+d(P.length,prevS&&prevS.rows.length),'var(--acc)'],['Gear เฉลี่ย',fmt(avg)+d(avg,pAvg),'var(--acc)'],['Active',cnt[0],'var(--good)'],['เฝ้าระวัง',cnt[1],'var(--warn)'],['เสี่ยงเตะ',cnt[2],'var(--bad)','risk'],['คนใหม่ / ยกเว้น',`${nNew} / ${nEx}`,'var(--mute)']]
+    .map(([l,v,c,k])=>`<div class="kpi ${k||''}"><span><i style="background:${c}"></i>${l}</span><b>${v}</b></div>`).join('');
+  renderClasses();renderKick();renderImproved();renderMoves();renderTable();renderKicks();renderSnaps();
   $('names').innerHTML=P.map(p=>`<option value="${esc(p.name)}">`).join('');
-  renderTable();renderSnaps();drawChart();
+  drawChart();
+  if(openName&&!$('modal').hidden)openProfile(openName);
 }
-
-const COLDEF=[['name','ชื่อ'],['cls','อาชีพ'],['rank','ตำแหน่ง'],['gear','Gear'],['dG','Gear เพิ่ม'],['act','กิจกรรม'],['cw','สนับสนุน/สัปดาห์'],['ct','สนับสนุนสะสม'],['oh','ออฟไลน์'],['sev','สถานะ']];
+function renderClasses(){
+  const C={};model.P.forEach(p=>{(C[p.cls]=C[p.cls]||{n:0,g:0,s:[0,0,0]});C[p.cls].n++;C[p.cls].g+=p.gear;C[p.cls].s[p.sev]++});
+  const cl=Object.entries(C).sort((a,b)=>b[1].n-a[1].n);
+  $('classList').innerHTML=cl.map(([k,v])=>`<button class="crow" data-c="${esc(k)}" aria-pressed="${fClass===k}"><span class="cls">${ico(k,30)}<span><b>${esc(k)}</b> <span class="note">${v.n}</span></span></span><span class="track">${v.s.map((x,i)=>`<i style="width:${x/v.n*100}%;background:var(${['--good','--warn','--bad'][i]})"></i>`).join('')}</span><span class="r num">${fmt(v.g/v.n)}</span></button>`).join('');
+  const fc=$('fClass');fc.innerHTML='<option value="">ทุกอาชีพ</option>'+cl.map(([k])=>`<option>${esc(k)}</option>`).join('');fc.value=fClass;
+}
+const kickList=()=>model.P.filter(p=>p.sev===2).sort((a,b)=>b.why.length-a.why.length||a.act-b.act);
+function renderKick(){
+  const K=kickList();$('kickN').textContent=K.length?`(${K.length} คน)`:'';
+  $('kick').innerHTML=K.length?K.map(p=>`<li class="k">${ico(p.cls,28)}<div class="grow"><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button>${tagsHtml(p)} <span class="note">${esc(p.cls)} · ${esc(p.rank)}</span><div class="why">${p.why.map(esc).join(' · ')}</div></div><button class="sm ghost" data-kick="${esc(p.name)}">บันทึกเตะ</button></li>`).join(''):'<li><span class="note">ไม่มีใครเข้าเกณฑ์</span></li>';
+}
+function renderImproved(){
+  const {daySn}=model;const I=model.P.filter(p=>p.dG>0).sort((a,b)=>b.dG-a.dG).slice(0,10);
+  const span=daySn.length>1?Math.max(1,Math.round((daySn[daySn.length-1].ts-daySn[0].ts)/DAY)):0;
+  $('impNote').textContent=span?`ช่วง ${span} วัน`:'';
+  $('improved').innerHTML=!span?'<li><span class="note">ต้องมีข้อมูลอย่างน้อย 2 วัน</span></li>':I.length?I.map((p,i)=>`<li><span class="rank">${i+1}</span>${ico(p.cls,26)}<div class="grow"><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button> <span class="note">${esc(p.cls)}</span></div><span class="r"><b class="up num">${sgn(p.dG)}</b><div class="why">${((p.dG/(p.gear-p.dG))*100).toFixed(1)}% · ${fmt(p.dG/span)}/วัน</div></span></li>`).join(''):'<li><span class="note">ยังไม่มีใคร Gear เพิ่มในช่วงนี้</span></li>';
+}
+function renderMoves(){
+  const {left,joined,sugg,prevS,P}=model;const back=P.filter(p=>p.tags.includes('back'));let h='';
+  if(sugg.length)h+=`<p class="note" style="margin:0 0 6px">อาจเปลี่ยนชื่อ (อาชีพเดียวกัน Gear และแต้มสะสมใกล้กัน)</p><ul class="list" style="margin-bottom:12px">${sugg.map(([o,n])=>`<li><div class="grow"><b>${esc(o)}</b> → <b>${esc(n)}</b></div><button class="sm pri" data-ren="${esc(o)}" data-to="${esc(n)}">ใช่ รวมประวัติ</button><button class="sm ghost" data-noren="${esc(o)}" data-to="${esc(n)}">ไม่ใช่</button></li>`).join('')}</ul>`;
+  if(back.length)h+=`<ul class="list" style="margin-bottom:12px">${back.map(p=>`<li class="k"><div class="grow"><b>${esc(p.name)}</b> <span class="tag t-back">เคยถูกเตะ</span><div class="why">ถูกเตะเมื่อ ${dTh(model.kicked.get(p.name).ts)} — ${esc(model.kicked.get(p.name).reason||'')}</div></div></li>`).join('')}</ul>`;
+  h+=prevS?`<p class="note" style="margin:0">เทียบกับ ${dtTh(prevS.ts)}</p><p style="margin:6px 0"><b class="dn">ออก ${left.length} คน</b>${left.length?': '+left.map(esc).join(', '):''}</p><p style="margin:6px 0"><b class="up">เข้าใหม่ ${joined.length} คน</b>${joined.length?': '+joined.map(esc).join(', '):''}</p>`:'<p class="note">ต้องมีข้อมูลอย่างน้อย 2 ครั้งเพื่อเทียบ</p>';
+  $('moves').innerHTML=h;
+}
+const tagsHtml=p=>p.tags.map(t=>t==='new'?'<span class="tag t-new">ใหม่</span>':t==='ex'?'<span class="tag t-ex">ยกเว้น</span>':'<span class="tag t-back">เคยถูกเตะ</span>').join('');
+const COLDEF=[['name','ชื่อ'],['cls','อาชีพ'],['rank','ตำแหน่ง',1],['gear','Gear'],['dG','Gear +'],['act','กิจกรรม'],['cw','สนับสนุน/สัปดาห์',1],['dCt','สะสม +'],['away','ออนไลน์ล่าสุด'],['sev','สถานะ']];
 function renderTable(){
-  if(!model)return;
-  $('thead').innerHTML=COLDEF.map(([k,l])=>`<th data-k="${k}" class="${['name','cls','rank','sev'].includes(k)?'':'r'}">${l}${sortK===k?(sortD>0?' ▲':' ▼'):''}</th>`).join('');
-  const q=$('q').value.trim().toLowerCase(),fs=$('fStat').value;
-  let R=model.P.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!fClass||p.cls===fClass)&&(fs===''||p.sev==fs));
-  R.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)x=-Infinity;if(y==null)y=-Infinity;return typeof x=='string'?x.localeCompare(y,'th')*sortD:(x-y)*sortD});
-  $('count').textContent=`แสดง ${R.length} จาก ${model.P.length} คน`+(fClass?` · อาชีพ ${fClass}`:'');
-  $('rows').innerHTML=R.map(p=>`<tr><td><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button></td><td><span class="cls">${ico(p.cls)}${esc(p.cls)}</span></td><td>${esc(p.rank)}</td><td class="n">${fmt(p.gear)}</td><td class="n ${p.dG>0?'up':''}">${model.daySn.length>1?sgn(p.dG):'–'}</td><td class="n" style="${p.act<S.minAct?'color:var(--bad)':''}">${p.act}</td><td class="n">${fmt(p.cw)}</td><td class="n">${fmt(p.ct)}</td><td class="n">${offTxt(p.oh)}</td><td><span class="st s${p.sev}">${ST[p.sev]}</span>${p.why.length?`<div class="why">${p.why.map(esc).join(' · ')}</div>`:''}</td></tr>`).join('');
+  $('thead').innerHTML=COLDEF.map(([k,l,h])=>`<th data-k="${k}" class="${['name','cls','rank','sev'].includes(k)?'':'r'} ${h?'hide-s':''}">${l}${sortK===k?(sortD>0?' ▲':' ▼'):''}</th>`).join('');
+  const q=$('q').value.trim().toLowerCase(),fs=$('fStat').value,multi=model.daySn.length>1;
+  let R=model.P.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!fClass||p.cls===fClass)&&(fs===''||(fs==='risk'?p.sev>0:fs==='new'?p.isNew:fs==='ex'?!!p.ex:p.sev==fs)));
+  R.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(sortK==='sev'&&x===y)return b.why.length-a.why.length||a.act-b.act;if(x==null)x=-Infinity;if(y==null)y=-Infinity;return typeof x=='string'?x.localeCompare(y,'th')*sortD:(x-y)*sortD});
+  $('count').textContent=`แสดง ${R.length} จาก ${model.P.length} คน`+(fClass?` · อาชีพ ${fClass}`:'')+' · กดชื่อเพื่อดูโปรไฟล์';
+  $('rows').innerHTML=R.map(p=>`<tr class="${p.sev?'r'+p.sev:''}"><td><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button>${tagsHtml(p)}${p.sev&&p.why.length?`<div class="why">${p.why.map(esc).join(' · ')}</div>`:''}</td><td><span class="cls">${ico(p.cls)}${esc(p.cls)}</span></td><td class="hide-s">${esc(p.rank)}</td><td class="n">${fmt(p.gear)}</td><td class="n ${p.dG>0?'up':''}">${multi?sgn(p.dG):'–'}</td><td class="n" style="${p.act<S.minAct?'color:var(--bad);font-weight:600':''}">${p.act}</td><td class="n hide-s">${fmt(p.cw)}</td><td class="n ${p.dCt>0?'up':''}">${multi?sgn(p.dCt):'–'}</td><td class="n">${awayTxt(p.away)}</td><td><span class="st s${p.sev}">${ST[p.sev]}</span></td></tr>`).join('')||'<tr><td colspan="10" class="empty">ไม่พบสมาชิกตามตัวกรอง</td></tr>';
+}
+function renderKicks(){
+  const K=[...meta.kicks].sort((a,b)=>b.ts-a.ts);
+  $('kicks').innerHTML=K.length?K.map((k,i)=>`<li>${ico(k.cls,26)}<div class="grow"><b>${esc(k.name)}</b> <span class="note">${esc(k.cls||'')} · Gear ${fmt(k.gear)}</span><div class="why">${dtTh(k.ts)} — ${esc(k.reason||'')}</div></div><button class="sm ghost" data-unkick="${k.ts}" title="ลบรายการนี้">ลบ</button></li>`).join(''):'<li><span class="note">ยังไม่มีการบันทึก — กด "บันทึกเตะ" ในรายชื่อเสี่ยงเตะ หรือในโปรไฟล์ผู้เล่น</span></li>';
 }
 function renderSnaps(){
-  $('snaps').innerHTML=[...snaps].reverse().map(s=>`<tr><td>${dtTh(s.ts)}</td><td class="n">${s.rows.length} คน</td><td class="note">${esc(s.file||'')}</td><td class="n">${col?`<button data-del="${esc(s.id)}">${delArm===s.id?'ยืนยันลบ':'ลบ'}</button>`:''}</td></tr>`).join('');
+  $('snaps').innerHTML=[...snaps].reverse().map(s=>`<tr><td>${dtTh(s.ts)}</td><td class="n">${s.rows.length} คน</td><td class="note hide-s">${esc(s.file||'')}</td><td class="n">${canWrite()?`<button class="sm ghost" data-del="${esc(s.id)}">${delArm===s.id?'ยืนยันลบ':'ลบ'}</button>`:''}</td></tr>`).join('');
 }
 
-const IMG={};function icoImg(c){const id=JOB[c];if(!id)return 'circle';if(!IMG[id]){const im=new Image(18,18);im.referrerPolicy='no-referrer';im.onload=()=>{if(mode==='class')drawChart()};im.src=`https://roworlddb.com/media/images/job/icon_jsxq_big_${id}.webp`;IMG[id]=im}return IMG[id].complete&&IMG[id].naturalWidth?IMG[id]:'circle'}
+/* ---------- chart ---------- */
+const IMG={};function icoImg(c){const id=JOB[c];if(!id)return 'circle';if(!IMG[id]){const im=new Image(18,18);im.referrerPolicy='no-referrer';im.onload=()=>{if(mode==='class')drawChart()};im.src=icoUrl(id);IMG[id]=im}return IMG[id].complete&&IMG[id].naturalWidth?IMG[id]:'circle'}
+function chartOpts(ink,line,mute,legend){return {responsive:true,maintainAspectRatio:false,animation:matchMedia('(prefers-reduced-motion: reduce)').matches?false:{duration:300},interaction:{mode:'nearest',intersect:false},
+  plugins:{legend:{display:legend,position:'bottom',labels:{color:ink,boxWidth:12,usePointStyle:mode==='class',font:{family:'IBM Plex Sans Thai',size:12.5}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
+  scales:{x:{ticks:{color:mute,maxTicksLimit:10,maxRotation:0,autoSkip:true},grid:{color:line}},y:{ticks:{color:mute,callback:v=>fmt(v)},grid:{color:line}}}}}
 function drawChart(){
   if(typeof Chart=='undefined'){$('chartNote').textContent='โหลดไลบรารีกราฟไม่สำเร็จ';return}
   const ink=cssv('--ink')||'#888',line=cssv('--line')||'#ddd',mute=cssv('--mute')||'#888';
-  let labels=[],ds=[];
+  let labels=[],ds=[],D0=[];
   if(model){
-    const D0=model.daySn,byDay=new Map(D0.map(s=>[dstr(s.ts),s])),D=[];
-    if(D0.length){const a=new Date(D0[0].ts),b=new Date(D0[D0.length-1].ts);a.setHours(12,0,0,0);b.setHours(12,0,0,0);for(let t=a.getTime();t<=b.getTime()+1;t+=DAY){const k=dstr(t);D.push(byDay.get(k)||{ts:t,rows:null})}}
+    D0=model.daySn;const byDay=new Map(D0.map(s=>[dstr(s.ts),s])),D=[];
+    if(D0.length){const a=new Date(D0[0].ts),b=new Date(D0[D0.length-1].ts);a.setHours(12,0,0,0);b.setHours(12,0,0,0);for(let t=a.getTime();t<=b.getTime()+1;t+=DAY){D.push(byDay.get(dstr(t))||{ts:t,rows:null})}}
     labels=D.map(s=>dTh(s.ts));const R=f=>D.map(s=>s.rows?f(s):null);
     if(mode==='guild'){
-      const avg=R(s=>s.rows.reduce((a,r)=>a+r[6],0)/s.rows.length);
-      const med=R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>a-b);return g[g.length>>1]});
-      const top=R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>b-a).slice(0,10);return g.reduce((a,b)=>a+b,0)/g.length});
-      ds=[['เฉลี่ยทั้งกิลด์',avg,PAL[0]],['มัธยฐาน',med,PAL[3]],['เฉลี่ย Top 10',top,PAL[2]]].map(([l,d,c])=>({label:l,data:d,borderColor:c,backgroundColor:c}));
+      ds=[['เฉลี่ยทั้งกิลด์',R(s=>s.rows.reduce((a,r)=>a+r[6],0)/s.rows.length),PAL[0]],['มัธยฐาน',R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>a-b);return g[g.length>>1]}),PAL[3]],['เฉลี่ย Top 10',R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>b-a).slice(0,10);return g.reduce((a,b)=>a+b,0)/g.length}),PAL[2]]].map(([l,d,c])=>({label:l,data:d,borderColor:c,backgroundColor:c}));
     }else if(mode==='class'){
-      const cls=[...new Set(model.P.map(p=>p.cls))].sort((a,b)=>model.P.filter(p=>p.cls===b).length-model.P.filter(p=>p.cls===a).length);
+      const cnt={};model.P.forEach(p=>cnt[p.cls]=(cnt[p.cls]||0)+1);const cls=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
       ds=cls.map((c,i)=>({label:c,data:R(s=>{const g=s.rows.filter(r=>r[2]===c);return g.length?g.reduce((a,r)=>a+r[6],0)/g.length:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],hidden:!!fClass&&c!==fClass,pointStyle:icoImg(c)}));
     }else{
       if(picked==null)picked=[...model.P].sort((a,b)=>(b.dG??0)-(a.dG??0)||b.gear-a.gear).slice(0,5).map(p=>p.name);
-      ds=picked.map((n,i)=>({label:n,data:R(s=>{const r=s.rows.find(r=>r[0]===n);return r?r[6]:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]}));
+      ds=picked.map((n,i)=>({label:n,data:R(s=>{const r=s.rows.find(r=>canon(r[0])===n);return r?r[6]:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]}));
     }
-    ds.forEach(d=>Object.assign(d,{tension:.25,pointRadius:D0.length<15?4:2,borderWidth:2,spanGaps:true,segment:{borderDash:c=>c.p1DataIndex-c.p0DataIndex>1?[5,5]:undefined}}));
+    ds.forEach(d=>Object.assign(d,{tension:.3,pointRadius:D0.length<20?3.5:1.5,borderWidth:2.2,spanGaps:true,segment:{borderDash:c=>c.p1DataIndex-c.p0DataIndex>1?[5,5]:undefined}}));
   }
   $('pickWrap').hidden=mode!=='person';
   $('picked').innerHTML=mode==='person'&&picked?picked.map(n=>`<span class="chip">${esc(n)}<button data-rm="${esc(n)}" aria-label="เอาออก">×</button></span>`).join(''):'';
-  let miss=[];if(model&&model.daySn.length>1){const have=new Set(model.daySn.map(s=>dstr(s.ts)));const a=new Date(model.daySn[0].ts);a.setHours(12,0,0,0);for(let t=a.getTime();t<model.daySn[model.daySn.length-1].ts;t+=DAY){if(!have.has(dstr(t)))miss.push(t)}}
-  $('chartNote').textContent=!model?'':model.daySn.length<2?'มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม':`มีข้อมูล ${model.daySn.length} วัน`+(miss.length?` · ขาด ${miss.length} วัน (${miss.slice(0,12).map(dTh).join(', ')}${miss.length>12?' …':''}) เส้นประ = ช่วงที่ไม่มีไฟล์`:'')+' · ใช้ไฟล์ล่าสุดของแต่ละวัน · กดชื่อใต้กราฟเพื่อซ่อน/แสดงเส้น';
-  const opt={responsive:true,maintainAspectRatio:false,animation:matchMedia('(prefers-reduced-motion: reduce)').matches?false:{duration:300},interaction:{mode:'nearest',intersect:false},
-    plugins:{legend:{position:'bottom',labels:{color:ink,boxWidth:12,usePointStyle:mode==='class',font:{family:'IBM Plex Sans Thai',size:13}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
-    scales:{x:{ticks:{color:mute},grid:{color:line}},y:{ticks:{color:mute,callback:v=>fmt(v)},grid:{color:line}}}};
+  let miss=[];if(D0.length>1){const have=new Set(D0.map(s=>dstr(s.ts)));const a=new Date(D0[0].ts);a.setHours(12,0,0,0);for(let t=a.getTime();t<D0[D0.length-1].ts;t+=DAY)if(!have.has(dstr(t)))miss.push(t)}
+  $('chartNote').textContent=!model?'':D0.length<2?'มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม':`มีข้อมูล ${D0.length} วัน`+(miss.length?` · ขาด ${miss.length} วัน (${miss.slice(0,10).map(dTh).join(', ')}${miss.length>10?' …':''}) เส้นประ = ช่วงที่ไม่มีไฟล์`:'')+' · กดชื่อใต้กราฟเพื่อซ่อน/แสดงเส้น';
+  const opt=chartOpts(ink,line,mute,true);
   if(chart){chart.data={labels,datasets:ds};chart.options=opt;chart.update()}else chart=new Chart($('chart'),{type:'line',data:{labels,datasets:ds},options:opt});
 }
 
+/* ---------- profile ---------- */
+function openProfile(name){
+  const p=model&&model.P.find(x=>x.name===name);if(!p)return;openName=name;
+  const H=[];snaps.forEach((s,i)=>{const r=model.maps[i].get(name);if(r)H.push({ts:s.ts,gear:r[6],ct:r[9],act:r[7],cw:r[8],st:r[10],nm:r[0]})});
+  const kicked=model.kicked.get(name);
+  $('pHead').innerHTML=`<div class="phead">${ico(p.cls,56)}<div><h2 id="pName" style="font-size:24px">${esc(p.name)}${tagsHtml(p)}</h2><div class="note">${esc(p.cls)} · Lv.${p.lv} · ${esc(p.rank)} · ${esc(p.title)} · อยู่ในข้อมูลตั้งแต่ ${dTh(p.joinTs)}</div><div style="margin-top:6px"><span class="st s${p.sev}">${ST[p.sev]}</span>${p.raw&&!p.sev?` <span class="note">(ถ้าไม่ยกเว้น/ไม่ใช่คนใหม่ จะเป็น ${ST[p.raw]})</span>`:''}</div></div></div>
+  ${p.why.length?`<ul class="list" style="margin-top:14px"><li class="${p.sev===2?'k':''}"><div class="grow"><b>เหตุผล</b><div class="why">${p.why.map(esc).join(' · ')}</div></div></li></ul>`:''}
+  <div class="stats"><div><span>Gear</span><b>${fmt(p.gear)}</b><span class="${p.dG>0?'up':''}">${sgn(p.dG)}</span></div><div><span>กิจกรรมสัปดาห์นี้</span><b>${p.act}</b><span>/205</span></div><div><span>สนับสนุน/สัปดาห์</span><b>${fmt(p.cw)}</b></div><div><span>แต้มสะสม</span><b>${fmt(p.ct)}</b><span class="${p.dCt>0?'up':''}">${sgn(p.dCt)}</span></div><div><span>ออนไลน์ล่าสุด</span><b>${awayTxt(p.away)}</b></div></div>`;
+  const names=[...new Set(H.map(h=>h.nm))];
+  $('pBody').innerHTML=`<div class="g2" style="margin-top:16px;gap:14px">
+   <div class="card" style="padding:14px"><b>ยกเว้นการตัดสิน</b><p class="note" style="margin:4px 0 8px">เช่น แจ้งลา, ตำแหน่งบริหาร</p><div class="row"><input id="exReason" placeholder="เหตุผล" value="${esc(p.ex?p.ex.reason:'')}" style="flex:1"><button class="sm ${p.ex?'':'pri'}" id="exBtn" ${canWrite()?'':'disabled'}>${p.ex?'ยกเลิกยกเว้น':'ยกเว้น'}</button></div></div>
+   <div class="card" style="padding:14px"><b>บันทึกการเตะ</b><p class="note" style="margin:4px 0 8px">${kicked?`บันทึกไว้แล้ว ${dtTh(kicked.ts)}`:'เก็บไว้ดูว่าเคยเตะใคร ด้วยเหตุผลอะไร'}</p><div class="row"><input id="kReason" placeholder="เหตุผล" value="${esc(p.why.join(', '))}" style="flex:1"><button class="sm" id="kBtn" ${canWrite()?'':'disabled'}>บันทึกเตะ</button></div></div></div>
+   ${names.length>1?`<p class="note">ชื่อเดิม: ${names.filter(n=>n!==name).map(esc).join(', ')}</p>`:''}
+   <h3 class="note" style="margin:18px 0 6px">ประวัติ (ล่าสุดก่อน)</h3><div class="scroll" style="max-height:260px;overflow-y:auto"><table><thead><tr><th>วันที่</th><th class="r">Gear</th><th class="r">กิจกรรม</th><th class="r">สนับสนุน</th><th class="r">สะสม</th><th>สถานะ</th></tr></thead><tbody>${[...H].reverse().map(h=>`<tr><td>${dtTh(h.ts)}</td><td class="n">${fmt(h.gear)}</td><td class="n">${h.act}</td><td class="n">${fmt(h.cw)}</td><td class="n">${fmt(h.ct)}</td><td class="note">${esc(h.st)}</td></tr>`).join('')}</tbody></table></div>`;
+  $('modal').hidden=false;document.body.style.overflow='hidden';
+  pCharts.forEach(c=>c.destroy());pCharts=[];
+  if(typeof Chart!='undefined'){
+    const ink=cssv('--ink'),line=cssv('--line'),mute=cssv('--mute');
+    const o1=chartOpts(ink,line,mute,true);o1.scales.y1={position:'right',ticks:{color:mute,callback:v=>fmt(v)},grid:{display:false}};
+    pCharts.push(new Chart($('pc1'),{type:'line',data:{labels:H.map(h=>dTh(h.ts)),datasets:[{label:'Gear',data:H.map(h=>h.gear),borderColor:PAL[0],backgroundColor:PAL[0],tension:.3,pointRadius:3},{label:'แต้มสะสม',data:H.map(h=>h.ct),borderColor:PAL[2],backgroundColor:PAL[2],tension:.3,pointRadius:3,yAxisID:'y1'}]},options:o1}));
+    const W=[...p.weeks].reverse(),ws=model.ws;
+    const o2=chartOpts(ink,line,mute,false);o2.scales.y.max=205;o2.scales.y.min=0;
+    pCharts.push(new Chart($('pc2'),{type:'bar',data:{labels:W.map(([w])=>dTh(w)+(w===ws?' (นี้)':'')),datasets:[{label:'กิจกรรม',data:W.map(([,a])=>a),backgroundColor:W.map(([w,a])=>a<(w===ws?model.curThr:S.minAct)?'#f43f5e':'#10b981'),borderRadius:6}]},options:o2}));
+  }
+  $('exBtn').onclick=()=>{if(meta.exempt[name])delete meta.exempt[name];else meta.exempt[name]={reason:$('exReason').value.trim(),ts:Date.now()};saveMeta()};
+  $('kBtn').onclick=()=>{recordKick(name,$('kReason').value.trim())};
+}
+function closeProfile(){$('modal').hidden=true;document.body.style.overflow='';openName=null;pCharts.forEach(c=>c.destroy());pCharts=[]}
+function recordKick(name,reason){const p=model.P.find(x=>x.name===name);meta.kicks=meta.kicks.filter(k=>k.name!==name).concat({name,cls:p?p.cls:'',gear:p?p.gear:null,reason:reason||(p?p.why.join(', '):''),ts:Date.now()});saveMeta();say(`บันทึกการเตะ ${name} แล้ว`)}
+
+/* ---------- export ---------- */
+function kickText(){if(!model)return '';const K=kickList();return `TheMoon · รายชื่อเสี่ยงเตะ (${dtTh(model.L.ts)})\n`+(K.length?K.map((p,i)=>`${i+1}. ${p.name} (${p.cls}) — ${p.why.join(', ')}`).join('\n'):'ไม่มี')}
+async function kickImage(){
+  if(!model)return;const K=kickList();try{await document.fonts.ready}catch(e){}
+  const W=1200,rh=88,H=200+Math.max(1,K.length)*rh+50,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0d1020');g.addColorStop(1,'#08090d');x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle='#eef0f6';x.font='700 46px "Chakra Petch","IBM Plex Sans Thai",sans-serif';x.fillText('TheMoon · รายชื่อเสี่ยงเตะ',56,92);
+  x.fillStyle='#8b93a7';x.font='400 24px "IBM Plex Sans Thai",sans-serif';x.fillText(`ข้อมูล ${dtTh(model.L.ts)} · ${K.length} คน`,56,136);
+  const fit=(t,w)=>{if(x.measureText(t).width<=w)return t;while(t.length>1&&x.measureText(t+'…').width>w)t=t.slice(0,-1);return t+'…'};
+  if(!K.length){x.fillStyle='#34d399';x.font='600 28px "IBM Plex Sans Thai"';x.fillText('ไม่มีใครเข้าเกณฑ์',56,230)}
+  K.forEach((p,i)=>{const y=180+i*rh;x.fillStyle='rgba(250,204,21,.16)';x.beginPath();x.roundRect?x.roundRect(40,y,W-80,rh-10,14):x.rect(40,y,W-80,rh-10);x.fill();x.fillStyle='#fb4f6b';x.fillRect(40,y,6,rh-10);
+    x.fillStyle='#eef0f6';x.font='700 26px "IBM Plex Sans Thai",sans-serif';x.fillText(fit(`${i+1}. ${p.name}`,330),66,y+48);
+    x.fillStyle='#b8bfd0';x.font='500 21px "IBM Plex Sans Thai",sans-serif';x.fillText(fit(p.cls,200),410,y+48);
+    x.fillStyle='#fcd9a8';const ln=[''];for(const w of p.why){const t=ln[ln.length-1]?ln[ln.length-1]+' · '+w:w;if(x.measureText(t).width>520&&ln[ln.length-1])ln.push(w);else ln[ln.length-1]=t}
+    const L2=ln.slice(0,2);if(ln.length>2)L2[1]=fit(L2[1]+' …',520);L2.forEach((t,k)=>x.fillText(fit(t,520),630,y+(L2.length>1?32+k*28:46)))});
+  c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`themoon-kick-${dstr(model.L.ts)}.png`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000)},'image/png');
+}
+
+/* ---------- storage ---------- */
+const canWrite=()=>!!store&&(store.kind==='local'||!!user);
+function saveMeta(){render();if(!store)return;store.saveMeta().catch(e=>say('บันทึกไม่สำเร็จ: '+(e.code==='permission-denied'?'ต้องเข้าสู่ระบบด้วยบัญชีที่ได้รับสิทธิ์':e.message)))}
+function saveSnaps(list){if(!store)return Promise.resolve();return store.saveSnaps(list).catch(e=>{say('บันทึกไม่สำเร็จ: '+(e.code==='permission-denied'?'ต้องเข้าสู่ระบบด้วยบัญชีที่ได้รับสิทธิ์':e.message));throw e})}
+const localStore={kind:'local',
+  saveSnaps:async list=>{const m=new Map(snaps.map(s=>[s.id,s]));list.forEach(s=>m.set(s.id,s));snaps=[...m.values()].sort(byTs);ls.set('tm-snaps',snaps);render()},
+  delSnap:async id=>{snaps=snaps.filter(s=>s.id!==id);ls.set('tm-snaps',snaps);render()},
+  saveMeta:async()=>{ls.set('tm-meta',meta)}};
+function useLocal(){store=localStore;snaps=(ls.get('tm-snaps')||[]).filter(valid).sort(byTs);setMeta(ls.get('tm-meta'));render()}
+const SDK='https://www.gstatic.com/firebasejs/10.12.2/';
+const loadJS=u=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=()=>no(new Error('โหลด '+u+' ไม่ได้'));document.head.appendChild(s)});
+async function useCloud(cfg){
+  await loadJS(SDK+'firebase-app-compat.js');await loadJS(SDK+'firebase-auth-compat.js');await loadJS(SDK+'firebase-firestore-compat.js');
+  const app=firebase.apps.length?firebase.app():firebase.initializeApp(cfg),db=firebase.firestore(),auth=firebase.auth();
+  store={kind:'cloud',projectId:cfg.projectId,
+    saveSnaps:async list=>{for(let i=0;i<list.length;i+=20){const b=db.batch();list.slice(i,i+20).forEach(s=>b.set(db.collection('snapshots').doc(s.id),s));await b.commit()}},
+    delSnap:id=>db.collection('snapshots').doc(id).delete(),
+    saveMeta:()=>db.doc('meta/state').set(JSON.parse(JSON.stringify(meta))),
+    login:()=>auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()),logout:()=>auth.signOut()};
+  auth.onAuthStateChanged(u=>{user=u;render()});
+  const t=setTimeout(()=>say('ยังโหลดข้อมูลจากคลาวด์ไม่ได้ ตรวจอินเทอร์เน็ตหรือการตั้งค่า Firebase'),10000);
+  db.collection('snapshots').onSnapshot(q=>{clearTimeout(t);snaps=q.docs.map(d=>d.data()).filter(valid).sort(byTs);render()},e=>{clearTimeout(t);say('อ่านข้อมูลคลาวด์ไม่ได้: '+e.message)});
+  db.doc('meta/state').onSnapshot(d=>{setMeta(d.exists?d.data():null);render()},()=>{});
+}
+function parseCfg(t){const i=t.indexOf('{'),j=t.lastIndexOf('}');if(i<0||j<i)throw new Error('ไม่พบ { }');let s=t.slice(i,j+1).replace(/([{,]\s*)([A-Za-z_]\w*)\s*:/g,'$1"$2":').replace(/'/g,'"').replace(/,\s*}/g,'}');const o=JSON.parse(s);if(!o.apiKey||!o.projectId)throw new Error('ต้องมี apiKey และ projectId');return o}
+function renderStore(){
+  const cloud=store&&store.kind==='cloud';
+  $('storePill').textContent=cloud?'คลาวด์ · '+store.projectId:'เก็บในเครื่องนี้';$('storePill').classList.toggle('on',!!cloud);
+  $('auth').innerHTML=cloud?(user?`<button class="sm ghost" id="logout" title="${esc(user.email)}">ออกจากระบบ</button>`:`<button class="sm" id="login">เข้าสู่ระบบ Google</button>`):'';
+  const local=(ls.get('tm-snaps')||[]).length;
+  const rules=`rules_version = '2';\nservice cloud.firestore {\n  match /databases/{db}/documents {\n    match /{doc=**} {\n      allow read: if true;\n      allow write: if request.auth != null\n        && request.auth.token.email in ['อีเมลของคุณ@gmail.com'];\n    }\n  }\n}`;
+  $('storeBox').innerHTML=cloud?`<p style="margin-top:0">ใช้ <b>Firebase</b> (${esc(store.projectId)}) — ทุกคนที่เปิดลิงก์เห็นข้อมูลชุดเดียวกัน${user?` · เข้าสู่ระบบเป็น ${esc(user.email)}`:' · <b>เข้าสู่ระบบ</b>เพื่ออัปโหลด/แก้ไข'}</p>
+    ${local&&user?`<button class="sm pri" id="migrate">ย้ายข้อมูลจากเครื่องนี้ขึ้นคลาวด์ (${local} วัน)</button>`:''}
+    ${FB_CONFIG?'':'<p class="note">config อยู่ในเบราว์เซอร์นี้เท่านั้น — ถ้าจะให้ทุกคนใช้คลาวด์อัตโนมัติ ให้วาง config ในตัวแปร FB_CONFIG บนสุดของสคริปต์</p><button class="sm ghost" id="fbOff">เลิกใช้คลาวด์ในเครื่องนี้</button>'}`
+   :`<p style="margin-top:0">ตอนนี้ข้อมูลเก็บใน<b>เบราว์เซอร์เครื่องนี้</b> คนอื่นเปิดลิงก์จะไม่เห็น — กด "สำรองข้อมูล" เป็นระยะ</p>
+    <details><summary>เชื่อม Firebase ให้ทุกคนเห็นข้อมูลชุดเดียวกัน</summary>
+    <ol class="note" style="padding-left:1.2em"><li>สร้างโปรเจกต์ที่ console.firebase.google.com แล้วเพิ่ม Web app</li><li>เปิด Firestore Database และ Authentication → Google</li><li>Authentication → Settings → Authorized domains เพิ่มโดเมนของเว็บนี้ (${esc(location.hostname||'')})</li><li>ตั้ง Firestore Rules ตามนี้ (ใส่อีเมลคนที่อัปโหลดได้)</li></ol>
+    <pre id="rules">${esc(rules)}</pre><button class="sm" id="copyRules">คัดลอก Rules</button>
+    <p class="note">5. วาง firebaseConfig ที่ได้จาก Firebase:</p><textarea id="cfg" placeholder="const firebaseConfig = { apiKey: ..., projectId: ... }"></textarea><div class="row" style="margin-top:8px"><button class="pri sm" id="fbOn">เชื่อมต่อ</button></div></details>`;
+}
+
+/* ---------- upload ---------- */
+const readText=f=>new Promise((ok,no)=>{const rd=new FileReader();rd.onload=()=>ok(rd.result);rd.onerror=()=>no(rd.error);rd.readAsText(f,'utf-8')});
+async function loadFiles(list){
+  const fs=[...list];if(!fs.length)return;const bad=[];
+  for(const f of fs.filter(f=>/\.json$/i.test(f.name)))await importBackup(f);
+  for(const f of fs.filter(f=>!/\.json$/i.test(f.name))){
+    try{const rows=toRows(await readText(f));const m=f.name.match(/(\d{4})(\d{2})(\d{2})[_-]?(\d{2})(\d{2})/);
+      pend=pend.filter(p=>p.file!==f.name).concat({file:f.name,rows,when:m?`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}`:toLocal(new Date(f.lastModified||Date.now())),guess:!m})}catch(er){bad.push(f.name)}}
+  pend.sort((a,b)=>a.when.localeCompare(b.when));renderPend();
+  if(bad.length)say(`อ่านไม่ได้ ${bad.length} ไฟล์: ${bad.join(', ')}`);
+  if(pend.length)$('overview').scrollIntoView({block:'start'});
+}
+function renderPend(){
+  $('drop').classList.toggle('on',pend.length>0);const ex=new Set(snaps.map(s=>s.id));
+  $('dropList').innerHTML=pend.map((p,i)=>`<tr><td>${esc(p.file)}${p.guess?'<div class="why">ชื่อไฟล์ไม่มีวันที่ — ใช้วันที่แก้ไขไฟล์ ตรวจให้ถูกก่อนบันทึก</div>':''}${ex.has(p.when.replace(/[-:T]/g,''))?'<div class="why">มีข้อมูลเวลานี้แล้ว — จะบันทึกทับ</div>':''}</td><td class="n">${p.rows.length}</td><td><input type="datetime-local" data-w="${i}" value="${esc(p.when)}"></td><td><button class="sm ghost" data-x="${i}" aria-label="เอาออก">×</button></td></tr>`).join('');
+  $('save').textContent=`บันทึก ${pend.length} ไฟล์`;
+}
+async function importBackup(f){
+  try{const j=JSON.parse(await readText(f));const arr=(Array.isArray(j)?j:j.snaps||[]).filter(valid);
+    if(!Array.isArray(j)&&j.meta){const m=j.meta;setMeta({...meta,exempt:{...meta.exempt,...m.exempt},renames:{...meta.renames,...m.renames},notRename:{...meta.notRename,...m.notRename},kicks:[...meta.kicks.filter(k=>!(m.kicks||[]).some(x=>x.name===k.name&&x.ts===k.ts)),...(m.kicks||[])],settings:{...meta.settings,...m.settings}});saveMeta()}
+    if(arr.length)await saveSnaps(arr);say(`นำเข้า ${arr.length} วันแล้ว`)}catch(er){say('ไฟล์สำรองไม่ถูกต้อง')}
+}
+
+/* ---------- events ---------- */
 function setSeg(id,v){[...$(id).children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v==v))}
 $('mode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.v;setSeg('mode',mode);drawChart()};
 $('range').onclick=e=>{const b=e.target.closest('button');if(!b)return;range=+b.dataset.v;setSeg('range',range);render()};
 $('pick').onchange=e=>{const n=e.target.value;picked=picked||[];if(model&&model.P.some(p=>p.name===n)&&!picked.includes(n)){picked.push(n);if(picked.length>10)picked.shift()}e.target.value='';drawChart()};
 document.addEventListener('click',e=>{
-  const p=e.target.closest('[data-p]');if(p){const n=p.dataset.p;picked=picked||[];if(!picked.includes(n))picked.unshift(n);picked=picked.slice(0,10);mode='person';setSeg('mode',mode);drawChart();$('chart').scrollIntoView({behavior:'smooth',block:'center'});return}
-  const rm=e.target.closest('[data-rm]');if(rm){picked=(picked||[]).filter(n=>n!==rm.dataset.rm);drawChart();return}
-  const c=e.target.closest('[data-c]');if(c){fClass=fClass===c.dataset.c?'':c.dataset.c;$('fClass').value=fClass;render();return}
-  const th=e.target.closest('th[data-k]');if(th){const k=th.dataset.k;sortD=sortK===k?-sortD:(['name','cls','rank'].includes(k)?1:-1);sortK=k;renderTable();return}
-  const del=e.target.closest('[data-del]');if(del){const id=del.dataset.del;if(delArm!==id){delArm=id;renderSnaps();return}delArm=null;snaps=snaps.filter(s=>s.id!==id);persist();render();return}
+  const t=e.target,cl=s=>t.closest(s);let el;
+  if(t.id==='modal'||cl('#pClose')){closeProfile();return}
+  if(el=cl('[data-p]')){openProfile(el.dataset.p);return}
+  if(el=cl('[data-rm]')){picked=(picked||[]).filter(n=>n!==el.dataset.rm);drawChart();return}
+  if(el=cl('[data-c]')){fClass=fClass===el.dataset.c?'':el.dataset.c;render();return}
+  if(el=cl('th[data-k]')){const k=el.dataset.k;sortD=sortK===k?-sortD:(['name','cls','rank'].includes(k)?1:-1);sortK=k;renderTable();return}
+  if(el=cl('[data-kick]')){if(!canWrite()){say('ต้องเข้าสู่ระบบก่อน');return}recordKick(el.dataset.kick);return}
+  if(el=cl('[data-unkick]')){if(!canWrite())return;meta.kicks=meta.kicks.filter(k=>String(k.ts)!==el.dataset.unkick);saveMeta();return}
+  if(el=cl('[data-ren]')){if(!canWrite()){say('ต้องเข้าสู่ระบบก่อน');return}meta.renames[el.dataset.ren]=el.dataset.to;for(const k of ['exempt']){if(meta[k][el.dataset.ren]&&!meta[k][el.dataset.to]){meta[k][el.dataset.to]=meta[k][el.dataset.ren]}}saveMeta();return}
+  if(el=cl('[data-noren]')){if(!canWrite())return;meta.notRename[el.dataset.noren+'>'+el.dataset.to]=1;saveMeta();return}
+  if(el=cl('[data-del]')){const id=el.dataset.del;if(delArm!==id){delArm=id;renderSnaps();return}delArm=null;store.delSnap(id).catch(er=>say('ลบไม่สำเร็จ: '+er.message));return}
+  if(el=cl('[data-x]')){pend.splice(+el.dataset.x,1);renderPend();return}
+  if(t.id==='login'){store.login().catch(er=>say('เข้าสู่ระบบไม่สำเร็จ: '+er.message));return}
+  if(t.id==='logout'){store.logout();return}
+  if(t.id==='copyRules'){navigator.clipboard.writeText($('rules').textContent).then(()=>say('คัดลอก Rules แล้ว'),()=>{});return}
+  if(t.id==='fbOn'){try{const c=parseCfg($('cfg').value);ls.set('tm-fb',c);say('กำลังเชื่อมต่อ…');useCloud(c).then(()=>say('เชื่อม Firebase แล้ว — เข้าสู่ระบบเพื่ออัปโหลด')).catch(er=>{say('เชื่อมไม่ได้: '+er.message);useLocal()})}catch(er){say('config ไม่ถูกต้อง: '+er.message)}return}
+  if(t.id==='fbOff'){localStorage.removeItem('tm-fb');location.reload();return}
+  if(t.id==='migrate'){const arr=(ls.get('tm-snaps')||[]).filter(valid);const m=ls.get('tm-meta');if(m){setMeta({...m,...meta,kicks:[...(m.kicks||[]),...meta.kicks]})}
+    saveSnaps(arr).then(()=>{if(m)return store.saveMeta()}).then(()=>say(`ย้าย ${arr.length} วันขึ้นคลาวด์แล้ว`)).catch(()=>{});return}
 });
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('modal').hidden)closeProfile()});
 $('q').oninput=renderTable;$('fStat').onchange=renderTable;$('fClass').onchange=e=>{fClass=e.target.value;render()};
-for(const [id,k] of [['sAct','minAct'],['sOff','offDays'],['sStag','stagDays']]){$(id).value=S[k];$(id).onchange=e=>{const v=+e.target.value;if(v>=0){S[k]=v;try{localStorage.setItem('tm-set',JSON.stringify(S))}catch(er){}render()}}}
-$('copyKick').onclick=async()=>{if(!model)return;const t=model.P.filter(p=>p.sev===2).map(p=>p.name).join('\n');try{await navigator.clipboard.writeText(t);$('copied').textContent='คัดลอกแล้ว'}catch(e){$('copied').textContent='คัดลอกไม่ได้ในหน้านี้'}};
-
-function say(t){$('msg').textContent=t}
-function pad(n){return String(n).padStart(2,'0')}
-const readText=f=>new Promise((ok,no)=>{const rd=new FileReader();rd.onload=()=>ok(rd.result);rd.onerror=()=>no(rd.error);rd.readAsText(f,'utf-8')});
-const toLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-let pend=[];
-async function loadFiles(list){
-  const fs=[...list];if(!fs.length)return;
-  const js=fs.filter(f=>/\.json$/i.test(f.name));if(js.length){const dt=new DataTransfer();js.forEach(f=>dt.items.add(f));$('imp').files=dt.files;$('imp').dispatchEvent(new Event('change'))}
-  const bad=[];
-  for(const f of fs.filter(f=>!/\.json$/i.test(f.name))){
-    try{const rows=toRows(await readText(f));const m=f.name.match(/(\d{4})(\d{2})(\d{2})[_-]?(\d{2})(\d{2})/);
-      const when=m?`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}`:toLocal(new Date(f.lastModified||Date.now()));
-      pend=pend.filter(p=>p.file!==f.name).concat({file:f.name,rows,when,guess:!m})}catch(er){bad.push(f.name)}
-  }
-  pend.sort((a,b)=>a.when.localeCompare(b.when));renderPend();
-  say(bad.length?`อ่านไม่ได้ ${bad.length} ไฟล์: ${bad.join(', ')}`:'');
-}
-function renderPend(){
-  $('drop').classList.toggle('on',pend.length>0);
-  const ex=new Set(snaps.map(s=>s.id));
-  $('dropList').innerHTML=pend.map((p,i)=>`<tr><td>${esc(p.file)}${p.guess?'<div class="why">ชื่อไฟล์ไม่มีวันที่ — ใช้วันที่แก้ไขไฟล์ ตรวจให้ถูกก่อนบันทึก</div>':''}${ex.has(p.when.replace(/[-:T]/g,''))?'<div class="why">มีข้อมูลเวลานี้แล้ว — จะบันทึกทับ</div>':''}</td><td class="n">${p.rows.length}</td><td><input type="datetime-local" data-w="${i}" value="${esc(p.when)}"></td><td><button data-x="${i}" aria-label="เอาออก">×</button></td></tr>`).join('');
-  $('save').textContent=`บันทึก ${pend.length} ไฟล์`;
-}
+for(const k of Object.keys(DEF)){$('s'+k).onchange=e=>{const v=+e.target.value;if(!isNaN(v)&&v>=0){meta.settings={...meta.settings,[k]:v};S={...DEF,...meta.settings};saveMeta()}}}
+const syncSettings=()=>{for(const k of Object.keys(DEF))if(document.activeElement!==$('s'+k))$('s'+k).value=S[k]};
+$('copyKick').onclick=async()=>{try{await navigator.clipboard.writeText(kickText());$('copied').textContent='คัดลอกแล้ว — วางใน Discord/LINE ได้เลย'}catch(e){$('copied').textContent='คัดลอกไม่ได้ในหน้านี้'}};
+$('imgKick').onclick=kickImage;
+$('exp').onclick=()=>{const b=new Blob([JSON.stringify({version:2,snaps,meta})],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='themoon-backup-'+dstr(Date.now())+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000)};
+$('imp').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)importBackup(f)};
 $('dropList').onchange=e=>{const i=e.target.dataset.w;if(i!=null){pend[i].when=e.target.value;pend[i].guess=false;renderPend()}};
-$('dropList').onclick=e=>{const b=e.target.closest('[data-x]');if(b){pend.splice(+b.dataset.x,1);renderPend()}};
 $('file').onchange=e=>{loadFiles(e.target.files);e.target.value=''};
 let dragN=0;
 document.addEventListener('dragenter',e=>{e.preventDefault();dragN++;document.body.classList.add('dragging')});
@@ -308,20 +546,16 @@ document.addEventListener('dragleave',()=>{if(--dragN<=0){dragN=0;document.body.
 document.addEventListener('dragover',e=>e.preventDefault());
 document.addEventListener('drop',e=>{e.preventDefault();dragN=0;document.body.classList.remove('dragging');loadFiles(e.dataTransfer.files)});
 $('cancel').onclick=()=>{pend=[];renderPend()};
-$('save').onclick=()=>{
-  if(!pend.length)return;
-  for(const p of pend){if(!p.when||isNaN(new Date(p.when).getTime())){say('ใส่วันเวลาให้ครบทุกไฟล์');return}}
-  const m=new Map(snaps.map(s=>[s.id,s]));
-  for(const p of pend){const ts=new Date(p.when).getTime(),id=p.when.replace(/[-:T]/g,'').slice(0,12);m.set(id,{id,ts,file:p.file,rows:p.rows})}
-  const n=pend.length;snaps=[...m.values()].sort((a,b)=>a.ts-b.ts);persist();pend=[];renderPend();render();
-  say(col?`บันทึก ${n} ไฟล์แล้ว`:'แสดงผลแล้ว แต่เบราว์เซอร์นี้บันทึกถาวรไม่ได้');
+$('save').onclick=async()=>{
+  if(!pend.length)return;if(!canWrite()){say('ต้องเข้าสู่ระบบก่อนอัปโหลด');return}
+  for(const p of pend)if(!p.when||isNaN(new Date(p.when).getTime())){say('ใส่วันเวลาให้ครบทุกไฟล์');return}
+  const list=pend.map(p=>({id:p.when.replace(/[-:T]/g,'').slice(0,12),ts:new Date(p.when).getTime(),file:p.file,rows:p.rows}));
+  $('save').disabled=true;try{await saveSnaps(list);say(`บันทึก ${list.length} ไฟล์แล้ว`);pend=[];renderPend()}catch(e){}$('save').disabled=false;
 };
 
-function persist(){if(!col)return;try{localStorage.setItem('tm-snaps',JSON.stringify(snaps))}catch(e){say('พื้นที่เก็บข้อมูลในเบราว์เซอร์เต็ม — สำรองข้อมูลแล้วลบวันที่เก่าออก')}}
-try{const raw=localStorage.getItem('tm-snaps');col=true;if(raw)snaps=JSON.parse(raw).filter(x=>x&&Array.isArray(x.rows)&&typeof x.ts=='number').sort((a,b)=>a.ts-b.ts)}catch(e){col=null}
-$('exp').onclick=()=>{const b=new Blob([JSON.stringify(snaps)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='themoon-backup-'+dstr(Date.now())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
-$('imp').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const arr=JSON.parse(rd.result).filter(x=>x&&Array.isArray(x.rows)&&typeof x.ts=='number');const m=new Map(snaps.map(s=>[s.id,s]));arr.forEach(s=>m.set(s.id,s));snaps=[...m.values()].sort((a,b)=>a.ts-b.ts);persist();render();say(`นำเข้า ${arr.length} วันแล้ว`)}catch(er){say('ไฟล์สำรองไม่ถูกต้อง')}};rd.readAsText(f)};
-render();
+/* ---------- start ---------- */
+const cfg=FB_CONFIG||ls.get('tm-fb');
+if(cfg){setMeta(null);render();useCloud(cfg).catch(er=>{say('เชื่อม Firebase ไม่ได้ ใช้ข้อมูลในเครื่องแทน: '+er.message);useLocal()})}else useLocal();
 }
 </script>
 </body>
