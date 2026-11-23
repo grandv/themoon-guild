@@ -46,7 +46,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,.btn:focus-within{
 .chip button{min-height:0;border:0;background:none;padding:0 0 0 4px;font-size:13px}
 .grid2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px}
 @media(max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
-.crow{display:grid;grid-template-columns:9.5em minmax(0,1fr) 4.5em;gap:10px;align-items:center;padding:7px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;border-radius:0;width:100%;text-align:left;font-weight:400;min-height:44px}
+.crow{display:grid;grid-template-columns:12em minmax(0,1fr) 4.5em;gap:10px;align-items:center;padding:7px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;border-radius:0;width:100%;text-align:left;font-weight:400;min-height:44px}
 .crow:hover,.crow[aria-pressed=true]{background:var(--panel)}
 .track{height:12px;display:flex;border-radius:3px;overflow:hidden;background:var(--panel)}
 .track i{display:block;height:100%}
@@ -66,9 +66,11 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .snaps td{font-size:14px}
 .empty{padding:48px 16px;text-align:center;color:var(--mute)}
 #msg{min-height:1.5em;font-size:14px}
+.job{vertical-align:middle;margin-right:6px;border-radius:50%;flex:none}
+.cls{display:inline-flex;align-items:center;white-space:nowrap}
 body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (หลายไฟล์ได้)';position:fixed;inset:12px;border:3px dashed var(--acc);border-radius:16px;background:color-mix(in srgb,var(--bg) 85%,transparent);display:grid;place-items:center;font:700 24px 'Chakra Petch','IBM Plex Sans Thai',sans-serif;z-index:9;pointer-events:none}
 .drop td input{width:auto}
-@media(max-width:600px){.crow{grid-template-columns:7.5em minmax(0,1fr) 4em}.hide-s{display:none}}
+@media(max-width:600px){.crow{grid-template-columns:10em minmax(0,1fr) 4em}.hide-s{display:none}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -138,6 +140,9 @@ const fmt=n=>n==null||isNaN(n)?'–':Math.round(n).toLocaleString('en-US');
 const sgn=n=>n==null?'–':(n>0?'+':'')+fmt(n);
 const DAY=864e5;
 const ST=['Active','เฝ้าระวัง','เสี่ยงเตะ'];
+const JOB={'Lord Knight':213,'Paladin':223,'High Wizard':313,'Professor':323,'Scholar':323,'Sniper':413,'Clown':423,'Minstrel':423,'Gypsy':433,'High Priest':513,'Champion':523,'Assassin Cross':613,'Stalker':623,'Whitesmith':713,'Mastersmith':713,'Creator':723,'Biochemist':723,'Night Walker':813,'อาลิเทีย':913,
+ 'Knight':212,'Crusader':222,'Wizard':312,'Sage':322,'Hunter':412,'Bard':422,'Dancer':432,'Priest':512,'Monk':522,'Assassin':612,'Rogue':622,'Blacksmith':712,'Alchemist':722,'Rebel':812,'คานอส':912};
+const ico=(c,sz=24)=>{const id=JOB[c];return id?`<img class="job" src="https://roworlddb.com/media/images/job/icon_jsxq_big_${id}.webp" width="${sz}" height="${sz}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''};
 const PAL=['#3b4bd8','#e4002b','#13a36b','#e08a00','#8e44ad','#0aa4c2','#d6336c','#6b7a00','#7a5230','#5c6bc0','#00897b','#b0662c','#7d8597'];
 let S={minAct:150,offDays:3,stagDays:7};
 try{Object.assign(S,JSON.parse(localStorage.getItem('tm-set')||'{}'))}catch(e){}
@@ -199,11 +204,11 @@ function render(){
   // classes
   const C={};P.forEach(p=>{(C[p.cls]=C[p.cls]||{n:0,g:0,s:[0,0,0]});C[p.cls].n++;C[p.cls].g+=p.gear;C[p.cls].s[p.sev]++});
   const cl=Object.entries(C).sort((a,b)=>b[1].n-a[1].n);
-  $('classes').innerHTML=cl.map(([k,v])=>`<button class="crow" data-c="${esc(k)}" aria-pressed="${fClass===k}"><span><b>${esc(k)}</b> <span class="note">${v.n} คน</span></span><span class="track">${v.s.map((x,i)=>`<i style="width:${x/v.n*100}%;background:var(${['--good','--warn','--bad'][i]})"></i>`).join('')}</span><span class="r num">${fmt(v.g/v.n)}</span></button>`).join('');
+  $('classes').innerHTML=cl.map(([k,v])=>`<button class="crow" data-c="${esc(k)}" aria-pressed="${fClass===k}"><span class="cls">${ico(k,30)}<span><b>${esc(k)}</b> <span class="note">${v.n} คน</span></span></span><span class="track">${v.s.map((x,i)=>`<i style="width:${x/v.n*100}%;background:var(${['--good','--warn','--bad'][i]})"></i>`).join('')}</span><span class="r num">${fmt(v.g/v.n)}</span></button>`).join('');
   const fc=$('fClass'),cur=fc.value;fc.innerHTML='<option value="">ทุกอาชีพ</option>'+cl.map(([k])=>`<option>${esc(k)}</option>`).join('');fc.value=fClass||cur;
   // kick
   const K=P.filter(p=>p.sev===2).sort((a,b)=>a.act-b.act||b.oh-a.oh);
-  $('kick').innerHTML=K.length?`<ol>${K.map(p=>`<li><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button> <span class="note">${esc(p.cls)} · ${esc(p.rank)}</span><div class="why">${p.why.map(esc).join(' · ')}</div></li>`).join('')}</ol>`:'<p class="note">ไม่มีใครเข้าเกณฑ์ 🎉</p>';
+  $('kick').innerHTML=K.length?`<ol>${K.map(p=>`<li><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button> <span class="note cls">${ico(p.cls,20)}${esc(p.cls)} · ${esc(p.rank)}</span><div class="why">${p.why.map(esc).join(' · ')}</div></li>`).join('')}</ol>`:'<p class="note">ไม่มีใครเข้าเกณฑ์ 🎉</p>';
   $('moves').innerHTML=model.prevS?`<p class="note" style="margin:0">เทียบกับ ${dtTh(model.prevS.ts)}: ออกไป ${model.left.length} คน${model.left.length?' ('+model.left.map(esc).join(', ')+')':''} · เข้าใหม่ ${model.joined.length} คน${model.joined.length?' ('+model.joined.map(esc).join(', ')+')':''}</p>`:'';
   $('names').innerHTML=P.map(p=>`<option value="${esc(p.name)}">`).join('');
   renderTable();renderSnaps();drawChart();
@@ -217,12 +222,13 @@ function renderTable(){
   let R=model.P.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!fClass||p.cls===fClass)&&(fs===''||p.sev==fs));
   R.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)x=-Infinity;if(y==null)y=-Infinity;return typeof x=='string'?x.localeCompare(y,'th')*sortD:(x-y)*sortD});
   $('count').textContent=`แสดง ${R.length} จาก ${model.P.length} คน`+(fClass?` · อาชีพ ${fClass}`:'');
-  $('rows').innerHTML=R.map(p=>`<tr><td><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button></td><td>${esc(p.cls)}</td><td>${esc(p.rank)}</td><td class="n">${fmt(p.gear)}</td><td class="n ${p.dG>0?'up':''}">${model.daySn.length>1?sgn(p.dG):'–'}</td><td class="n" style="${p.act<S.minAct?'color:var(--bad)':''}">${p.act}</td><td class="n">${fmt(p.cw)}</td><td class="n">${fmt(p.ct)}</td><td class="n">${offTxt(p.oh)}</td><td><span class="st s${p.sev}">${ST[p.sev]}</span>${p.why.length?`<div class="why">${p.why.map(esc).join(' · ')}</div>`:''}</td></tr>`).join('');
+  $('rows').innerHTML=R.map(p=>`<tr><td><button class="lnk" data-p="${esc(p.name)}">${esc(p.name)}</button></td><td><span class="cls">${ico(p.cls)}${esc(p.cls)}</span></td><td>${esc(p.rank)}</td><td class="n">${fmt(p.gear)}</td><td class="n ${p.dG>0?'up':''}">${model.daySn.length>1?sgn(p.dG):'–'}</td><td class="n" style="${p.act<S.minAct?'color:var(--bad)':''}">${p.act}</td><td class="n">${fmt(p.cw)}</td><td class="n">${fmt(p.ct)}</td><td class="n">${offTxt(p.oh)}</td><td><span class="st s${p.sev}">${ST[p.sev]}</span>${p.why.length?`<div class="why">${p.why.map(esc).join(' · ')}</div>`:''}</td></tr>`).join('');
 }
 function renderSnaps(){
   $('snaps').innerHTML=[...snaps].reverse().map(s=>`<tr><td>${dtTh(s.ts)}</td><td class="n">${s.rows.length} คน</td><td class="note">${esc(s.file||'')}</td><td class="n">${col?`<button data-del="${esc(s.id)}">${delArm===s.id?'ยืนยันลบ':'ลบ'}</button>`:''}</td></tr>`).join('');
 }
 
+const IMG={};function icoImg(c){const id=JOB[c];if(!id)return 'circle';if(!IMG[id]){const im=new Image(18,18);im.referrerPolicy='no-referrer';im.onload=()=>{if(mode==='class')drawChart()};im.src=`https://roworlddb.com/media/images/job/icon_jsxq_big_${id}.webp`;IMG[id]=im}return IMG[id].complete&&IMG[id].naturalWidth?IMG[id]:'circle'}
 function drawChart(){
   if(typeof Chart=='undefined'){$('chartNote').textContent='โหลดไลบรารีกราฟไม่สำเร็จ';return}
   const ink=cssv('--ink')||'#888',line=cssv('--line')||'#ddd',mute=cssv('--mute')||'#888';
@@ -238,7 +244,7 @@ function drawChart(){
       ds=[['เฉลี่ยทั้งกิลด์',avg,PAL[0]],['มัธยฐาน',med,PAL[3]],['เฉลี่ย Top 10',top,PAL[2]]].map(([l,d,c])=>({label:l,data:d,borderColor:c,backgroundColor:c}));
     }else if(mode==='class'){
       const cls=[...new Set(model.P.map(p=>p.cls))].sort((a,b)=>model.P.filter(p=>p.cls===b).length-model.P.filter(p=>p.cls===a).length);
-      ds=cls.map((c,i)=>({label:c,data:R(s=>{const g=s.rows.filter(r=>r[2]===c);return g.length?g.reduce((a,r)=>a+r[6],0)/g.length:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],hidden:!!fClass&&c!==fClass}));
+      ds=cls.map((c,i)=>({label:c,data:R(s=>{const g=s.rows.filter(r=>r[2]===c);return g.length?g.reduce((a,r)=>a+r[6],0)/g.length:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],hidden:!!fClass&&c!==fClass,pointStyle:icoImg(c)}));
     }else{
       if(picked==null)picked=[...model.P].sort((a,b)=>(b.dG??0)-(a.dG??0)||b.gear-a.gear).slice(0,5).map(p=>p.name);
       ds=picked.map((n,i)=>({label:n,data:R(s=>{const r=s.rows.find(r=>r[0]===n);return r?r[6]:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]}));
@@ -250,7 +256,7 @@ function drawChart(){
   let miss=[];if(model&&model.daySn.length>1){const have=new Set(model.daySn.map(s=>dstr(s.ts)));const a=new Date(model.daySn[0].ts);a.setHours(12,0,0,0);for(let t=a.getTime();t<model.daySn[model.daySn.length-1].ts;t+=DAY){if(!have.has(dstr(t)))miss.push(t)}}
   $('chartNote').textContent=!model?'':model.daySn.length<2?'มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม':`มีข้อมูล ${model.daySn.length} วัน`+(miss.length?` · ขาด ${miss.length} วัน (${miss.slice(0,12).map(dTh).join(', ')}${miss.length>12?' …':''}) เส้นประ = ช่วงที่ไม่มีไฟล์`:'')+' · ใช้ไฟล์ล่าสุดของแต่ละวัน · กดชื่อใต้กราฟเพื่อซ่อน/แสดงเส้น';
   const opt={responsive:true,maintainAspectRatio:false,animation:matchMedia('(prefers-reduced-motion: reduce)').matches?false:{duration:300},interaction:{mode:'nearest',intersect:false},
-    plugins:{legend:{position:'bottom',labels:{color:ink,boxWidth:12,font:{family:'IBM Plex Sans Thai',size:13}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
+    plugins:{legend:{position:'bottom',labels:{color:ink,boxWidth:12,usePointStyle:mode==='class',font:{family:'IBM Plex Sans Thai',size:13}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
     scales:{x:{ticks:{color:mute},grid:{color:line}},y:{ticks:{color:mute,callback:v=>fmt(v)},grid:{color:line}}}};
   if(chart){chart.data={labels,datasets:ds};chart.options=opt;chart.update()}else chart=new Chart($('chart'),{type:'line',data:{labels,datasets:ds},options:opt});
 }
