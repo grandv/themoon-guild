@@ -467,7 +467,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 {
-/* วาง Firebase config ตรงนี้ เพื่อให้ทุกคนที่เปิดลิงก์เห็นข้อมูลชุดเดียวกัน (หรือวางในหน้า ตั้งค่า) */
+/* วาง config ตรงนี้ เพื่อให้ทุกคนที่เปิดลิงก์เห็นข้อมูลชุดเดียวกัน (หรือวางในหน้า ตั้งค่า) */
 const FB_CONFIG={apiKey:"AIzaSyA_Np440xRhf0eS7NCa1BRNir0wqs5-2aw",authDomain:"themoon-guild.firebaseapp.com",projectId:"themoon-guild",storageBucket:"themoon-guild.firebasestorage.app",messagingSenderId:"72247970064",appId:"1:72247970064:web:e2181b8bb95dce554b3d95"};
 
 const $=id=>document.getElementById(id);
@@ -497,7 +497,7 @@ const D={
 "เหตุผล (ไม่บังคับ · เห็นเฉพาะหัวหน้า)":["Reason (optional · shown to leaders only)", "Alasan (opsional · hanya pemimpin)", "Dahilan (opsyonal · leaders lang)"],
 "บันทึกการลา":["Save leave", "Simpan izin", "I-save"],
 "ยกเลิกการลานี้":["Cancel this leave", "Batalkan izin", "I-cancel"],
-"ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะแจ้งลาได้":["Firebase rules must be updated before members can request leave", "Aturan Firebase harus diperbarui dulu", "Kailangang i-update ang Firebase rules"],
+"ต้องอัปเดตกฎฐานข้อมูล ก่อน สมาชิกถึงจะแจ้งลาได้":["database rules must be updated before members can request leave", "Aturan database harus diperbarui dulu", "Kailangang i-update ang database rules"],
 "ยกเลิกการลาแล้ว":["Leave cancelled", "Izin dibatalkan", "Na-cancel"],
 "บันทึกการลาแล้ว — ชื่อในหน้าปาร์ตี้จะขึ้นว่าลา":["Leave saved — your name shows as on leave in parties", "Izin tersimpan — nama ditandai izin", "Na-save — naka-leave ka sa party"],
 "ไม่พบชื่อนี้ในรายชื่อกิลด์ล่าสุด":["Name not found in the latest roster", "Nama tidak ditemukan", "Hindi nakita ang pangalan"],
@@ -755,13 +755,13 @@ const D={
 "ฮีล/ซัพพอร์ต":["Healer/Support", "Healer/Support", "Healer/Support"],
 "DPS ระยะประชิด":["Melee DPS", "DPS jarak dekat", "Melee DPS"],
 "DPS ระยะไกล/AOE":["Ranged DPS/AOE", "DPS jarak jauh/AOE", "Ranged DPS/AOE"],
-"ต้องอัปเดตกฎ Firebase ก่อน (เมนู สิทธิ์เข้าดู)":["Firebase rules need updating first (Access menu)", "Aturan Firebase perlu diperbarui dulu (menu Akses)", "Kailangan munang i-update ang Firebase rules (Access menu)"],
+"ระบบยังไม่เปิดสิทธิ์นี้ — แจ้งหัวหน้ากิลด์":["database rules need updating first (Access menu)", "Aturan database perlu diperbarui dulu (menu Akses)", "Kailangan munang i-update ang database rules (Access menu)"],
 "ตัวละครของฉัน":["My character", "Karakter saya", "Aking character"],
 "เปลี่ยน":["Change", "Ganti", "Palitan"],
 "เลือกตัวละครของคุณก่อน":["Pick your character first", "Pilih karaktermu dulu", "Piliin muna ang character mo"],
-"ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะลงชื่อได้ — เมนู \"สิทธิ์เข้าดู\" → กฎ Firebase → คัดลอกไปวางใน Firebase Console":["Update the Firebase rules before members can sign up — Access menu → Firebase rules → paste into Firebase Console", "Perbarui aturan Firebase agar anggota bisa mendaftar — menu Akses → aturan Firebase → tempel di Firebase Console", "I-update ang Firebase rules para makapag-sign up ang miyembro — Access menu → Firebase rules → i-paste sa Firebase Console"],
+"ต้องอัปเดตกฎฐานข้อมูล ก่อน สมาชิกถึงจะลงชื่อได้ — เมนู \"สิทธิ์เข้าดู\" → กฎฐานข้อมูล → คัดลอกไปวางใน database console":["Update the database rules before members can sign up — Access menu → database rules → paste into database console", "Perbarui aturan database agar anggota bisa mendaftar — menu Akses → aturan database → tempel di database console", "I-update ang database rules para makapag-sign up ang miyembro — Access menu → database rules → i-paste sa database console"],
 "ระบบลงชื่อยังไม่เปิด — รอหัวหน้าตั้งค่า":["Sign-up is not open yet — waiting for the leader", "Pendaftaran belum dibuka — menunggu ketua", "Hindi pa bukas ang sign-up — hinihintay ang leader"],
-"ใช้ได้เมื่อเชื่อม Firebase":["Available when connected to Firebase", "Tersedia saat terhubung ke Firebase", "Magagamit kapag naka-connect sa Firebase"],
+"ใช้ได้เมื่อเชื่อมฐานข้อมูล":["Available when connected to the database", "Tersedia saat terhubung ke database", "Magagamit kapag naka-connect sa database"],
 "ได้รับแล้ว":["Given to", "Sudah diberikan", "Naibigay kay"],
 "ได้ไปแล้ว":["already got", "sudah dapat", "nakakuha na"],
 "ให้ไอเทม":["Give item", "Beri item", "Ibigay"],
@@ -968,15 +968,15 @@ const D={
 'เพิ่มสมาชิกเองด้วยอีเมล':['Add a member by email','Tambah anggota lewat email','Magdagdag gamit ang email'],
 'อีเมล Google':['Google email','Email Google','Google email'],
 'เพิ่ม':['Add','Tambah','Idagdag'],
-'กฎ Firebase สำหรับเปิดสิทธิ์ทันทีหลังเชื่อมตัวละคร':['Firebase rules for instant access after linking','Aturan Firebase untuk akses instan setelah menautkan','Firebase rules para instant access pagka-link'],
-'วางใน Firebase Console → Firestore → Rules แล้วกด Publish (ทำครั้งเดียว ทำจากมือถือก็ได้)':['Paste in Firebase Console → Firestore → Rules and press Publish (once; works from a phone too)','Tempel di Firebase Console → Firestore → Rules lalu tekan Publish (sekali saja, bisa dari HP)','I-paste sa Firebase Console → Firestore → Rules at pindutin ang Publish (isang beses lang, puwede sa phone)'],
+'กฎฐานข้อมูล สำหรับเปิดสิทธิ์ทันทีหลังเชื่อมตัวละคร':['database rules for instant access after linking','Aturan database untuk akses instan setelah menautkan','database rules para instant access pagka-link'],
+'แจ้งผู้ดูแลระบบเพื่ออัปเดต':['Ask the site admin to update (once; works from a phone too)','Minta admin situs untuk memperbarui Publish (sekali saja, bisa dari HP)','Hilingin sa admin na i-update ang Publish (isang beses lang, puwede sa phone)'],
 'คัดลอก':['Copy','Salin','Kopyahin'],
 'คัดลอกแล้ว':['Copied','Tersalin','Nakopya'],
 'คัดลอกแล้ว — วางใน Discord/LINE ได้เลย':['Copied — paste into Discord/LINE','Tersalin — tempel di Discord/LINE','Nakopya — i-paste sa Discord/LINE'],
 'คัดลอกไม่ได้ในหน้านี้':['Copy not allowed here','Tidak bisa menyalin di sini','Bawal kumopya dito'],
 'ทำไม่สำเร็จ':['Failed','Gagal','Nabigo'],
 'ไม่มีสิทธิ์ทำรายการนี้':['You do not have permission for this','Kamu tidak punya izin','Wala kang permiso dito'],
-'ข้อมูลเก็บบน Firebase — เฉพาะคนที่ได้รับสิทธิ์เห็นข้อมูล':['Data is stored on Firebase — only approved people can see it','Data disimpan di Firebase — hanya yang berwenang bisa melihat','Nasa Firebase ang data — ang may access lang ang nakakakita'],
+'ข้อมูลเก็บบนฐานข้อมูลออนไลน์ของกิลด์ — เฉพาะคนที่ได้รับสิทธิ์เห็นข้อมูล':['Data is stored on the guild database — only approved people can see it','Data disimpan di database — hanya yang berwenang bisa melihat','Nasa database ang data — ang may access lang ang nakakakita'],
 'เข้าสู่ระบบเป็น':['Signed in as','Masuk sebagai','Naka-sign in bilang'],
 'ย้ายข้อมูลจากเครื่องนี้ขึ้นคลาวด์':['Move this device’s data to the cloud','Pindahkan data perangkat ini ke cloud','Ilipat sa cloud ang data ng device na ito'],
 'ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ — กด "สำรองข้อมูล" เป็นระยะ':['Data is kept in this browser — back up regularly','Data disimpan di browser ini — cadangkan secara rutin','Nasa browser na ito ang data — mag-back up palagi'],
@@ -1097,7 +1097,9 @@ const JOB={'Lord Knight':213,'Paladin':223,'High Wizard':313,'Professor':323,'Sc
 const icoUrl=id=>`https://roworlddb.com/media/images/job/icon_jsxq_big_${id}.webp`;
 const ico=(c,sz=24)=>{const id=JOB[c];return id?`<img class="job" src="${icoUrl(id)}" width="${sz}" height="${sz}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''};
 const DEF={minAct:150,offDays:3,stagDays:7,grace:7,lowWeeks:2,resetDay:1,hideRisk:1};
-const OWNERS=['grandlinez@gmail.com'];
+const OWNER_H=['4862287f03a0a151e0b85a0e95334f0324b86b273307efdbf874d290ab0a0df0'];let ownerSet=new Set();const ownChecked=new Set();
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(String(s).toLowerCase()));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function markOwners(list){let ch=false;for(const e of list){if(!e||ownChecked.has(e))continue;ownChecked.add(e);try{if(OWNER_H.includes(await sha(e))){ownerSet.add(e);ch=true}}catch(_){}}return ch}
 let role=null,gate=null,myReq=null,members=[],roster=[],FB=null,dataOn=false,authUnsubs=[],dataUnsubs=[],rosterSynced=false;
 const isCloud=()=>!!store&&store.kind==='cloud';
 let viewAs=(()=>{try{return sessionStorage.getItem('tm-viewas')||'admin'}catch(e){return 'admin'}})();
@@ -1487,10 +1489,11 @@ async function useCloud(cfg){
     saveMeta:()=>db.doc('meta/state').set(JSON.parse(JSON.stringify(meta))),
     login:()=>auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()),logout:()=>auth.signOut()};
   setGate('checking');
-  auth.onAuthStateChanged(u=>{
+  auth.onAuthStateChanged(async u=>{
+    if(u)await markOwners([u.email]);
     user=u;authUnsubs.forEach(f=>f());authUnsubs=[];stopData();role=null;myReq=null;
     if(!u){setGate('login');return}
-    if(OWNERS.includes(u.email)){role='owner';authUnsubs.push(db.doc('members/'+u.email).onSnapshot(d=>{myReq=d.exists?d.data():null;render();renderAuction();renderParty()},()=>{}));startData();return}
+    if(ownerSet.has(u.email)){role='owner';authUnsubs.push(db.doc('members/'+u.email).onSnapshot(d=>{myReq=d.exists?d.data():null;render();renderAuction();renderParty()},()=>{}));startData();return}
     setGate('checking');
     authUnsubs.push(db.doc('members/'+u.email).onSnapshot(d=>{
       myReq=d.exists?d.data():null;
@@ -1511,7 +1514,7 @@ function startData(){
   dataUnsubs.push(db.collection('leaves').onSnapshot(q=>{leaves=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.l=false;rerLeave()},()=>{rulesOld.l=true;rerLeave()}));
   dataUnsubs.push(db.collection('event_signups').onSnapshot(q=>{signups=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.s=false;renderParty()},()=>{rulesOld.s=true;renderParty()}));
   if(role==='owner'||role==='officer'){
-    dataUnsubs.push(db.collection('members').onSnapshot(q=>{members=q.docs.map(d=>({...d.data(),email:d.id}));render();autoApprove()},e=>say('อ่านรายชื่อผู้ขอเข้าดูไม่ได้: '+e.message)));
+    dataUnsubs.push(db.collection('members').onSnapshot(q=>{members=q.docs.map(d=>({...d.data(),email:d.id}));markOwners(members.map(m=>m.email)).then(c=>{if(c)render()});render();autoApprove()},e=>say('อ่านรายชื่อผู้ขอเข้าดูไม่ได้: '+e.message)));
     dataUnsubs.push(db.doc('public/roster').onSnapshot(d=>{roster=d.exists?(d.data().names||[]):[];rosterTs=d.exists?d.data().ts:0;const k=d.exists&&d.data().keys;if(!k)rosterTs=0;rosterSynced=false;syncRoster();autoApprove()},()=>{}));
   }
   render();
@@ -1568,70 +1571,21 @@ function renderAccess(){
   const pn=members.filter(m=>m.status==='pending').length;$('pendN').textContent=pn?`(${pn})`:'';
   if(!show)return;
   const names=model?new Map(model.P.map(p=>[p.name,p])):new Map(),find=c=>names.get(canon(c||''));
-  const P=members.filter(m=>m.status==='pending').sort((a,b)=>a.ts-b.ts),A=members.filter(m=>m.status==='approved'&&!OWNERS.includes(m.email)),R=members.filter(m=>m.status==='rejected');
+  const P=members.filter(m=>m.status==='pending').sort((a,b)=>a.ts-b.ts),A=members.filter(m=>m.status==='approved'&&!ownerSet.has(m.email)),OW=members.filter(m=>ownerSet.has(m.email)),R=members.filter(m=>m.status==='rejected');
   const dup={};A.concat(P).forEach(m=>{const k=canon(m.char||'');dup[k]=(dup[k]||0)+1});
   const gone=model?A.filter(m=>m.role!=='officer'&&!find(m.char)):[];
   const who=m=>{const p=find(m.char);return (p?`<span class="okc">✓ ${T('อยู่ในกิลด์')}</span> <span class="note">${esc(p.cls)} · Gear ${fmt(p.gear)}</span>`:`<span class="noc">✗ ${T('ไม่พบชื่อในกิลด์')}</span>`)+(dup[canon(m.char||'')]>1?` <span class="noc">⚠ ${T('มีมากกว่า 1 บัญชีอ้างชื่อนี้')}</span>`:'')};
   const em=m=>esc(m.email);
   let h=`<p class="note" style="margin-top:0">${T('สมาชิกล็อกอินแล้วเชื่อมตัวละครเองได้ — ตรวจรายการที่มีเครื่องหมาย ⚠ หรือ ✗')}</p>`;
   h+=`<h3 class="note" style="margin:0 0 8px">${T('รอเปิดสิทธิ์')} (${P.length})</h3><ul class="list">${P.length?P.map(m=>`<li class="${find(m.char)&&dup[canon(m.char)]<2?'':'k'}"><div class="grow"><b>${esc(m.char)}</b> ${who(m)}<div class="why">${em(m)}${m.name?' · '+esc(m.name):''} · ${dtTh(m.ts)}</div></div><button class="sm pri" data-ap="${em(m)}">${T('อนุมัติ')}</button><button class="sm ghost" data-rj="${em(m)}">${T('ปฏิเสธ')}</button></li>`).join(''):`<li><span class="note">${T('ไม่มีรายการรอ')}</span></li>`}</ul>`;
-  h+=`<div class="head" style="margin:18px 0 8px"><h3 class="note" style="margin:0">${T('เข้าดูได้')} (${A.length+OWNERS.length})</h3>${gone.length?`<button class="sm" data-rvall="1">${T('ถอนสิทธิ์คนที่ไม่อยู่ในกิลด์แล้ว')} (${gone.length})</button>`:''}</div>
-  <ul class="list">${OWNERS.map(o=>`<li><div class="grow"><b>${esc((members.find(m=>m.email===o)||{}).char||T('หัวหน้า'))}</b><div class="why">${esc(o)}</div></div><span class="tag t-ex">${T('หัวหน้า')}</span></li>`).join('')}
+  h+=`<div class="head" style="margin:18px 0 8px"><h3 class="note" style="margin:0">${T('เข้าดูได้')} (${A.length+Math.max(1,OW.length)})</h3>${gone.length?`<button class="sm" data-rvall="1">${T('ถอนสิทธิ์คนที่ไม่อยู่ในกิลด์แล้ว')} (${gone.length})</button>`:''}</div>
+  <ul class="list">${(OW.length?OW:[{}]).map(o=>`<li><div class="grow"><b>${esc(o.char||T('หัวหน้า'))}</b></div><span class="tag t-ex">${T('หัวหน้า')}</span></li>`).join('')}
   ${A.sort((a,b)=>(b.role==='officer')-(a.role==='officer')||String(a.char).localeCompare(String(b.char),'th')).map(m=>`<li class="${find(m.char)&&dup[canon(m.char)]<2||m.role==='officer'?'':'k'}"><div class="grow"><b>${esc(m.char)}</b> ${m.role==='officer'?`<span class="tag t-new">${T('รองหัวหน้า')}</span>`:''}<div class="why">${who(m)} · ${em(m)}${m.by==='self'||m.by==='auto'?' · '+T('เชื่อมเอง'):''}</div></div><div class="row" style="gap:6px">${role==='owner'?`<button class="sm ghost" data-promo="${em(m)}" data-to="${m.role==='officer'?'member':'officer'}">${m.role==='officer'?T('ลดเป็นสมาชิก'):T('ตั้งเป็นรองหัวหน้า')}</button>`:''}${role==='owner'||m.role!=='officer'?`<button class="sm ghost" data-rv="${em(m)}">${T('ถอนสิทธิ์')}</button>`:''}</div></li>`).join('')}</ul>`;
   if(R.length)h+=`<details><summary>${T('ถูกปฏิเสธ')} (${R.length})</summary><ul class="list">${R.map(m=>`<li><div class="grow"><b>${esc(m.char)}</b><div class="why">${em(m)}</div></div><button class="sm ghost" data-ap="${em(m)}">${T('อนุมัติ')}</button><button class="sm ghost" data-rv="${em(m)}">${T('ลบ')}</button></li>`).join('')}</ul></details>`;
   h+=`<details><summary>${T('เพิ่มสมาชิกเองด้วยอีเมล')}</summary><div class="row"><input id="addEmail" placeholder="${T('อีเมล Google')}" style="flex:1 1 14em"><input id="addChar" list="names" placeholder="${T('ชื่อตัวละคร')}" style="flex:1 1 10em"><button class="sm pri" id="addBtn">${T('เพิ่ม')}</button></div></details>`;
-  if(role==='owner')h+=`<details><summary>${T('กฎ Firebase สำหรับเปิดสิทธิ์ทันทีหลังเชื่อมตัวละคร')}</summary><p class="note">${T('วางใน Firebase Console → Firestore → Rules แล้วกด Publish (ทำครั้งเดียว ทำจากมือถือก็ได้)')}</p><pre id="rulesTxt">${esc(RULES)}</pre><button class="sm" id="copyRules2">${T('คัดลอก')}</button></details>`;
   $('accessBody').innerHTML=h;
 }
-const RULES=`rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
-    function email() { return request.auth.token.email; }
-    function isOwner() { return signedIn() && email() in ['grandlinez@gmail.com']; }
-    function memPath() { return /databases/$(database)/documents/members/$(email()); }
-    function isMember() { return isOwner() || (signedIn() && exists(memPath()) && get(memPath()).data.status == 'approved'); }
-    function isOfficer() { return isOwner() || (isMember() && get(memPath()).data.role == 'officer'); }
-    function inRoster(k) { return k in get(/databases/$(database)/documents/public/roster).data.keys; }
 
-    match /snapshots/{id} { allow read: if isMember(); allow write: if isOfficer(); }
-    match /meta/{id} { allow read: if isMember(); allow write: if isOfficer(); }
-    match /public/{id} { allow read: if true; allow write: if isOfficer(); }
-    match /claims/{k} {
-      allow read: if signedIn();
-      allow create: if signedIn() && request.resource.data.email == email() && inRoster(k);
-      allow delete: if isOfficer() || (signedIn() && resource.data.email == email());
-    }
-    match /auction_queue/{id} {
-      allow read: if isMember();
-      allow create: if isOfficer() || (isMember() && request.resource.data.email == email() && id == request.resource.data.itemId + '__' + email());
-      allow update: if isOfficer();
-      allow delete: if isOfficer() || (isMember() && resource.data.email == email());
-    }
-    match /event_signups/{id} {
-      allow read: if isMember();
-      allow create, update: if isOfficer() || (isMember() && request.resource.data.email == email() && id == request.resource.data.eventId + '__' + email());
-      allow delete: if isOfficer() || (isMember() && resource.data.email == email());
-    }
-    match /leaves/{id} {
-      allow read: if isMember();
-      allow create, update: if isOfficer() || (isMember() && request.resource.data.email == email() && id == request.resource.data.week + '__' + email());
-      allow delete: if isOfficer() || (isMember() && resource.data.email == email());
-    }
-    match /members/{mail} {
-      allow read: if isOfficer() || (signedIn() && mail == email());
-      allow create: if (signedIn() && mail == email() && request.resource.data.role == 'member'
-          && (request.resource.data.status == 'pending'
-            || (request.resource.data.status == 'approved'
-              && getAfter(/databases/$(database)/documents/claims/$(request.resource.data.key)).data.email == email())))
-        || (isOfficer() && (isOwner() || request.resource.data.role == 'member'));
-      allow update: if (isOfficer() && (isOwner() || (resource.data.role != 'officer' && request.resource.data.role == 'member')))
-        || (signedIn() && mail == email() && resource.data.status == 'pending'
-          && request.resource.data.status == 'pending' && request.resource.data.role == 'member');
-      allow delete: if isOwner() || (isOfficer() && resource.data.role != 'officer') || (signedIn() && mail == email());
-    }
-  }
-}`;
 const mdoc=e=>FB.db.doc('members/'+e);
 const merr=e=>say(T('ทำไม่สำเร็จ')+': '+(e.code==='permission-denied'?T('ไม่มีสิทธิ์ทำรายการนี้'):e.message));
 function renderStore(){
@@ -1639,7 +1593,7 @@ function renderStore(){
   $('storePill').textContent=cloud?T('คลาวด์'):T('เก็บในเครื่องนี้');$('storePill').classList.toggle('on',!!cloud);
   $('auth').innerHTML=cloud&&user&&!gate?`<button class="sm ghost" id="logout" title="${esc(user.email)}">${T('ออกจากระบบ')}</button>`:'';
   const have=new Set(snaps.map(x=>x.id)),local=(ls.get('tm-snaps')||[]).filter(x=>x&&!have.has(x.id)).length;
-  $('storeBox').innerHTML=cloud?`<p style="margin-top:0">${T('ข้อมูลเก็บบน Firebase — เฉพาะคนที่ได้รับสิทธิ์เห็นข้อมูล')}</p>${user?`<p class="note">${T('เข้าสู่ระบบเป็น')} ${esc(user.email)}</p>`:''}${local&&user&&isStaff()?`<button class="sm pri" id="migrate">${T('ย้ายข้อมูลจากเครื่องนี้ขึ้นคลาวด์')} (${local})</button>`:''}`
+  $('storeBox').innerHTML=cloud?`<p style="margin-top:0">${T('ข้อมูลเก็บบนฐานข้อมูลออนไลน์ของกิลด์ — เฉพาะคนที่ได้รับสิทธิ์เห็นข้อมูล')}</p>${user?`<p class="note">${T('เข้าสู่ระบบเป็น')} ${esc(user.email)}</p>`:''}${local&&user&&isStaff()?`<button class="sm pri" id="migrate">${T('ย้ายข้อมูลจากเครื่องนี้ขึ้นคลาวด์')} (${local})</button>`:''}`
    :`<p style="margin-top:0">${T('ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ — กด "สำรองข้อมูล" เป็นระยะ')}</p>`;
 }
 
@@ -1697,7 +1651,7 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const pInfo=c=>model?model.P.find(p=>p.name===canon(c||'')):null;
 let editChar=false;
 const myChar=()=>(myReq&&myReq.status==='approved'&&myReq.char)||(role==='owner'?(ls.get('tm-mychar')||''):'');
-const ferr=e=>say(T('ทำไม่สำเร็จ')+': '+(e.code==='permission-denied'?T('ต้องอัปเดตกฎ Firebase ก่อน (เมนู สิทธิ์เข้าดู)'):e.message));
+const ferr=e=>say(T('ทำไม่สำเร็จ')+': '+(e.code==='permission-denied'?T('ระบบยังไม่เปิดสิทธิ์นี้ — แจ้งหัวหน้ากิลด์'):e.message));
 const stfx=()=>isCloud()&&isStaff();
 function myCharBox(){
   if(role!=='owner'||viewAs==='member')return '';const c=myReq&&myReq.char;
@@ -1712,7 +1666,7 @@ async function saveMyChar(v){
     ls.set('tm-mychar',v);editChar=false;say(T('เชื่อมตัวละครแล้ว')+': '+v)}catch(e){ferr(e)}
 }
 function setView(v){view=v;document.body.dataset.view=v;document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',(a.dataset.view||'dash')===v&&(v!=='dash'||a.getAttribute('href')==='#overview')));if(v==='auction')renderAuction();if(v==='party')renderParty()}
-function rulesBanner(old){if(!old)return '';return `<div class="warnbox" style="margin-bottom:12px">${stfx()?T('ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะลงชื่อได้ — เมนู "สิทธิ์เข้าดู" → กฎ Firebase → คัดลอกไปวางใน Firebase Console'):T('ระบบลงชื่อยังไม่เปิด — รอหัวหน้าตั้งค่า')}</div>`}
+function rulesBanner(old){if(!old)return '';return `<div class="warnbox" style="margin-bottom:12px">${stfx()?T('ต้องอัปเดตกฎฐานข้อมูล ก่อน สมาชิกถึงจะลงชื่อได้ — เมนู "สิทธิ์เข้าดู" → กฎฐานข้อมูล → คัดลอกไปวางใน database console'):T('ระบบลงชื่อยังไม่เปิด — รอหัวหน้าตั้งค่า')}</div>`}
 
 /* auction */
 function renderCatalog(){
@@ -1732,7 +1686,7 @@ const pairBg=pr=>`--ph:${pr.h};--ph2:${pr.h2}`;
 function gotCount(){const now=Date.now(),got={};aucItems.forEach(it=>(it.winners||[]).forEach(w=>{if(now-w.ts<30*DAY)got[w.char]=(got[w.char]||0)+1}));return got}
 function renderAuction(){
   if(!$('aucList'))return;
-  if(!isCloud()){$('aucList').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อม Firebase')}</p>`;return}
+  if(!isCloud()){$('aucList').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อมฐานข้อมูล')}</p>`;return}
   const me=myChar(),staff=stfx(),got=gotCount();setPairHues();
   $('aucTop').innerHTML=rulesBanner(rulesOld.q)+myCharBox();
   $('aucAdd').hidden=!staff;if(staff&&$('aucAdd').open)renderCatalog();
@@ -1865,7 +1819,7 @@ function pbText(k,d){const head=`${PBDEF[k].n} · ${T(PBDEF[k].d)} ${PBDEF[k].t}
   return k==='polar'?head+` · ${T('สัปดาห์')} ${d.week||sunKey()}`+sec(T('ห้องบน'),d.up)+'\n'+sec(T('ห้องล่าง'),d.down):head+sec('',d.parties)}
 function renderParty(){
   if(!$('pbBoard'))return;
-  if(!isCloud()){$('pbBoard').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อม Firebase')}</p>`;return}
+  if(!isCloud()){$('pbBoard').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อมฐานข้อมูล')}</p>`;return}
   const staff=stfx(),k=pbKey,d=pbDoc(k),me=myChar(),def=PBDEF[k];
   setSeg('pbTab',k);$('evTop').innerHTML=myCharBox()+leaveBox();
   /* my parties summary */
@@ -1959,14 +1913,14 @@ function leaveBox(){
   const cur=who&&leaves.find(l=>canon(l.char)===canon(who)&&l.week===wk);
   const mineL=me?leaves.filter(l=>canon(l.char)===canon(me)&&l.week>=monKey(Date.now())).sort((a,b)=>a.week.localeCompare(b.week)):[];
   const btn=`<button class="pri big" data-lv="open">🙋 ${T('แจ้งลา')}</button>`;
-  if(!leaveOpen)return `<div class="lvbar">${btn}${mineL.length?mineL.map(l=>`<span class="chip lvchip">🙋 ${T('ลา')} ${l.acts.map(k=>{const a=ACT.find(x=>x[0]===k);return a?a[1]+' '+T(a[2])+' '+dTh(actDate(k,l.week).getTime()):''}).join(', ')}</span>`).join(''):''}${rulesOld.l?`<span class="note noc">${T('ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะแจ้งลาได้')}</span>`:''}</div>`;
+  if(!leaveOpen)return `<div class="lvbar">${btn}${mineL.length?mineL.map(l=>`<span class="chip lvchip">🙋 ${T('ลา')} ${l.acts.map(k=>{const a=ACT.find(x=>x[0]===k);return a?a[1]+' '+T(a[2])+' '+dTh(actDate(k,l.week).getTime()):''}).join(', ')}</span>`).join(''):''}${rulesOld.l?`<span class="note noc">${T('ต้องอัปเดตกฎฐานข้อมูล ก่อน สมาชิกถึงจะแจ้งลาได้')}</span>`:''}</div>`;
   return `<div class="card lvbox"><div class="row" style="justify-content:space-between"><h3 style="margin:0">🙋 ${T('แจ้งลา')}</h3><button class="sm ghost" data-lv="close">✕</button></div>
    ${staff?`<label class="note">${T('ตัวละคร (หัวหน้าแจ้งแทนได้)')}<input id="lvWho" list="names" value="${esc(who||'')}" placeholder="${T('ชื่อตัวละคร')}"></label>`:(me?`<p style="margin:6px 0">${T('ตัวละคร')}: <b>${esc(me)}</b></p>`:`<p class="noc">${T('เลือกตัวละครของคุณก่อน')}</p>`)}
    <div class="seg" id="lvWk" style="margin:8px 0"><button data-lvwk="0" aria-pressed="${leaveWk===0}">${T('สัปดาห์นี้')}</button><button data-lvwk="1" aria-pressed="${leaveWk===1}">${T('สัปดาห์หน้า')}</button></div>
    <div class="lvacts">${ACT.map(([k,ic,n])=>{const d=actDate(k,wk),past=d.getTime()<Date.now();return `<label class="lvact ${past?'past':''}"><input type="checkbox" class="lvck" value="${k}" ${cur&&cur.acts.includes(k)?'checked':''} ${past?'disabled':''}><span>${ic} ${T(n)}</span><span class="note">${dTh(d.getTime())}${past?' · '+T('ผ่านไปแล้ว'):''}</span></label>`}).join('')}</div>
    <input id="lvWhy" placeholder="${T('เหตุผล (ไม่บังคับ · เห็นเฉพาะหัวหน้า)')}" value="${esc(cur&&cur.reason||'')}" style="width:100%;margin-top:8px">
    <div class="row" style="margin-top:10px"><button class="pri" data-lv="save" ${rulesOld.l&&!staff?'disabled':''}>${T('บันทึกการลา')}</button>${cur?`<button class="ghost" data-lv="del">${T('ยกเลิกการลานี้')}</button>`:''}</div>
-   ${rulesOld.l?`<p class="note noc">${T('ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะแจ้งลาได้')}</p>`:''}</div>`}
+   ${rulesOld.l?`<p class="note noc">${T('ต้องอัปเดตกฎฐานข้อมูล ก่อน สมาชิกถึงจะแจ้งลาได้')}</p>`:''}</div>`}
 async function leaveAction(t){
   const el=t.closest('[data-lv],[data-lvwk]');if(!el)return false;
   if(el.dataset.lvwk!=null){leaveWk=+el.dataset.lvwk;rerLeave();return true}
@@ -2100,7 +2054,6 @@ document.addEventListener('click',e=>{
   if(el=cl('[data-x]')){pend.splice(+el.dataset.x,1);renderPend();return}
   if(t.id==='reqBtn'){sendRequest();return}
   if(t.id==='reqCancel'){unlink(user.email).catch(merr);return}
-  if(t.id==='copyRules2'){navigator.clipboard.writeText(RULES).then(()=>say(T('คัดลอกแล้ว')),()=>{});return}
   if(t.id==='copyLink'){navigator.clipboard.writeText(location.href.split('#')[0]).then(()=>{t.textContent='คัดลอกแล้ว'},()=>{});return}
   if(el=cl('[data-ap]')){mdoc(el.dataset.ap).update({status:'approved',role:'member',by:user.email,at:Date.now()}).catch(merr);return}
   if(el=cl('[data-rj]')){mdoc(el.dataset.rj).update({status:'rejected',role:'member',by:user.email,at:Date.now()}).catch(merr);return}
@@ -2113,7 +2066,7 @@ document.addEventListener('click',e=>{
   if(t.id==='login'){store.login().catch(er=>{const m=er.code==='auth/popup-blocked'?'เบราว์เซอร์บล็อกหน้าต่างล็อกอิน — อนุญาตป๊อปอัปแล้วลองใหม่':er.code==='auth/popup-closed-by-user'?'':'เข้าสู่ระบบไม่สำเร็จ: '+er.message;say(m);if(gate&&m)$('gate').insertAdjacentHTML('beforeend',`<p class="note">${esc(m)}</p>`)});return}
   if(t.id==='logout'){store.logout();return}
   if(t.id==='copyRules'){navigator.clipboard.writeText($('rules').textContent).then(()=>say('คัดลอก Rules แล้ว'),()=>{});return}
-  if(t.id==='fbOn'){try{const c=parseCfg($('cfg').value);ls.set('tm-fb',c);say('กำลังเชื่อมต่อ…');useCloud(c).then(()=>say('เชื่อม Firebase แล้ว — เข้าสู่ระบบเพื่ออัปโหลด')).catch(er=>{say('เชื่อมไม่ได้: '+er.message);useLocal()})}catch(er){say('config ไม่ถูกต้อง: '+er.message)}return}
+  if(t.id==='fbOn'){try{const c=parseCfg($('cfg').value);ls.set('tm-fb',c);say('กำลังเชื่อมต่อ…');useCloud(c).then(()=>say('เชื่อมฐานข้อมูล แล้ว — เข้าสู่ระบบเพื่ออัปโหลด')).catch(er=>{say('เชื่อมไม่ได้: '+er.message);useLocal()})}catch(er){say('config ไม่ถูกต้อง: '+er.message)}return}
   if(t.id==='fbOff'){localStorage.removeItem('tm-fb');location.reload();return}
   if(t.id==='migrate'){const arr=(ls.get('tm-snaps')||[]).filter(valid);const m=ls.get('tm-meta');if(m){setMeta({...m,...meta,kicks:[...(m.kicks||[]),...meta.kicks]})}
     saveSnaps(arr).then(()=>{if(m)return store.saveMeta()}).then(()=>say(`ย้าย ${arr.length} วันขึ้นคลาวด์แล้ว`)).catch(()=>{});return}
@@ -2159,7 +2112,7 @@ window.addEventListener('scroll',()=>{if(!tipPin)hideTip()},{passive:true});
 const hv=()=>{const h=location.hash.slice(1);setView(h==='auction'||h==='party'?h:'dash')};window.addEventListener('hashchange',hv);hv();
 startTr();
 const cfg=FB_CONFIG||ls.get('tm-fb');
-if(cfg){setMeta(null);render();useCloud(cfg).catch(er=>{say('เชื่อม Firebase ไม่ได้ ใช้ข้อมูลในเครื่องแทน: '+er.message);useLocal()})}else useLocal();
+if(cfg){setMeta(null);render();useCloud(cfg).catch(er=>{say('เชื่อมฐานข้อมูล ไม่ได้ ใช้ข้อมูลในเครื่องแทน: '+er.message);useLocal()})}else useLocal();
 }
 </script>
 </body>
