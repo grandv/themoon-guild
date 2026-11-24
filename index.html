@@ -120,7 +120,7 @@ body.gated main>section:not(#gate),body.gated main>#msg{display:none!important}
 body.gated .bar nav,body.gated .bar .right label.btn,body.gated #langTop{display:none}
 body.viewer .staffonly,body.norisk .riskonly{display:none!important}
 .viewonly,.nv-m{display:none}body.viewer .viewonly{display:block}body.viewer .nv-m{display:inline}body.viewer .nv-a{display:none}
-body.viewer:not(.anaopen) #anaSec{display:none}body.viewer #anaTab [data-v=all]{display:none}body.viewer #classes,body.viewer nav a[href="#classes"],body.viewer #kpis,body.viewer #impSec{display:none!important}.lvchip{white-space:normal;max-width:100%;height:auto}
+body.viewer:not(.anaopen) #anaSec .acard:not([data-cat=game]),body.viewer:not(.anaopen) #anaSec .acat,body.viewer:not(.anaopen) #anaTab,body.viewer:not(.anaopen) #chartNote,body.viewer:not(.anaopen) #anaSec>.head .tools{display:none!important}body.viewer:not(.anaopen) #anaSec .acard[data-cat=game]{display:block!important}body.viewer #anaTab [data-v=all]{display:none}body.viewer #classes,body.viewer nav a[href="#classes"],body.viewer #kpis,body.viewer #impSec{display:none!important}.lvchip{white-space:normal;max-width:100%;height:auto}
 body:not([data-view="dash"]) .anatoggle,body:not([data-view="dash"]) #myHome{display:none!important}.anatoggle{text-align:center;margin:18px 0 6px}.anatoggle button{font-size:16px;padding:10px 22px}.ao-o{display:none}body.anaopen .ao-o{display:inline}body.anaopen .ao-c{display:none}
 button.big{font-size:16px;padding:9px 18px;min-height:42px}
 .welcome{margin-top:14px;font-size:16px;border-color:color-mix(in srgb,var(--acc) 50%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 12%,var(--card)),var(--card))}.wsteps{margin:10px 0 0;padding-left:4px;list-style:none;display:grid;gap:8px}.wsteps li{line-height:1.5}
@@ -171,12 +171,43 @@ body.viewer #impSec{grid-template-columns:1fr}
 [data-zr][hidden]{display:none!important}
 .anatab{display:flex;flex-wrap:wrap;margin:2px 0 10px}.anatab button{font-size:14.5px;min-height:38px;padding:4px 14px}
 .insight{font-size:15px;line-height:1.5;margin:6px 0 2px;padding:8px 12px;border-radius:10px;background:var(--card)}.insight:empty{display:none}
+.gamecard{background:transparent;border:0;padding:0}
+#gameView{display:grid;gap:14px}
+.gcard{background:var(--card2);border:1px solid var(--line);border-radius:18px;padding:16px}.gcard h3{margin:0 0 12px;font-size:17px}
+.ggrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:900px){.ggrid{grid-template-columns:1fr}}
+.gguild,.gme{display:flex;gap:16px;align-items:center}.gguild>.grow,.gme>.grow{flex:1}
+.glv{flex:none;width:84px;height:84px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe08a,#f0a020 60%,#a8620a);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#3b2200;box-shadow:0 0 0 4px rgba(255,190,60,.25),0 8px 20px -6px #f0a020}
+.glv span{font-size:12px;font-weight:700;line-height:1}.glv b{font-size:32px;line-height:1;font-family:'Chakra Petch',sans-serif}
+.gpow{font-size:34px;font-weight:700;font-family:'Chakra Petch',sans-serif;line-height:1.1}.gpow small{font-size:16px;margin-left:6px}
+.gxp{position:relative;height:22px;border-radius:999px;background:var(--card);border:1px solid var(--line);overflow:hidden;margin:8px 0}
+.gxp i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#f0a020,#ffd36a);border-radius:999px}.gxp span{position:relative;display:block;text-align:center;font-size:12.5px;font-weight:600;line-height:20px;text-shadow:0 1px 2px rgba(0,0,0,.5);color:#fff}
+.gstats{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:4px 0}
+.gtier{flex:none;width:84px;height:84px;border-radius:18px;transform:rotate(45deg) scale(.8);background:var(--tc);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px -6px var(--tc)}
+.gtier span{transform:rotate(-45deg) scale(1.25);font-size:40px;font-weight:800;color:#fff;font-family:'Chakra Petch',sans-serif;text-shadow:0 2px 4px rgba(0,0,0,.35)}
+.gme{border-color:var(--tc);background:linear-gradient(120deg,color-mix(in srgb,var(--tc) 18%,var(--card2)),var(--card2) 60%)}
+.gme h3{margin:2px 0 6px;display:flex;align-items:center;gap:8px;font-size:20px}
+.gnext{margin-top:6px;font-size:14px}
+.gbar{position:relative;flex:1;min-width:80px;height:22px;border-radius:8px;background:var(--card);overflow:hidden;border:1px solid var(--line)}
+.gbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 70%,#000),var(--c));border-radius:8px}
+.gbar span{position:relative;display:block;padding:0 8px;font-size:12.5px;font-weight:700;line-height:20px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6);text-align:right}
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:8px;margin-bottom:12px}
+.pod{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;min-width:0}.pod b{font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pod span{font-size:11.5px;color:var(--mute)}
+.podc{font-size:24px;line-height:1}.pod1 .podc{font-size:30px}
+.podb{width:100%;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,var(--c),color-mix(in srgb,var(--c) 55%,#000));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;margin-top:6px}
+.pod1 .podb{height:96px}.pod2 .podb{height:72px}.pod3 .podb{height:56px}.podb em{font-style:normal;font-size:26px;font-weight:800;font-family:'Chakra Petch',sans-serif;line-height:1}.podb small{font-size:12px;font-weight:700}
+.glist{list-style:none;margin:0;padding:0;display:grid;gap:6px}.glist li{display:flex;align-items:center;gap:8px;min-width:0}.glist li[data-p]{cursor:pointer}
+.lr{width:26px;text-align:center;font-weight:700;flex:none}.ln{width:112px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:14px}
+.track{flex:1;height:22px;border-radius:999px;background:repeating-linear-gradient(90deg,var(--card) 0 18px,var(--card2) 18px 20px);border:1px solid var(--line);position:relative;overflow:hidden}
+.track i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 40%,transparent),var(--c));border-radius:999px;display:flex;justify-content:flex-end;align-items:center}.track i b{font-size:14px;margin-right:2px}
+.army li{display:grid;grid-template-columns:30px 110px minmax(0,1fr) 120px;gap:8px}.an{display:flex;flex-direction:column;min-width:0}.an b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.an span{font-size:11.5px;color:var(--mute)}
+.asold{display:flex;flex-wrap:wrap;gap:2px;align-items:center}.asold i{width:7px;height:12px;border-radius:3px 3px 1px 1px;background:var(--mute);opacity:.75}.asold em{font-size:11px;font-style:normal;color:var(--mute);margin-left:4px}
+@media(max-width:600px){.gguild,.gme{gap:10px}.glv,.gtier{width:62px;height:62px}.glv b{font-size:24px}.gpow{font-size:24px}.ln{width:84px}.army li{grid-template-columns:26px 86px minmax(0,1fr);}.army li .gbar{grid-column:2/-1}}
 .anagrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:8px}
 .acard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card2);min-width:0}.acard.wide{grid-column:1/-1}
 .acard .ah{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.acard h3{margin:0;font-size:15px;flex:1 1 12em}.acard .fig{height:300px;margin-top:8px}
 .acat{grid-column:1/-1;display:none;font-weight:600;font-size:16px;margin-top:6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
 #anaSec[data-tab=all] .acat{display:block}
-#anaSec[data-tab=guild] .acard:not([data-cat=guild]),#anaSec[data-tab=class] .acard:not([data-cat=class]),#anaSec[data-tab=person] .acard:not([data-cat=person]){display:none}
+#anaSec[data-tab=game] .acard:not([data-cat=game]),#anaSec[data-tab=game] .acat,#anaSec[data-tab=all] .acard[data-cat=game],#anaSec[data-tab=guild] .acard:not([data-cat=guild]),#anaSec[data-tab=class] .acard:not([data-cat=class]),#anaSec[data-tab=person] .acard:not([data-cat=person]){display:none}
 .heat{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px;background:var(--card)}
 .heat table{border-collapse:separate;border-spacing:2px;font-size:12px}.heat th{position:sticky;top:0;background:var(--card);z-index:1;font-weight:500;color:var(--mute);padding:2px 0;min-width:16px}
 .heat td.n,.heat th.n{position:sticky;left:0;background:var(--card);text-align:left;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis;padding:0 6px 0 4px}.heat th.n{z-index:2}
@@ -247,6 +278,10 @@ button.chip{min-height:36px;cursor:pointer}
 .evico{vertical-align:middle;object-fit:contain}
 @media(max-width:600px){.evtabs{gap:6px}.evc{height:132px;border-width:2px;border-radius:12px}.evc-day{font-size:9px;padding:1px 5px;margin-top:5px;max-width:94%;overflow:hidden;text-overflow:ellipsis}.evc-t b{font-size:12px}.evc-t i{font-size:9.5px}.evc-ic{width:54px;height:54px}}
 .pbsavebar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.pbs-ok{color:var(--good);font-weight:600}.pbs-ing{color:var(--warn)}
+.glrooms{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.glrooms button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--card2);color:var(--ink);cursor:pointer;min-height:0}
+.glrooms button b{font-size:16px}.glrooms button span{font-size:13px;color:var(--mute)}
+.glrooms button.on{border-color:var(--acc);background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 20%,var(--card2)),var(--card2));box-shadow:0 6px 16px -10px var(--acc)}
 .pbinfo{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-start}
 .pbrule{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--accbg);line-height:1.6}
 .pbwrap{display:grid;grid-template-columns:290px minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}.pbwrap.noroster{grid-template-columns:1fr}.pbwrap.noroster .pbroster{display:none}
@@ -404,9 +439,10 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 <section class="card" id="anaSec" data-tab="guild">
   <div class="head"><h2>กราฟวิเคราะห์</h2>
     <div class="tools"><div class="seg" id="range"><button data-v="7" aria-pressed="false">7 วัน</button><button data-v="30" aria-pressed="false">30 วัน</button><button data-v="0" aria-pressed="true">ทั้งหมด</button></div></div></div>
-  <div class="seg anatab" id="anaTab" role="tablist"><button data-v="guild" aria-pressed="true">🏰 ภาพรวมกิลด์</button><button data-v="class" aria-pressed="false">⚔️ อาชีพ</button><button data-v="person" aria-pressed="false">👤 รายคน</button><button data-v="all" aria-pressed="false">📊 รวมทุกอย่าง</button></div>
+  <div class="seg anatab" id="anaTab" role="tablist"><button data-v="game" aria-pressed="true">🎮 สนามประลอง</button><button data-v="guild" aria-pressed="false">🏰 ภาพรวมกิลด์</button><button data-v="class" aria-pressed="false">⚔️ อาชีพ</button><button data-v="person" aria-pressed="false">👤 รายคน</button><button data-v="all" aria-pressed="false">📊 รวมทุกอย่าง</button></div>
   <p class="note" id="chartNote"></p>
   <div class="anagrid">
+    <div class="acard wide gamecard" data-cat="game"><div id="gameView"></div></div>
     <div class="acat" data-cat="guild">🏰 ภาพรวมกิลด์</div>
     <div class="acard" data-cat="guild"><div class="ah"><h3>Gear ตามวัน (เฉลี่ย · มัธยฐาน · Top 10)</h3><button class="sm ghost" data-zr="trend" hidden>↺</button><button class="sm ghost" data-png="trend" title="บันทึกเป็นรูป">📷</button></div><div class="insight" id="in_trend"></div><div class="fig"><canvas id="chart"></canvas></div></div>
     <div class="acard" data-cat="guild"><div class="ah"><h3>Gear รวมทั้งกิลด์ + จำนวนสมาชิก</h3><button class="sm ghost" data-zr="tot" hidden>↺</button><button class="sm ghost" data-png="tot" title="บันทึกเป็นรูป">📷</button></div><div class="insight" id="in_tot"></div><div class="fig"><canvas id="cTot"></canvas></div><p class="note">เส้น = Gear รวม · แท่ง = จำนวนคน — ถ้าเส้นขึ้นแต่แท่งเท่าเดิม แปลว่าคนเก่าเก่งขึ้นจริง</p></div>
@@ -523,6 +559,20 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"🎮 สนามประลอง":["🎮 Arena", "🎮 Arena", "🎮 Arena"],
+"พลังกิลด์":["Guild power", "Kekuatan guild", "Guild power"],
+"ถึงเลเวลถัดไป":["to the next level", "ke level berikut", "sa susunod na level"],
+"อีก":["", "lagi", ""],
+"เฉลี่ย":["avg", "rata-rata", "avg"],
+"ทำเนียบผู้แข็งแกร่ง":["Hall of fame", "Hall of fame", "Hall of fame"],
+"การแข่งขันพัฒนาเร็ว":["Growth race", "Balapan pertumbuhan", "Growth race"],
+"กองทัพแต่ละอาชีพ":["Class army", "Pasukan kelas", "Class army"],
+"ของอันดับ 1":["of #1", "dari #1", "ng #1"],
+"จะแซง":["to pass", "untuk menyalip", "para malampasan"],
+"คุณคืออันดับ 1 ของกิลด์!":["You're #1 in the guild!", "Anda #1 di guild!", "Ikaw ang #1!"],
+"ขึ้นแรงค์":["Rank up to", "Naik ke rank", "Rank up sa"],
+"ต้องการ":["needs", "perlu", "kailangan"],
+"ห้องล่างเต็ม 90 คนแล้ว":["Lower room is full (90)", "Ruang bawah penuh (90)", "Puno na ang lower room (90)"],
 "กำลังบันทึก…":["Saving…", "Menyimpan…", "Sine-save…"],
 "บันทึกไม่สำเร็จ — กด 💾 อีกครั้ง":["Couldn't save — press 💾 again", "Gagal menyimpan — tekan 💾 lagi", "Hindi na-save — pindutin ulit ang 💾"],
 "บันทึกแล้ว":["Saved", "Tersimpan", "Na-save"],
@@ -1177,7 +1227,7 @@ const effRole=()=>role==='owner'&&viewAs==='member'?'member':role;
 const isStaff=()=>!isCloud()||effRole()==='owner'||effRole()==='officer';
 const NR=()=>isCloud()&&effRole()==='member'&&!!S.hideRisk;
 function setViewAs(v){viewAs=v;try{sessionStorage.setItem('tm-viewas',v)}catch(e){}editChar=false;closeProfileSafe();render();renderAuction();renderParty();say(v==='member'?T('กำลังดูในมุมมองสมาชิก — ปุ่มของหัวหน้าถูกซ่อนไว้'):'')}
-let snaps=[],meta=blankMeta(),S={...DEF},store=null,user=null,model=null,pend=[],mode=(()=>{try{return sessionStorage.getItem('tm-ana')||'guild'}catch(e){return 'guild'}})(),range=0,picked=null,fClass='',sortK='sev',sortD=-1,chart=null,delArm=null,pCharts=[],openName=null;
+let snaps=[],meta=blankMeta(),S={...DEF},store=null,user=null,model=null,pend=[],mode=(()=>{try{return sessionStorage.getItem('tm-ana')||'game'}catch(e){return 'game'}})(),range=0,picked=null,fClass='',sortK='sev',sortD=-1,chart=null,delArm=null,pCharts=[],openName=null;
 function blankMeta(){return {exempt:{},kicks:[],renames:{},notRename:{},settings:{}}}
 function setMeta(m){meta={...blankMeta(),...(m||{})};S={...DEF,...(meta.settings||{})}}
 const ls={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){say('พื้นที่เก็บในเบราว์เซอร์เต็ม — สำรองข้อมูลแล้วลบวันที่เก่าออก');return false}}};
@@ -1359,7 +1409,41 @@ const ser=o=>Object.assign(o,{tension:.3,borderWidth:2.2,spanGaps:true,segment:{
 function slopeFit(vals,n=14){const pts=vals.map((v,i)=>[i,v]).filter(p=>p[1]!=null).slice(-n);if(pts.length<3)return null;const m=pts.length,sx=pts.reduce((a,p)=>a+p[0],0),sy=pts.reduce((a,p)=>a+p[1],0),sxx=pts.reduce((a,p)=>a+p[0]*p[0],0),sxy=pts.reduce((a,p)=>a+p[0]*p[1],0);const d=m*sxx-sx*sx;if(!d)return null;const b=(m*sxy-sx*sy)/d;return {b,last:pts[m-1]}}
 function quart(a){a=[...a].sort((x,y)=>x-y);const q=f=>{const i=(a.length-1)*f,lo=Math.floor(i),hi=Math.ceil(i);return a[lo]+(a[hi]-a[lo])*(i-lo)};return [a[0],q(.25),q(.5),q(.75),a[a.length-1]]}
 function clsRole(c){try{return CLASS_ROLE[c]||'other'}catch(e){return 'other'}}
+/* ---------- game-style arena view ---------- */
+const TIERS=[['S',.10,'#ffb020'],['A',.30,'#a274e0'],['B',.60,'#4f9de0'],['C',.85,'#5fb87c'],['D',1,'#8a8f9e']];
+const tierOf=rankPct=>TIERS.find(t=>rankPct<=t[1])||TIERS[4];
+function renderGame(){
+  const el=$('gameView');if(!el)return;if(!model){el.innerHTML='';return}
+  const P=[...model.P].sort((a,b)=>b.gear-a.gear),N=P.length,max=P[0]?P[0].gear:1,total=P.reduce((a,p)=>a+p.gear,0),avg=total/Math.max(1,N);
+  const D0=model.daySn,f=D0[0],l=D0[D0.length-1],t0=f?f.rows.reduce((a,r)=>a+r[6],0):0,dT=D0.length>1?total-t0:0;
+  const ms=[2e6,4e6,6e6,8e6,1e7,1.25e7,1.5e7,2e7,3e7,5e7],next=ms.find(m=>m>total)||total*1.2,prevM=[...ms].reverse().find(m=>m<=total)||0,pct=Math.max(4,Math.min(100,(total-prevM)/(next-prevM)*100));
+  const lvl=ms.filter(m=>m<=total).length+1;
+  const bar=(v,m,c,txt)=>`<div class="gbar"><i style="width:${Math.max(3,v/m*100).toFixed(1)}%;--c:${c}"></i><span>${txt}</span></div>`;
+  const podium=[P[1],P[0],P[2]].map((p,i)=>p?`<div class="pod pod${[2,1,3][i]}"><div class="podc">${['🥈','👑','🥉'][i]}</div>${ico(p.cls,[46,58,42][i])}<b>${esc(p.name)}</b><span>${esc(p.cls)}</span><div class="podb" style="--c:${clsCol(p.cls)}"><em>${[2,1,3][i]}</em><small>${kfmt(p.gear)}</small></div></div>`:'').join('');
+  const top=P.slice(3,10).map((p,i)=>`<li data-p="${esc(p.name)}"><span class="lr">${i+4}</span>${ico(p.cls,26)}<span class="ln">${esc(p.name)}</span>${bar(p.gear,max,clsCol(p.cls),kfmt(p.gear))}</li>`).join('');
+  const climb=[...P].filter(p=>p.dG!=null&&p.dG>0).sort((a,b)=>b.dG-a.dG).slice(0,5),cmax=climb[0]?climb[0].dG:1;
+  const race=climb.map((p,i)=>`<li data-p="${esc(p.name)}"><span class="lr">${['🥇','🥈','🥉','4','5'][i]}</span>${ico(p.cls,26)}<span class="ln">${esc(p.name)}</span><div class="track"><i style="width:${Math.max(8,p.dG/cmax*100).toFixed(1)}%;--c:${clsCol(p.cls)}"><b>🏃</b></i></div><span class="up">+${kfmt(p.dG)}</span></li>`).join('');
+  const cl={};P.forEach(p=>{(cl[p.cls]=cl[p.cls]||[]).push(p)});const CL=Object.entries(cl).map(([c,a])=>[c,a.length,a.reduce((x,p)=>x+p.gear,0)/a.length]).sort((a,b)=>b[1]-a[1]);
+  const cmx=Math.max(...CL.map(x=>x[1])),amx=Math.max(...CL.map(x=>x[2]));
+  const army=CL.map(([c,n,a])=>`<li>${ico(c,30)}<div class="an"><b>${esc(c)}</b><span>${n} ${T('คน')}</span></div><div class="asold">${'<i></i>'.repeat(Math.min(n,30))}${n>30?`<em>+${n-30}</em>`:''}</div>${bar(a,amx,clsCol(c),'⚔ '+kfmt(a))}</li>`).join('');
+  const me=myChar(),mp=me&&P.find(p=>p.name===canon(me));let mine='';
+  if(mp){const rk=P.indexOf(mp)+1,tr=tierOf(rk/N),above=P[rk-2],nt=TIERS[TIERS.indexOf(tr)-1],need=nt?P[Math.max(0,Math.ceil(nt[1]*N)-1)]:null;
+    mine=`<div class="gcard gme" style="--tc:${tr[2]}"><div class="gtier"><span>${tr[0]}</span></div><div class="grow" style="min-width:0"><div class="note">${T('ตัวละครของฉัน')} · My hero</div><h3>${ico(mp.cls,28)} ${esc(mp.name)}</h3>
+      <div class="gstats"><span>🏅 ${T('อันดับ')} <b>#${rk}</b>/${N}</span><span>⚡ Gear <b>${fmt(mp.gear)}</b></span>${mp.dG!=null?`<span>📈 <b class="${mp.dG>=0?'up':'dn'}">${sgn(mp.dG)}</b></span>`:''}</div>
+      ${bar(mp.gear,max,clsCol(mp.cls),`${Math.round(mp.gear/max*100)}% ${T('ของอันดับ 1')}`)}
+      <div class="gnext">${above?`🎯 ${T('อีก')} <b>${fmt(above.gear-mp.gear+1)}</b> Gear ${T('จะแซง')} <b>${esc(above.name)}</b> (#${rk-1})`:`👑 ${T('คุณคืออันดับ 1 ของกิลด์!')}`}${need&&need!==mp&&need.gear>mp.gear?` · ${T('ขึ้นแรงค์')} ${nt[0]} ${T('ต้องการ')} <b>${fmt(need.gear-mp.gear+1)}</b>`:''}</div></div></div>`}
+  el.innerHTML=`${mine}
+   <div class="gcard gguild"><div class="glv"><span>LV</span><b>${lvl}</b></div><div class="grow" style="min-width:0"><div class="note">${T('พลังกิลด์')} · Guild power</div><div class="gpow">${fmt(total)} ${dT?`<small class="${dT>=0?'up':'dn'}">${dT>=0?'▲':'▼'} ${kfmt(Math.abs(dT))}</small>`:''}</div>
+     <div class="gxp"><i style="width:${pct.toFixed(1)}%"></i><span>${kfmt(total)} / ${kfmt(next)} · ${T('อีก')} ${kfmt(next-total)} ${T('ถึงเลเวลถัดไป')}</span></div>
+     <div class="gstats"><span>👥 ${N} ${T('คน')}</span><span>⚔ ${T('เฉลี่ย')} ${kfmt(avg)}</span><span>🏆 Top ${kfmt(max)}</span></div></div></div>
+   <div class="ggrid">
+    <div class="gcard"><h3>🏆 ${T('ทำเนียบผู้แข็งแกร่ง')} · Hall of fame</h3><div class="podium">${podium}</div><ol class="glist">${top}</ol></div>
+    <div class="gcard"><h3>🚀 ${T('การแข่งขันพัฒนาเร็ว')} · Growth race</h3>${race?`<ol class="glist race">${race}</ol>`:`<p class="note">${T('ต้องมีข้อมูลอย่างน้อย 2 วัน')}</p>`}
+      <h3 style="margin-top:16px">🛡 ${T('กองทัพแต่ละอาชีพ')} · Class army</h3><ul class="glist army">${army}</ul></div>
+   </div>`}
+
 function drawChart(){
+  renderGame();
   const sec=$('anaSec');if(sec)sec.dataset.tab=mode;setSeg('anaTab',mode);
   if(typeof Chart=='undefined'){$('chartNote').textContent='โหลดไลบรารีกราฟไม่สำเร็จ';return}
   const ink=cssv('--ink')||'#888',line=cssv('--line')||'#ddd',mute=cssv('--mute')||'#888',good=cssv('--good'),warn=cssv('--warn'),bad=cssv('--bad');
@@ -1861,8 +1945,9 @@ let onLeave=(c,key)=>false;
 const emptyParty=()=>({id:uid(),m:Array(PSIZE).fill(''),lock:false});
 function sunKey(ts=Date.now()){const d=new Date(ts);d.setHours(12,0,0,0);d.setDate(d.getDate()+((7-d.getDay())%7));return dstr(d.getTime())}
 function pbDoc(k){const d=pbData[k];if(k==='polar'){const x=d?JSON.parse(JSON.stringify(d)):{};x.up=x.up||[];x.down=x.down||[];x.hist=x.hist||{};return x}
-  const x=d?JSON.parse(JSON.stringify(d)):{};x.parties=x.parties&&x.parties.length?x.parties:Array.from({length:PBDEF[k].p},emptyParty);return x}
-const pbRooms=(k,d)=>k==='polar'?[['up',d.up],['down',d.down]]:[['main',d.parties]];
+  const x=d?JSON.parse(JSON.stringify(d)):{};x.parties=x.parties&&x.parties.length?x.parties:Array.from({length:PBDEF[k].p},emptyParty);if(isGL(k))x.down=x.down&&x.down.length?x.down:Array.from({length:GLDOWN/PSIZE},emptyParty);return x}
+let pbGLTouched=false;const GLDOWN=90,isGL=k=>k==='gl_tue'||k==='gl_thu';let pbGLRoom=(()=>{try{return sessionStorage.getItem('tm-glroom')||'main'}catch(e){return 'main'}})();
+const pbRooms=(k,d)=>k==='polar'?[['up',d.up],['down',d.down]]:isGL(k)?[['main',d.parties],['down',d.down||[]]]:[['main',d.parties]];
 function pbWhere(d,k,c){const n=canon(c);for(const [r,P] of pbRooms(k,d))for(let i=0;i<P.length;i++){const j=P[i].m.findIndex(x=>x&&canon(x)===n);if(j>=0)return {r,i,j}}return null}
 const roleC=c=>CLASS_ROLE[(pInfo(c)||{}).cls]||'melee';
 let pbUndo={},pbSt={};
@@ -1872,7 +1957,7 @@ function pbSave(k,d,noUndo){if(!noUndo){const prev=pbData[k]?JSON.stringify(pbDa
   return db.doc('meta/pb_'+k).set(d).then(()=>{pbSt[k]={s:'ok',t:Date.now()};pbStatus()}).catch(e=>{pbSt[k]={s:'err'};pbStatus();ferr(e)})}
 function pbStatus(){const el=$('pbSave');if(!el)return;const st=pbSt[pbKey]||{},d=pbData[pbKey];
   el.innerHTML=st.s==='saving'?`<span class="pbs-ing">⏳ ${T('กำลังบันทึก…')}</span>`:st.s==='err'?`<span class="noc">⚠ ${T('บันทึกไม่สำเร็จ — กด 💾 อีกครั้ง')}</span>`:d&&d.ts?`<span class="pbs-ok">✓ ${T('บันทึกแล้ว')} ${new Date(d.ts).toLocaleTimeString(LOCALE[LANG]||'th-TH',{hour:'2-digit',minute:'2-digit'})}</span>`:`<span class="note">${T('ยังไม่มีการบันทึก')}</span>`}
-function pbList(k,d,r){return k==='polar'?d[r]:d.parties}
+function pbList(k,d,r){return k==='polar'?d[r]:(r==='down'&&isGL(k)?d.down:d.parties)}
 function pbPlace(c,to,from){/* to/from: {r,i,j} ; c: char name (from roster) */
   const k=pbKey,d=pbDoc(k);const P=pbList(k,d,to.r),tp=P[to.i];if(!tp)return;
   if(tp.lock){say(T('ปาร์ตี้นี้ล็อคอยู่ — กด 🔓 ก่อนเปลี่ยน'));return}
@@ -1882,6 +1967,7 @@ function pbPlace(c,to,from){/* to/from: {r,i,j} ; c: char name (from roster) */
   const cur=from||pbWhere(d,k,c);
   if(cur&&!from){const cp=pbList(k,d,cur.r)[cur.i];if(cp.lock){say(T('คนนี้อยู่ในปาร์ตี้ที่ล็อคไว้'));return}}
   if(k==='polar'&&to.r==='up'&&(!cur||cur.r!=='up')&&!tp.m[to.j]){const n=d.up.reduce((a,p)=>a+p.m.filter(Boolean).length,0);if(n>=POLCAP){say(T('ห้องบนเต็ม 50 คนแล้ว'));return}}
+  if(isGL(k)&&to.r==='down'&&(!cur||cur.r!=='down')&&!tp.m[to.j]){const n=d.down.reduce((a,p)=>a+p.m.filter(Boolean).length,0);if(n>=GLDOWN){say(T('ห้องล่างเต็ม 90 คนแล้ว'));return}}
   const occ=tp.m[to.j];
   if(cur){pbList(k,d,cur.r)[cur.i].m[cur.j]=occ&&!pbList(k,d,cur.r)[cur.i].lock?occ:''}
   tp.m[to.j]=c;
@@ -1914,14 +2000,16 @@ function polarNewWeek(){
   /* unlock auto-filled parties so leaders can still tweak; keep originally locked ones */
   return {week:wk,baseHist,baseLast,hist:baseHist,up:up.filter(p=>p.m.some(Boolean)),down:down.filter(p=>p.m.some(Boolean)),cap:POLCAP}}
 function pbText(k,d){const head=`${PBDEF[k].n} · ${T(PBDEF[k].d)} ${PBDEF[k].t}`;const sec=(t,P)=>(t?`\n【${t}】`:'')+P.map((p,i)=>p.m.some(Boolean)?`\n${pName(p,i)}${p.lock?' 🔒':''}: ${p.m.filter(Boolean).map(c=>`${c} (${RSHORT[roleC(c)]})`).join(', ')}`:'').join('');
+  if(isGL(k))return head+sec(T('ห้องบน'),d.parties)+'\n'+sec(T('ห้องล่าง'),d.down);
   return k==='polar'?head+` · ${T('สัปดาห์')} ${d.week||sunKey()}`+sec(T('ห้องบน'),d.up)+'\n'+sec(T('ห้องล่าง'),d.down):head+sec('',d.parties)}
 function renderParty(){
   if(!$('pbBoard'))return;
   if(!isCloud()){$('pbBoard').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อมฐานข้อมูล')}</p>`;return}
   const staff=stfx(),k=pbKey,d=pbDoc(k),me=myChar(),def=PBDEF[k];
+  if(!staff&&isGL(k)&&me&&!pbGLTouched){const w=pbWhere(d,k,me);if(w)pbGLRoom=w.r}
   setSeg('pbTab',k);$('evTop').innerHTML=myCharBox()+leaveBox();
   /* my parties summary */
-  const mine=Object.keys(PBDEF).map(x=>{const w=me&&pbWhere(pbDoc(x),x,me);return w?`<span class="chip">${evIco(x,20)} ${esc(PBDEF[x].n)} ${T(PBDEF[x].d)}: <b>${x==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${esc(wName(pbDoc(x),x,w))}</b></span>`:''}).join('');
+  const mine=Object.keys(PBDEF).map(x=>{const w=me&&pbWhere(pbDoc(x),x,me);return w?`<span class="chip">${evIco(x,20)} ${esc(PBDEF[x].n)} ${T(PBDEF[x].d)}: <b>${x==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':w.r==='down'?T('ห้องล่าง')+' · ':''}${esc(wName(pbDoc(x),x,w))}</b></span>`:''}).join('');
   const all=pbRooms(k,d).flatMap(([,P])=>P),placed=all.reduce((a,p)=>a+p.m.filter(Boolean).length,0),locked=all.filter(p=>p.lock).length;
   let h=`<div class="pbinfo"><div><h2 style="margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap">${evIco(k,44)} ${esc(def.n)} <span class="note" style="font-size:15px">${T(def.d)} · ${def.t}</span></h2>
     <div class="row" style="margin-top:6px;justify-content:flex-start"><span class="chip">${T('จัดแล้ว')} <b>${placed}</b> ${T('คน')}</span><span class="chip">🔒 ${locked}/${all.length} ${T('ปาร์ตี้')}</span>${k==='polar'?`<span class="chip">${T('สัปดาห์')} <b>${esc(d.week||'—')}</b></span>`:''}</div>
@@ -1946,19 +2034,21 @@ function renderParty(){
   const vis=P=>staff?P.map((p,i)=>[p,i]):P.map((p,i)=>[p,i]).filter(([p])=>p.m.some(Boolean));
   const room=(r,P,title)=>`${title?`<div class="pbroom"><h3>${title}</h3>${staff?`<button class="sm ghost" data-pb="add" data-r="${r}">＋ ${T('ปาร์ตี้')}</button>`:''}</div>`:''}<div class="pbgrid">${vis(P).map(([p,i])=>card(r,p,i)).join('')||(staff?'':`<p class="note">${T('หัวหน้ายังไม่ได้จัดปาร์ตี้')}</p>`)}</div>`;
   $('pbBoard').innerHTML=(k==='polar'?room('up',d.up,'⬆ '+T('ห้องบน')+` (${T('ดันเจี้ยนดาว')} · ${T('สูงสุด')} ${POLCAP})`)+room('down',d.down,'⬇ '+T('ห้องล่าง')+` (${T('ดันเจี้ยนปกติ')})`)
-    :room('main',d.parties,''))+(staff&&k!=='polar'?`<div class="row" style="margin-top:10px"><button class="sm ghost" data-pb="add" data-r="main">＋ ${T('เพิ่มปาร์ตี้')}</button><button class="sm ghost" data-pb="del" data-r="main">− ${T('ลบปาร์ตี้สุดท้าย')}</button></div>`:'')+
+    :isGL(k)?(()=>{const cnt=r=>(r==='down'?d.down:d.parties).reduce((a,p)=>a+p.m.filter(Boolean).length,0),R=pbGLRoom;
+       return `<div class="glrooms" translate="no"><button data-glroom="main" class="${R==='main'?'on':''}"><b>⬆ ${T('ห้องบน')} · Upper</b><span>${cnt('main')}/${d.parties.length*PSIZE} ${T('คน')}</span></button><button data-glroom="down" class="${R==='down'?'on':''}"><b>⬇ ${T('ห้องล่าง')} · Lower</b><span>${cnt('down')}/${GLDOWN} ${T('คน')}</span></button></div>`+room(R,R==='down'?d.down:d.parties,'')})()
+    :room('main',d.parties,''))+(staff&&k!=='polar'?`<div class="row" style="margin-top:10px"><button class="sm ghost" data-pb="add" data-r="${isGL(k)?pbGLRoom:'main'}">＋ ${T('เพิ่มปาร์ตี้')}</button><button class="sm ghost" data-pb="del" data-r="${isGL(k)?pbGLRoom:'main'}">− ${T('ลบปาร์ตี้สุดท้าย')}</button></div>`:'')+
     (staff&&!d.ts&&k!=='polar'?`<p class="note">${T('ยังไม่ได้จัด — ลากชื่อจากรายชื่อด้านซ้ายมาวางในช่อง')}</p>`:'')+(k==='polar'&&!d.up.length&&!d.down.length?`<div class="empty">${T('ยังไม่ได้จัดรอบสัปดาห์นี้')}${staff?' — '+T('กด "จัดรอบสัปดาห์นี้ (สลับห้อง)"'):''}</div>`:'');
   /* roster */
   $('pbWrap').classList.toggle('noroster',!staff);
   if(staff&&model){const q=pbQ.toLowerCase(),hist=k==='polar'?(d.hist||{}):{};
-    const R=[...model.P].sort((a,b)=>b.gear-a.gear).map(p=>({p,w:pbWhere(d,k,p.name),r:CLASS_ROLE[p.cls]||'melee'})).filter(x=>(!q||x.p.name.toLowerCase().includes(q))&&(!pbRole||x.p.cls===pbRole)&&(!pbHide||!x.w));
+    const R=[...model.P].sort((a,b)=>b.gear-a.gear).map(p=>({p,w:pbWhere(d,k,p.name),r:CLASS_ROLE[p.cls]||'melee'})).filter(x=>!(isGL(k)&&x.w&&x.w.r!==pbGLRoom)).filter(x=>(!q||x.p.name.toLowerCase().includes(q))&&(!pbRole||x.p.cls===pbRole)&&(!pbHide||!x.w));
     const cnt=model.P.filter(p=>!pbWhere(d,k,p.name)).length;
     $('pbRoster').innerHTML=`<div class="pbrh"><b>${T('รายชื่อในกิล')}</b><span class="note">${T('ยังไม่ได้จัด')} ${cnt}</span></div>
       <input id="pbQ" placeholder="${T('ค้นหาชื่อ')}" value="${esc(pbQ)}">
       <div class="chips pbrf"><button class="chip ${pbRole===''?'on':''}" data-pbrole="">${T('ทั้งหมด')} ${model.P.length}</button>${Object.entries(model.P.reduce((m,p)=>(m[p.cls]=(m[p.cls]||0)+1,m),{})).sort((a,b)=>b[1]-a[1]).map(([c,n])=>{const free=model.P.filter(p=>p.cls===c&&!pbWhere(d,k,p.name)).length;return `<button class="chip clschip ${pbRole===c?'on':''}" data-pbrole="${esc(c)}" style="--cc:${clsCol(c)}" title="${esc(c)}: ${T('ยังไม่ได้จัด')} ${free}/${n}">${ico(c,20)}<span class="cn">${esc(c)}</span><b>${free}</b></button>`}).join('')}</div>
       <label class="note" style="display:flex;gap:6px;align-items:center;margin:4px 0"><input type="checkbox" id="pbHide" ${pbHide?'checked':''}> ${T('ซ่อนคนที่จัดแล้ว')}</label>
       <p class="note" style="margin:2px 0 6px">${matchMedia('(pointer:coarse)').matches?T('แตะชื่อ แล้วแตะช่องว่างเพื่อวาง'):T('ลากชื่อไปวางในช่อง · หรือคลิกชื่อแล้วคลิกช่อง')}</p>
-      <ul class="pbrl">${R.map(({p,w,r})=>{const lv=onLeave(p.name,k);return `<li class="pbri ${w?'placed':''} ${lv?'leave':''} ${pbSel===p.name?'sel':''}" style="--cc:${clsCol(p.cls)}" ${lv?`title="${T('แจ้งลา — ลากเข้าไม่ได้')}"`:`data-drag="${esc(p.name)}" data-pick-c="${esc(p.name)}"`}>${ico(p.cls,24)}<div class="grow" style="min-width:0"><div class="nm"><b>${esc(p.name)}</b>${onLeave(p.name,k)?` <span class="tag t-new">${T('ลา')}</span>`:''}</div><div class="note nm">${esc(p.cls)} · ${fmt(p.gear)}${k==='polar'?` · ${T('เคยห้องบน')} ${hist[p.name]||0}`:''}</div></div>${w?`<span class="pbat">${k==='polar'?(w.r==='up'?'⬆':'⬇'):''}P${w.i+1}</span>`:''}</li>`}).join('')}</ul>`;
+      <ul class="pbrl">${R.map(({p,w,r})=>{const lv=onLeave(p.name,k);return `<li class="pbri ${w?'placed':''} ${lv?'leave':''} ${pbSel===p.name?'sel':''}" style="--cc:${clsCol(p.cls)}" ${lv?`title="${T('แจ้งลา — ลากเข้าไม่ได้')}"`:`data-drag="${esc(p.name)}" data-pick-c="${esc(p.name)}"`}>${ico(p.cls,24)}<div class="grow" style="min-width:0"><div class="nm"><b>${esc(p.name)}</b>${onLeave(p.name,k)?` <span class="tag t-new">${T('ลา')}</span>`:''}</div><div class="note nm">${esc(p.cls)} · ${fmt(p.gear)}${k==='polar'?` · ${T('เคยห้องบน')} ${hist[p.name]||0}`:''}</div></div>${w?`<span class="pbat">${k==='polar'?(w.r==='up'?'⬆':'⬇'):''}${esc(pName(pbList(k,d,w.r)[w.i],w.i))}</span>`:''}</li>`}).join('')}</ul>`;
   }else $('pbRoster').innerHTML='';
 }
 /* drag & drop (mouse) + tap-to-place */
@@ -1976,6 +2066,7 @@ function pbAction(t){
   if(Date.now()-pbJustDragged<250)return true;
   let el;const cl=s=>t.closest(s);
   if(el=cl('#pbTab [data-v]')){pbKey=el.dataset.v;pbSel=null;try{sessionStorage.setItem('tm-pb',pbKey)}catch(_){}renderParty();return true}
+  if(el=cl('[data-glroom]')){pbGLRoom=el.dataset.glroom;pbGLTouched=true;pbSel=null;pbSelSlot=null;try{sessionStorage.setItem('tm-glroom',pbGLRoom)}catch(_){}renderParty();return true}
   if(el=cl('[data-pbrole]')){pbRole=el.dataset.pbrole;renderParty();return true}
   const staff=stfx(),k=pbKey;
   if(el=cl('[data-pb]')){const a=el.dataset.pb,d=pbDoc(k);
@@ -1990,9 +2081,9 @@ function pbAction(t){
     else if(a==='rm')pbRemove({r:el.dataset.r,i:+el.dataset.i,j:+el.dataset.j});
     else if(a==='add'){L.push(emptyParty());pbSave(k,d)}
     else if(a==='del'){const p=L[L.length-1];if(!p)return true;if(p.lock||p.m.some(Boolean)){say(T('ปาร์ตี้สุดท้ายยังมีคนอยู่ — เอาออกก่อน'));return true}L.pop();pbSave(k,d)}
-    else if(a==='fill'){const inB=new Set(d.parties.flatMap(p=>p.m.filter(Boolean).map(canon)));balancedFill(d.parties,[...model.P].sort((a,b)=>b.gear-a.gear).map(p=>p.name).filter(c=>!inB.has(c)&&!onLeave(c,k)));pbSave(k,d);say(T('เติมช่องว่างแล้ว — ปาร์ตี้ที่ครบ 5 คนถูกล็อคอัตโนมัติ'))}
-    else if(a==='clear'){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยันล้าง');return true}pbRooms(k,d).forEach(([,P])=>P.forEach(p=>{if(!p.lock)p.m=Array(PSIZE).fill('')}));pbSave(k,d)}
-    else if(a==='copytue'){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยัน (จะแทนที่ของเดิม)');return true}const s=pbDoc('gl_tue');pbSave(k,{parties:s.parties.map(p=>({...p,id:uid()}))})}
+    else if(a==='fill'){const inB=new Set(pbRooms(k,d).flatMap(([,P])=>P.flatMap(p=>p.m.filter(Boolean).map(canon))));balancedFill(isGL(k)?pbList(k,d,pbGLRoom):d.parties,[...model.P].sort((a,b)=>b.gear-a.gear).map(p=>p.name).filter(c=>!inB.has(c)&&!onLeave(c,k)));pbSave(k,d);say(T('เติมช่องว่างแล้ว — ปาร์ตี้ที่ครบ 5 คนถูกล็อคอัตโนมัติ'))}
+    else if(a==='clear'){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยันล้าง');return true}pbRooms(k,d).filter(([r])=>!isGL(k)||r===pbGLRoom).forEach(([,P])=>P.forEach(p=>{if(!p.lock)p.m=Array(PSIZE).fill('')}));pbSave(k,d)}
+    else if(a==='copytue'){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยัน (จะแทนที่ของเดิม)');return true}const s=pbDoc('gl_tue');pbSave(k,{parties:s.parties.map(p=>({...p,id:uid()})),down:s.down.map(p=>({...p,id:uid()}))})}
     else if(a==='newweek'){if(!model){say(T('ยังไม่มีข้อมูลสมาชิก'));return true}if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยันจัดรอบใหม่');return true}pbSave('polar',polarNewWeek());say(T('จัดรอบสัปดาห์นี้แล้ว — ปรับเพิ่มได้ด้วยการลากวาง'))}
     return true}
   if(!staff)return false;
@@ -2051,7 +2142,7 @@ function renderMyHome(){renderWelcome();
   const el=$('myHome');if(!el)return;if(!model||!user||!isCloud()){el.innerHTML='';return}
   const me=myChar();
   const parts=ACT.map(([k,ic,n])=>{const key=k==='polar'?'polar':k,d=pbDoc(key),w=me&&pbWhere(d,key,me),lv=me&&leaveOf(me,k);
-    return `<li class="${lv?'lvoff':''}"><span class="ic">${evIco(k,36)}</span><div class="grow"><b>${T(n)}</b><div class="note">${dTh(actDate(k,nextOcc(k)).getTime())} · ${(PBDEF[key]||{}).t||''}</div></div><span class="pbwhere">${lv?`<span class="tag t-new">${T('ลา')}</span>`:w?`${key==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}<b>${esc(wName(d,key,w))}</b>`:`<span class="note">${T('ยังไม่ได้จัด')}</span>`}</span></li>`}).join('');
+    return `<li class="${lv?'lvoff':''}"><span class="ic">${evIco(k,36)}</span><div class="grow"><b>${T(n)}</b><div class="note">${dTh(actDate(k,nextOcc(k)).getTime())} · ${(PBDEF[key]||{}).t||''}</div></div><span class="pbwhere">${lv?`<span class="tag t-new">${T('ลา')}</span>`:w?`${key==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':w.r==='down'?T('ห้องล่าง')+' · ':''}<b>${esc(wName(d,key,w))}</b>`:`<span class="note">${T('ยังไม่ได้จัด')}</span>`}</span></li>`}).join('');
   const myQ=me?aucItems.filter(it=>it.status!=='closed').map(it=>{const Q=aucQ.filter(q=>q.itemId===it.id).sort((a,b)=>a.ts-b.ts),i=Q.findIndex(q=>canon(q.char)===canon(me));return i>=0?[it,i+1]:null}).filter(Boolean):[];
   const won=me?aucItems.filter(it=>(it.winners||[]).some(w=>canon(w.char)===canon(me))):[];
   const P=model.P,avg=P.reduce((a,p)=>a+p.gear,0)/P.length,top=[...P].filter(p=>p.dG!=null).sort((a,b)=>b.dG-a.dG).slice(0,5);
