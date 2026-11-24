@@ -213,15 +213,18 @@ button.ok.arm,button[data-ungive][data-arm="1"]{background:var(--good);color:#ff
 .chip.on{background:var(--acc);color:light-dark(#fff,#0b0d16);border-color:var(--acc)}
 button.chip{min-height:36px;cursor:pointer}
 .mysign{background:var(--accbg);border-color:transparent;margin:6px 0 14px;padding:12px}
-.evtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
-.evtabs button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px 8px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:0;cursor:pointer;transition:transform .12s,border-color .12s}
-.evtabs button img{width:64px;height:64px;object-fit:contain;filter:grayscale(.35) opacity(.8);transition:filter .12s}
-.evtabs button b{font-size:14px}.evtabs button span{font-size:12.5px;color:var(--mute)}
-.evtabs button:hover{transform:translateY(-2px)}.evtabs button:hover img{filter:none}
-.evtabs button[aria-pressed=true]{border-color:var(--acc);background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 18%,var(--card)),var(--card));box-shadow:0 6px 18px -8px var(--acc)}
-.evtabs button[aria-pressed=true] img{filter:none}.evtabs button[aria-pressed=true] span{color:var(--acc);font-weight:600}
+.evtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+.evc{position:relative;height:190px;padding:0;border-radius:18px;overflow:hidden;border:3px solid #f1e3c8;background:var(--bg) center 30%/cover no-repeat,#3a2b55;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;color:#fff;min-height:0;filter:saturate(.75) brightness(.8);transition:transform .15s,filter .15s,box-shadow .15s}
+.evc::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 35%,rgba(10,8,25,.85) 100%);pointer-events:none}
+.evc:hover{transform:translateY(-3px);filter:none}
+.evc[aria-pressed=true]{filter:none;border-color:#ffd27a;box-shadow:0 0 0 2px #ffb347,0 10px 26px -8px #ffb347}
+.evc-polar{background:radial-gradient(circle at 50% 35%,#8b6cf0 0%,#4b2f9a 45%,#1d1440 100%)}
+.evc-ic{position:absolute;top:22%;left:50%;width:86px;height:86px;transform:translateX(-50%);z-index:1;filter:drop-shadow(0 6px 14px rgba(0,0,0,.5))}
+.evc-day{position:relative;z-index:2;align-self:center;margin-top:8px;padding:2px 10px;border-radius:999px;background:rgba(255,248,235,.92);color:#c4651d;font-weight:700;font-size:12.5px;white-space:nowrap}
+.evc-t{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 6px 10px;text-align:center;line-height:1.15}
+.evc-t b{font-size:17px;color:#fff;text-shadow:0 2px 0 #2a6fd6,0 0 8px rgba(0,0,0,.6)}.evc-t i{font-style:normal;font-size:12px;color:#ffe2a8;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 .evico{vertical-align:middle;object-fit:contain}
-@media(max-width:600px){.evtabs{gap:6px}.evtabs button{padding:8px 2px 6px}.evtabs button img{width:44px;height:44px}.evtabs button b{font-size:11.5px;line-height:1.2;text-align:center}.evtabs button span{font-size:11px}}
+@media(max-width:600px){.evtabs{gap:6px}.evc{height:132px;border-width:2px;border-radius:12px}.evc-day{font-size:9px;padding:1px 5px;margin-top:5px;max-width:94%;overflow:hidden;text-overflow:ellipsis}.evc-t b{font-size:12px}.evc-t i{font-size:9.5px}.evc-ic{width:54px;height:54px}}
 .pbinfo{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-start}
 .pbrule{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--accbg);line-height:1.6}
 .pbwrap{display:grid;grid-template-columns:290px minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}.pbwrap.noroster{grid-template-columns:1fr}.pbwrap.noroster .pbroster{display:none}
@@ -463,11 +466,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   <div class="hero"><div><h1>จัดปาร์ตี้กิจกรรม</h1><p>ลากชื่อสมาชิกจากด้านซ้ายไปวางในช่อง · ครบ 5 คนแล้วปาร์ตี้จะล็อคไว้จนกว่าจะปลดล็อค · ใช้ซ้ำได้ทุกสัปดาห์</p></div></div>
   <div class="warnbox pvb" style="margin-top:14px">👁 <b>กำลังดูในมุมมองสมาชิก</b> <button class="sm" data-viewas="admin" style="margin-left:8px">กลับเป็น Admin</button></div>
   <div id="evTop" style="margin-top:14px"></div>
-  <div class="evtabs" id="pbTab" role="tablist">
-    <button data-v="gl_tue"><img src="https://roworlddb.com/media/images/activity/icon_activity_gonghuiliansai.webp" alt="" referrerpolicy="no-referrer"><b>Guild League</b><span>อังคาร</span></button>
-    <button data-v="gl_thu"><img src="https://roworlddb.com/media/images/activity/icon_activity_gonghuiliansai.webp" alt="" referrerpolicy="no-referrer"><b>Guild League</b><span>พฤหัส</span></button>
-    <button data-v="siege"><img src="https://roworlddb.com/media/images/activity/icon_activity_gongchengzhan.webp" alt="" referrerpolicy="no-referrer"><b>ศึกชิงปราสาท</b><span>อาทิตย์</span></button>
-    <button data-v="polar"><img src="https://roworlddb.com/media/images/activity/icon_activity_heibaizhanjing.webp" alt="" referrerpolicy="no-referrer"><b>Polarity Zone</b><span>อาทิตย์</span></button></div>
+  <div class="evtabs" id="pbTab" role="tablist" translate="no"><button data-v="gl_tue" class="evc" style="--bg:url(ev_gl.jpg)"><span class="evc-day">วันอังคาร · Tue</span><span class="evc-t"><b>Guild League</b><i>Guild League</i></span></button><button data-v="gl_thu" class="evc" style="--bg:url(ev_gl.jpg)"><span class="evc-day">วันพฤหัส · Thu</span><span class="evc-t"><b>Guild League</b><i>Guild League</i></span></button><button data-v="siege" class="evc" style="--bg:url(ev_siege.jpg)"><span class="evc-day">วันอาทิตย์ · Sun</span><span class="evc-t"><b>ศึกชิงปราสาท</b><i>Siege War</i></span></button><button data-v="polar" class="evc evc-polar"><img class="evc-ic" src="https://roworlddb.com/media/images/activity/icon_activity_heibaizhanjing.webp" alt="" referrerpolicy="no-referrer"><span class="evc-day">วันอาทิตย์ · Sun</span><span class="evc-t"><b>Polarity Zone</b><i>ศึกขาวดำ · Black & White</i></span></button></div>
   <div class="card" id="pbHead" style="margin-top:12px"></div>
   <div class="pbwrap" id="pbWrap"><aside class="pbroster card" id="pbRoster"></aside><div class="card" id="pbBoard"></div></div>
 </section>
@@ -1094,6 +1093,7 @@ function T(s){if(LANG==='th'||!s||!hasTh(s))return s;const k=LI[LANG],t=s.trim()
 function trNode(n){
   if(LANG==='th')return;
   if(n.nodeType===3){const v=n.nodeValue;if(v&&hasTh(v)){const t=T(v);if(t!==v)n.nodeValue=t}return}
+  if(n.nodeType===1&&n.getAttribute('translate')==='no')return;
   if(n.nodeType!==1||n.tagName==='SCRIPT'||n.tagName==='STYLE'||n.tagName==='TEXTAREA'||n.tagName==='PRE')return;
   for(const a of ['placeholder','title','aria-label']){const v=n.getAttribute&&n.getAttribute(a);if(v&&hasTh(v)){const t=T(v);if(t!==v)n.setAttribute(a,t)}}
   for(const c of n.childNodes)trNode(c);
