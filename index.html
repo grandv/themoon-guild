@@ -213,6 +213,15 @@ button.ok.arm,button[data-ungive][data-arm="1"]{background:var(--good);color:#ff
 .chip.on{background:var(--acc);color:light-dark(#fff,#0b0d16);border-color:var(--acc)}
 button.chip{min-height:36px;cursor:pointer}
 .mysign{background:var(--accbg);border-color:transparent;margin:6px 0 14px;padding:12px}
+.evtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.evtabs button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px 8px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:0;cursor:pointer;transition:transform .12s,border-color .12s}
+.evtabs button img{width:64px;height:64px;object-fit:contain;filter:grayscale(.35) opacity(.8);transition:filter .12s}
+.evtabs button b{font-size:14px}.evtabs button span{font-size:12.5px;color:var(--mute)}
+.evtabs button:hover{transform:translateY(-2px)}.evtabs button:hover img{filter:none}
+.evtabs button[aria-pressed=true]{border-color:var(--acc);background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 18%,var(--card)),var(--card));box-shadow:0 6px 18px -8px var(--acc)}
+.evtabs button[aria-pressed=true] img{filter:none}.evtabs button[aria-pressed=true] span{color:var(--acc);font-weight:600}
+.evico{vertical-align:middle;object-fit:contain}
+@media(max-width:600px){.evtabs{gap:6px}.evtabs button{padding:8px 2px 6px}.evtabs button img{width:44px;height:44px}.evtabs button b{font-size:11.5px;line-height:1.2;text-align:center}.evtabs button span{font-size:11px}}
 .pbinfo{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-start}
 .pbrule{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--accbg);line-height:1.6}
 .pbwrap{display:grid;grid-template-columns:290px minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}.pbwrap.noroster{grid-template-columns:1fr}.pbwrap.noroster .pbroster{display:none}
@@ -241,7 +250,7 @@ button.chip{min-height:36px;cursor:pointer}
 .pbs .x{padding:0 6px;min-height:0}
 .pbghost{position:fixed;z-index:80;pointer-events:none;background:var(--acc);color:#fff;font-weight:600;padding:5px 10px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.3)}
 .dragsrc{opacity:.35}body.pbdragging{cursor:grabbing;user-select:none}
-@media(max-width:820px){.pbwrap{grid-template-columns:1fr}.pbroster{position:static;max-height:560px}.pbrf{max-height:112px!important}#pbTab button{flex:1 1 45%}}
+@media(max-width:820px){.pbwrap{grid-template-columns:1fr}.pbroster{position:static;max-height:560px}.pbrf{max-height:112px!important}}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:10px}
 .party{background:var(--card2);border-radius:14px;padding:10px}
 .party .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
@@ -454,7 +463,11 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   <div class="hero"><div><h1>จัดปาร์ตี้กิจกรรม</h1><p>ลากชื่อสมาชิกจากด้านซ้ายไปวางในช่อง · ครบ 5 คนแล้วปาร์ตี้จะล็อคไว้จนกว่าจะปลดล็อค · ใช้ซ้ำได้ทุกสัปดาห์</p></div></div>
   <div class="warnbox pvb" style="margin-top:14px">👁 <b>กำลังดูในมุมมองสมาชิก</b> <button class="sm" data-viewas="admin" style="margin-left:8px">กลับเป็น Admin</button></div>
   <div id="evTop" style="margin-top:14px"></div>
-  <div class="seg anatab" id="pbTab" style="margin-top:14px"><button data-v="gl_tue">🏆 Guild League · อังคาร</button><button data-v="gl_thu">🏆 Guild League · พฤหัส</button><button data-v="siege">🏰 ศึกชิงปราสาท</button><button data-v="polar">☯️ Polarity Zone</button></div>
+  <div class="evtabs" id="pbTab" role="tablist">
+    <button data-v="gl_tue"><img src="https://roworlddb.com/media/images/activity/icon_activity_gonghuiliansai.webp" alt="" referrerpolicy="no-referrer"><b>Guild League</b><span>อังคาร</span></button>
+    <button data-v="gl_thu"><img src="https://roworlddb.com/media/images/activity/icon_activity_gonghuiliansai.webp" alt="" referrerpolicy="no-referrer"><b>Guild League</b><span>พฤหัส</span></button>
+    <button data-v="siege"><img src="https://roworlddb.com/media/images/activity/icon_activity_gongchengzhan.webp" alt="" referrerpolicy="no-referrer"><b>ศึกชิงปราสาท</b><span>อาทิตย์</span></button>
+    <button data-v="polar"><img src="https://roworlddb.com/media/images/activity/icon_activity_heibaizhanjing.webp" alt="" referrerpolicy="no-referrer"><b>Polarity Zone</b><span>อาทิตย์</span></button></div>
   <div class="card" id="pbHead" style="margin-top:12px"></div>
   <div class="pbwrap" id="pbWrap"><aside class="pbroster card" id="pbRoster"></aside><div class="card" id="pbBoard"></div></div>
 </section>
@@ -480,6 +493,9 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"อังคาร":["Tue", "Sel", "Mar"],
+"พฤหัส":["Thu", "Kam", "Huw"],
+"อาทิตย์":["Sun", "Min", "Lin"],
 "หัวหน้ายังไม่ได้จัดปาร์ตี้":["Leaders haven't set the parties yet", "Pemimpin belum mengatur party", "Wala pang party"],
 "ยินดีต้อนรับสู่เว็บกิลด์ TheMoon":["Welcome to the TheMoon guild site", "Selamat datang di situs guild TheMoon", "Welcome sa TheMoon guild site"],
 "เข้าใจแล้ว ✕":["Got it ✕", "Mengerti ✕", "Sige ✕"],
@@ -1766,6 +1782,8 @@ const roleOf=s=>s&&s.role||CLASS_ROLE[(pInfo(s&&s.char)||{}).cls]||'melee';
 const rName=r=>T((ROLES.find(x=>x[0]===r)||['',r])[1]);
 function evtList(){return [...events].sort((a,b)=>a.at-b.at)}
 /* ---------- party boards (GL / Siege / Polarity) ---------- */
+const EVIMG={gl_tue:'gonghuiliansai',gl_thu:'gonghuiliansai',siege:'gongchengzhan',polar:'heibaizhanjing'};
+const evIco=(k,sz=24)=>`<img class="evico" src="https://roworlddb.com/media/images/activity/icon_activity_${EVIMG[k]}.webp" width="${sz}" height="${sz}" alt="" referrerpolicy="no-referrer">`;
 const PBDEF={gl_tue:{n:'Guild League',d:'วันอังคาร',t:'21:30–21:55 · 22:00–22:25',p:12,ic:'🏆'},gl_thu:{n:'Guild League',d:'วันพฤหัสบดี',t:'22:00–22:25',p:12,ic:'🏆'},siege:{n:'ศึกชิงปราสาท',d:'วันอาทิตย์',t:'21:00–22:00',p:12,ic:'🏰'},polar:{n:'Polarity Zone',d:'วันอาทิตย์',t:'12:00–21:00 · เปิดแล้วเล่นได้ 90 นาที',p:0,ic:'☯️'}};
 const PSIZE=5,POLCAP=50;
 let pbData={},pbKey=(()=>{try{return sessionStorage.getItem('tm-pb')||'gl_tue'}catch(e){return 'gl_tue'}})(),pbSel=null,pbQ='',pbRole='',pbHide=false;
@@ -1828,9 +1846,9 @@ function renderParty(){
   const staff=stfx(),k=pbKey,d=pbDoc(k),me=myChar(),def=PBDEF[k];
   setSeg('pbTab',k);$('evTop').innerHTML=myCharBox()+leaveBox();
   /* my parties summary */
-  const mine=Object.keys(PBDEF).map(x=>{const w=me&&pbWhere(pbDoc(x),x,me);return w?`<span class="chip">${PBDEF[x].ic} ${esc(PBDEF[x].n)} ${T(PBDEF[x].d)}: <b>${x==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${T('ปาร์ตี้')} ${w.i+1}</b></span>`:''}).join('');
+  const mine=Object.keys(PBDEF).map(x=>{const w=me&&pbWhere(pbDoc(x),x,me);return w?`<span class="chip">${evIco(x,20)} ${esc(PBDEF[x].n)} ${T(PBDEF[x].d)}: <b>${x==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${T('ปาร์ตี้')} ${w.i+1}</b></span>`:''}).join('');
   const all=pbRooms(k,d).flatMap(([,P])=>P),placed=all.reduce((a,p)=>a+p.m.filter(Boolean).length,0),locked=all.filter(p=>p.lock).length;
-  let h=`<div class="pbinfo"><div><h2 style="margin:0">${def.ic} ${esc(def.n)} <span class="note" style="font-size:15px">${T(def.d)} · ${def.t}</span></h2>
+  let h=`<div class="pbinfo"><div><h2 style="margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap">${evIco(k,44)} ${esc(def.n)} <span class="note" style="font-size:15px">${T(def.d)} · ${def.t}</span></h2>
     <div class="row" style="margin-top:6px;justify-content:flex-start"><span class="chip">${T('จัดแล้ว')} <b>${placed}</b> ${T('คน')}</span><span class="chip">🔒 ${locked}/${all.length} ${T('ปาร์ตี้')}</span>${k==='polar'?`<span class="chip">${T('สัปดาห์')} <b>${esc(d.week||'—')}</b></span>`:''}</div>
     ${mine?`<div class="row" style="margin-top:8px;justify-content:flex-start">${T('ปาร์ตี้ของฉัน')}: ${mine}</div>`:''}</div>
     <div class="row">${staff?`${k==='polar'?`<button class="pri" data-pb="newweek">🔄 ${T('จัดรอบสัปดาห์นี้ (สลับห้อง)')}</button>`:`<button class="pri" data-pb="fill">✨ ${T('เติมช่องว่างอัตโนมัติ')}</button>`}
@@ -1922,7 +1940,7 @@ function leaveBox(){
   return `<div class="card lvbox"><div class="row" style="justify-content:space-between"><h3 style="margin:0">🙋 ${T('แจ้งลา')}</h3><button class="sm ghost" data-lv="close">✕</button></div>
    ${staff?`<label class="note">${T('ตัวละคร (หัวหน้าแจ้งแทนได้)')}<input id="lvWho" list="names" value="${esc(who||'')}" placeholder="${T('ชื่อตัวละคร')}"></label>`:(me?`<p style="margin:6px 0">${T('ตัวละคร')}: <b>${esc(me)}</b></p>`:`<p class="noc">${T('เลือกตัวละครของคุณก่อน')}</p>`)}
    <div class="seg" id="lvWk" style="margin:8px 0"><button data-lvwk="0" aria-pressed="${leaveWk===0}">${T('สัปดาห์นี้')}</button><button data-lvwk="1" aria-pressed="${leaveWk===1}">${T('สัปดาห์หน้า')}</button></div>
-   <div class="lvacts">${ACT.map(([k,ic,n])=>{const d=actDate(k,wk),past=d.getTime()<Date.now();return `<label class="lvact ${past?'past':''}"><input type="checkbox" class="lvck" value="${k}" ${cur&&cur.acts.includes(k)?'checked':''} ${past?'disabled':''}><span>${ic} ${T(n)}</span><span class="note">${dTh(d.getTime())}${past?' · '+T('ผ่านไปแล้ว'):''}</span></label>`}).join('')}</div>
+   <div class="lvacts">${ACT.map(([k,ic,n])=>{const d=actDate(k,wk),past=d.getTime()<Date.now();return `<label class="lvact ${past?'past':''}"><input type="checkbox" class="lvck" value="${k}" ${cur&&cur.acts.includes(k)?'checked':''} ${past?'disabled':''}><span style="display:flex;align-items:center;gap:6px">${evIco(k,24)} ${T(n)}</span><span class="note">${dTh(d.getTime())}${past?' · '+T('ผ่านไปแล้ว'):''}</span></label>`}).join('')}</div>
    <input id="lvWhy" placeholder="${T('เหตุผล (ไม่บังคับ · เห็นเฉพาะหัวหน้า)')}" value="${esc(cur&&cur.reason||'')}" style="width:100%;margin-top:8px">
    <div class="row" style="margin-top:10px"><button class="pri" data-lv="save" ${rulesOld.l&&!staff?'disabled':''}>${T('บันทึกการลา')}</button>${cur?`<button class="ghost" data-lv="del">${T('ยกเลิกการลานี้')}</button>`:''}</div>
    ${rulesOld.l?`<p class="note noc">${T('ต้องอัปเดตกฎฐานข้อมูล ก่อน สมาชิกถึงจะแจ้งลาได้')}</p>`:''}</div>`}
@@ -1950,7 +1968,7 @@ function renderMyHome(){renderWelcome();
   const el=$('myHome');if(!el)return;if(!model||!user||!isCloud()){el.innerHTML='';return}
   const me=myChar();
   const parts=ACT.map(([k,ic,n])=>{const key=k==='polar'?'polar':k,d=pbDoc(key),w=me&&pbWhere(d,key,me),lv=me&&leaveOf(me,k);
-    return `<li class="${lv?'lvoff':''}"><span class="ic">${ic}</span><div class="grow"><b>${T(n)}</b><div class="note">${dTh(actDate(k,nextOcc(k)).getTime())} · ${(PBDEF[key]||{}).t||''}</div></div><span class="pbwhere">${lv?`<span class="tag t-new">${T('ลา')}</span>`:w?`${key==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${T('ปาร์ตี้')} <b>${w.i+1}</b>`:`<span class="note">${T('ยังไม่ได้จัด')}</span>`}</span></li>`}).join('');
+    return `<li class="${lv?'lvoff':''}"><span class="ic">${evIco(k,36)}</span><div class="grow"><b>${T(n)}</b><div class="note">${dTh(actDate(k,nextOcc(k)).getTime())} · ${(PBDEF[key]||{}).t||''}</div></div><span class="pbwhere">${lv?`<span class="tag t-new">${T('ลา')}</span>`:w?`${key==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${T('ปาร์ตี้')} <b>${w.i+1}</b>`:`<span class="note">${T('ยังไม่ได้จัด')}</span>`}</span></li>`}).join('');
   const myQ=me?aucItems.filter(it=>it.status!=='closed').map(it=>{const Q=aucQ.filter(q=>q.itemId===it.id).sort((a,b)=>a.ts-b.ts),i=Q.findIndex(q=>canon(q.char)===canon(me));return i>=0?[it,i+1]:null}).filter(Boolean):[];
   const won=me?aucItems.filter(it=>(it.winners||[]).some(w=>canon(w.char)===canon(me))):[];
   const P=model.P,avg=P.reduce((a,p)=>a+p.gear,0)/P.length,top=[...P].filter(p=>p.dG!=null).sort((a,b)=>b.dG-a.dG).slice(0,5);
