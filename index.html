@@ -170,7 +170,7 @@ body.viewer #impSec{grid-template-columns:1fr}
 .mine .mfig{position:relative;height:220px}
 [data-zr][hidden]{display:none!important}
 .anatab{display:flex;flex-wrap:wrap;margin:2px 0 10px}.anatab button{font-size:14.5px;min-height:38px;padding:4px 14px}
-.insight{font-size:15px;line-height:1.5;margin:6px 0 2px;padding:8px 12px;border-radius:10px;background:var(--card)}.insight:empty{display:none}
+.insight{font-size:15px;line-height:1.5;margin:6px 0 2px;padding:4px 2px;background:none}.insight b.big{font-size:22px;font-family:'Chakra Petch',sans-serif}.insight:empty{display:none}
 .gamecard{background:transparent;border:0;padding:0}
 #gameView{display:grid;gap:14px}
 .gcard{background:var(--card2);border:1px solid var(--line);border-radius:18px;padding:16px}.gcard h3{margin:0 0 12px;font-size:17px}
@@ -1393,7 +1393,7 @@ let icoT=0;const IMG={};function icoImg(c){const id=JOB[c];if(!id)return 'circle
 const kfmt=v=>{const a=Math.abs(v);return a>=1e6?(v/1e6).toFixed(a>=1e7?0:1)+'M':a>=1e4?(v/1e3).toFixed(a>=1e5?0:1)+'k':fmt(v)};
 function chartOpts(ink,line,mute,legend){return {responsive:true,maintainAspectRatio:false,animation:matchMedia('(prefers-reduced-motion: reduce)').matches?false:{duration:300},interaction:{mode:'nearest',intersect:false},
   plugins:{legend:{display:legend,position:'bottom',labels:{color:ink,boxWidth:12,usePointStyle:mode==='class',font:{family:'IBM Plex Sans Thai',size:13}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
-  scales:{x:{ticks:{color:mute,maxTicksLimit:10,maxRotation:0,autoSkip:true},grid:{color:line}},y:{ticks:{color:mute,callback:v=>kfmt(v),font:{size:12}},grid:{color:line}}}}}
+  scales:{x:{ticks:{color:mute,maxTicksLimit:6,maxRotation:0,autoSkip:true,font:{size:12}},grid:{display:false},border:{color:line}},y:{ticks:{color:mute,callback:v=>kfmt(v),font:{size:12},maxTicksLimit:5},grid:{color:line},border:{display:false}}}}}
 const CH={};
 function mkChart(key,id,cfg){const cv=$(id);if(!cv||typeof Chart=='undefined')return null;let c=CH[key];if(c&&(c.canvas!==cv||c.config.type!==cfg.type)){c.destroy();c=null}
   if(c){c.data=cfg.data;c.options=cfg.options;c.update()}else c=CH[key]=new Chart(cv,cfg);const zr=document.querySelector(`[data-zr="${key}"]`);if(zr)zr.hidden=true;return c}
@@ -1516,9 +1516,9 @@ function drawChart(){
 function setIn(k,h){const e=$('in_'+k);if(e)e.innerHTML=h}
 function insights(D0){if(!model)return;const P=model.P,avg=a=>a.reduce((x,y)=>x+y,0)/Math.max(1,a.length);const f=D0[0],l=D0[D0.length-1];
   const a0=f?avg(f.rows.map(r=>r[6])):0,a1=l?avg(l.rows.map(r=>r[6])):0,dA=a1-a0;
-  setIn('trend',`${T('Gear เฉลี่ยตอนนี้')} <b>${fmt(a1)}</b>${D0.length>1?` · <span class="${dA>=0?'up':'dn'}">${sgn(Math.round(dA))} (${a0?(dA/a0*100).toFixed(1):0}%)</span> ${T('ในช่วงที่เลือก')}`:''}<span class="note"> · ${T('กดชื่อเส้นด้านล่างเพื่อเปิด/ปิดเส้นอื่น')}</span>`);
+  setIn('trend',`${T('Gear เฉลี่ยตอนนี้')} <b class="big">${fmt(a1)}</b>${D0.length>1?` <span class="${dA>=0?'up':'dn'}">${dA>=0?'▲':'▼'} ${sgn(Math.round(dA))} (${a0?(dA/a0*100).toFixed(1):0}%)</span>`:''}`);
   const n0=f?f.rows.length:0,n1=l?l.rows.length:0,s0=f?f.rows.reduce((a,r)=>a+r[6],0):0,s1=l?l.rows.reduce((a,r)=>a+r[6],0):0;
-  setIn('tot',`${T('สมาชิก')} <b>${n1}</b> ${T('คน')}${D0.length>1?` (${sgn(n1-n0)})`:''} · Gear ${T('รวม')} <b>${kfmt(s1)}</b>${D0.length>1?` <span class="${s1>=s0?'up':'dn'}">${s1>=s0?'+':''}${kfmt(s1-s0)}</span>`:''}`);
+  setIn('tot',`${T('สมาชิก')} <b>${n1}</b> ${T('คน')}${D0.length>1&&n1!==n0?` (${sgn(n1-n0)})`:''} · Gear ${T('รวม')} <b>${kfmt(s1)}</b>${D0.length>1?` <span class="${s1>=s0?'up':'dn'}">${s1>=s0?'+':''}${kfmt(s1-s0)}</span>`:''}`);
   const med=quart(P.map(p=>p.gear))[2],low=P.filter(p=>p.act<model.curThr&&p.gear<med).length;
   setIn('sc',low?`⚠️ <b>${low}</b> ${T('คนอยู่มุมล่างซ้าย (Gear ต่ำ + กิจกรรมต่ำ) — ควรจับตา')}`:`✅ ${T('ไม่มีใครอยู่โซนต้องจับตา')}`);
   setIn('heat',`${T('แถวที่มีช่องแดงหลายช่อง = ไม่ได้เล่นหลายวัน')}`);
