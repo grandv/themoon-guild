@@ -246,6 +246,7 @@ button.chip{min-height:36px;cursor:pointer}
 .evc-t b{font-size:17px;color:#fff;text-shadow:0 2px 0 #2a6fd6,0 0 8px rgba(0,0,0,.6)}.evc-t i{font-style:normal;font-size:12px;color:#ffe2a8;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 .evico{vertical-align:middle;object-fit:contain}
 @media(max-width:600px){.evtabs{gap:6px}.evc{height:132px;border-width:2px;border-radius:12px}.evc-day{font-size:9px;padding:1px 5px;margin-top:5px;max-width:94%;overflow:hidden;text-overflow:ellipsis}.evc-t b{font-size:12px}.evc-t i{font-size:9.5px}.evc-ic{width:54px;height:54px}}
+.pbsavebar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.pbs-ok{color:var(--good);font-weight:600}.pbs-ing{color:var(--warn)}
 .pbinfo{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-start}
 .pbrule{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--accbg);line-height:1.6}
 .pbwrap{display:grid;grid-template-columns:290px minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}.pbwrap.noroster{grid-template-columns:1fr}.pbwrap.noroster .pbroster{display:none}
@@ -522,6 +523,15 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"กำลังบันทึก…":["Saving…", "Menyimpan…", "Sine-save…"],
+"บันทึกไม่สำเร็จ — กด 💾 อีกครั้ง":["Couldn't save — press 💾 again", "Gagal menyimpan — tekan 💾 lagi", "Hindi na-save — pindutin ulit ang 💾"],
+"บันทึกแล้ว":["Saved", "Tersimpan", "Na-save"],
+"ยังไม่มีการบันทึก":["Not saved yet", "Belum disimpan", "Hindi pa na-save"],
+"บันทึก":["Save", "Simpan", "I-save"],
+"ย้อนกลับ":["Undo", "Urungkan", "I-undo"],
+"ทุกการเปลี่ยนแปลงบันทึกอัตโนมัติทันที":["Every change is saved automatically", "Setiap perubahan otomatis tersimpan", "Awtomatikong nase-save ang bawat pagbabago"],
+"บันทึกแล้ว ✓":["Saved ✓", "Tersimpan ✓", "Na-save ✓"],
+"ย้อนกลับ 1 ขั้นแล้ว":["Undid 1 step", "Diurungkan 1 langkah", "Na-undo ang 1 hakbang"],
 "กดเพื่อเปลี่ยนชื่อ":["Click to rename", "Klik untuk ganti nama", "I-click para palitan ang pangalan"],
 "เปลี่ยนสีปาร์ตี้":["Change party colour", "Ganti warna party", "Palitan ang kulay"],
 "ไม่ใส่สี":["No colour", "Tanpa warna", "Walang kulay"],
@@ -1855,7 +1865,13 @@ function pbDoc(k){const d=pbData[k];if(k==='polar'){const x=d?JSON.parse(JSON.st
 const pbRooms=(k,d)=>k==='polar'?[['up',d.up],['down',d.down]]:[['main',d.parties]];
 function pbWhere(d,k,c){const n=canon(c);for(const [r,P] of pbRooms(k,d))for(let i=0;i<P.length;i++){const j=P[i].m.findIndex(x=>x&&canon(x)===n);if(j>=0)return {r,i,j}}return null}
 const roleC=c=>CLASS_ROLE[(pInfo(c)||{}).cls]||'melee';
-function pbSave(k,d){pbData[k]=d;renderParty();const db=FB&&FB.db;if(!db)return;d.ts=Date.now();d.by=user.email;db.doc('meta/pb_'+k).set(d).catch(ferr)}
+let pbUndo={},pbSt={};
+function pbSave(k,d,noUndo){if(!noUndo){const prev=pbData[k]?JSON.stringify(pbData[k]):null;(pbUndo[k]=pbUndo[k]||[]).push(prev);if(pbUndo[k].length>30)pbUndo[k].shift()}
+  pbData[k]=d;try{localStorage.setItem('tm-pbdraft-'+k,JSON.stringify(d))}catch(_){}
+  const db=FB&&FB.db;if(!db){renderParty();return Promise.resolve()}d.ts=Date.now();d.by=user.email;pbSt[k]={s:'saving'};renderParty();
+  return db.doc('meta/pb_'+k).set(d).then(()=>{pbSt[k]={s:'ok',t:Date.now()};pbStatus()}).catch(e=>{pbSt[k]={s:'err'};pbStatus();ferr(e)})}
+function pbStatus(){const el=$('pbSave');if(!el)return;const st=pbSt[pbKey]||{},d=pbData[pbKey];
+  el.innerHTML=st.s==='saving'?`<span class="pbs-ing">⏳ ${T('กำลังบันทึก…')}</span>`:st.s==='err'?`<span class="noc">⚠ ${T('บันทึกไม่สำเร็จ — กด 💾 อีกครั้ง')}</span>`:d&&d.ts?`<span class="pbs-ok">✓ ${T('บันทึกแล้ว')} ${new Date(d.ts).toLocaleTimeString(LOCALE[LANG]||'th-TH',{hour:'2-digit',minute:'2-digit'})}</span>`:`<span class="note">${T('ยังไม่มีการบันทึก')}</span>`}
 function pbList(k,d,r){return k==='polar'?d[r]:d.parties}
 function pbPlace(c,to,from){/* to/from: {r,i,j} ; c: char name (from roster) */
   const k=pbKey,d=pbDoc(k);const P=pbList(k,d,to.r),tp=P[to.i];if(!tp)return;
@@ -1911,12 +1927,13 @@ function renderParty(){
     <div class="row" style="margin-top:6px;justify-content:flex-start"><span class="chip">${T('จัดแล้ว')} <b>${placed}</b> ${T('คน')}</span><span class="chip">🔒 ${locked}/${all.length} ${T('ปาร์ตี้')}</span>${k==='polar'?`<span class="chip">${T('สัปดาห์')} <b>${esc(d.week||'—')}</b></span>`:''}</div>
     ${mine?`<div class="row" style="margin-top:8px;justify-content:flex-start">${T('ปาร์ตี้ของฉัน')}: ${mine}</div>`:''}</div>
     <div class="row">${staff?`${k==='polar'?`<button class="pri" data-pb="newweek">🔄 ${T('จัดรอบสัปดาห์นี้ (สลับห้อง)')}</button>`:`<button class="pri" data-pb="fill">✨ ${T('เติมช่องว่างอัตโนมัติ')}</button>`}
-    ${k==='gl_thu'?`<button data-pb="copytue">${T('คัดลอกจากวันอังคาร')}</button>`:''}<button data-pb="clear" class="ghost">${T('ล้างปาร์ตี้ที่ไม่ล็อค')}</button>`:''}<button data-pb="text" class="ghost">📋 ${T('คัดลอกเป็นข้อความ')}</button></div></div>`;
+    ${k==='gl_thu'?`<button data-pb="copytue">${T('คัดลอกจากวันอังคาร')}</button>`:''}<button data-pb="clear" class="ghost">${T('ล้างปาร์ตี้ที่ไม่ล็อค')}</button>`:''}<button data-pb="text" class="ghost">📋 ${T('คัดลอกเป็นข้อความ')}</button></div></div>
+    ${staff?`<div class="pbsavebar"><button class="pri" data-pb="save">💾 ${T('บันทึก')}</button><button class="ghost" data-pb="undo" ${(pbUndo[k]||[]).length?'':'disabled'}>↶ ${T('ย้อนกลับ')}</button><span id="pbSave"></span><span class="note">${T('ทุกการเปลี่ยนแปลงบันทึกอัตโนมัติทันที')}</span></div>`:''}`;
   if(k==='polar'){const nu=d.up.reduce((a,p)=>a+p.m.filter(Boolean).length,0),nd=d.down.reduce((a,p)=>a+p.m.filter(Boolean).length,0),un=model?model.P.length-nu-nd:0;
     h+=`<div class="note pbrule">☯️ ${T('ห้องบน = ดันเจี้ยนดาว รับได้')} <b>${POLCAP}</b> ${T('คน (Warzone Elite) · ห้องล่าง = ดันเจี้ยนปกติ ทุกคนลงได้')} · ${T('ทุกสัปดาห์ระบบจะสลับให้คนที่อยู่ห้องล่างได้ขึ้นห้องบนก่อน ปาร์ตี้ที่ล็อคไว้จะย้ายไปด้วยกันทั้งปาร์ตี้')}
       <div class="row" style="margin-top:6px;justify-content:flex-start"><span class="chip">⬆ ${T('ห้องบน')} <b>${nu}/${POLCAP}</b></span><span class="chip">⬇ ${T('ห้องล่าง')} <b>${nd}</b></span><span class="chip">${T('ยังไม่ได้จัด')} <b>${un}</b></span></div></div>`}
   {const LV=leaves.filter(l=>l.week===nextOcc(k)&&(l.acts||[]).includes(k));h+=`<div class="lvlist row" style="justify-content:flex-start"><b>🙋 ${T('แจ้งลารอบนี้')} (${LV.length})</b>${LV.map(l=>`<span class="chip" ${staff&&l.reason?`title="${esc(l.reason)}"`:''}>${esc(l.char)}${staff&&l.reason?' 💬':''}</span>`).join('')||`<span class="note">${T('ยังไม่มีใครลา')}</span>`}</div>`}
-  $('pbHead').innerHTML=h;
+  $('pbHead').innerHTML=h;pbStatus();
   /* board */
   const card=(r,p,i)=>{const L=p.m.filter(Boolean),rs=L.map(roleC),avg=L.length?L.reduce((a,c)=>a+((pInfo(c)||{}).gear||0),0)/L.length:0,isMe=me&&L.some(c=>canon(c)===canon(me));
     const nl=L.filter(c=>onLeave(c,k)).length,warn=L.length?[nl?`${T('มีคนลา')} ${nl} — ${T('หาคนแทน')}`:'',!rs.includes('tank')?T('ไม่มีแทงค์'):'',!rs.includes('heal')?T('ไม่มีฮีล'):''].filter(Boolean):[];
@@ -1962,6 +1979,8 @@ function pbAction(t){
   if(el=cl('[data-pbrole]')){pbRole=el.dataset.pbrole;renderParty();return true}
   const staff=stfx(),k=pbKey;
   if(el=cl('[data-pb]')){const a=el.dataset.pb,d=pbDoc(k);
+    if(a==='save'&&staff){pbSave(k,pbDoc(k),true).then(()=>say(T('บันทึกแล้ว ✓')));return true}
+    if(a==='undo'&&staff){const st=pbUndo[k]||[];if(!st.length)return true;const prev=st.pop();pbSave(k,prev?JSON.parse(prev):{parties:[],up:[],down:[]},true);say(T('ย้อนกลับ 1 ขั้นแล้ว'));return true}
     if(a==='text'){navigator.clipboard.writeText(pbText(k,d)).then(()=>say(T('คัดลอกแล้ว — วางใน Discord/LINE ได้เลย')),()=>say(T('คัดลอกไม่ได้ในหน้านี้')));return true}
     if(!staff)return true;
     const L=el.dataset.r?pbList(k,d,el.dataset.r):null;
