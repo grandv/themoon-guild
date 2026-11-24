@@ -6,6 +6,9 @@
 <title>TheMoon Guild Dashboard</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0e0f18">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="TheMoon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -118,8 +121,9 @@ body.gated .bar nav,body.gated .bar .right label.btn,body.gated #langTop{display
 body.viewer .staffonly,body.norisk .riskonly{display:none!important}
 .viewonly,.nv-m{display:none}body.viewer .viewonly{display:block}body.viewer .nv-m{display:inline}body.viewer .nv-a{display:none}
 body.viewer:not(.anaopen) #anaSec{display:none}body.viewer #anaTab [data-v=all]{display:none}body.viewer #classes,body.viewer nav a[href="#classes"],body.viewer #kpis,body.viewer #impSec{display:none!important}.lvchip{white-space:normal;max-width:100%;height:auto}
-.anatoggle{text-align:center;margin:18px 0 6px}.anatoggle button{font-size:16px;padding:10px 22px}.ao-o{display:none}body.anaopen .ao-o{display:inline}body.anaopen .ao-c{display:none}
+body:not([data-view="dash"]) .anatoggle,body:not([data-view="dash"]) #myHome{display:none!important}.anatoggle{text-align:center;margin:18px 0 6px}.anatoggle button{font-size:16px;padding:10px 22px}.ao-o{display:none}body.anaopen .ao-o{display:inline}body.anaopen .ao-c{display:none}
 button.big{font-size:16px;padding:9px 18px;min-height:42px}
+.welcome{margin-top:14px;font-size:16px;border-color:color-mix(in srgb,var(--acc) 50%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 12%,var(--card)),var(--card))}.wsteps{margin:10px 0 0;padding-left:4px;list-style:none;display:grid;gap:8px}.wsteps li{line-height:1.5}
 .myh{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px;margin-top:14px;font-size:16px}
 .myh .head h2{font-size:19px}
 .myparts{list-style:none;margin:0;padding:0;display:grid;gap:8px}.myparts li{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--card2)}
@@ -343,6 +347,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   </div>
   <div id="previewBar" class="warnbox" style="margin-top:12px">👁 <b>กำลังดูในมุมมองสมาชิก</b> — สิ่งที่สมาชิกทั่วไปเห็น <button class="sm" data-viewas="admin" style="margin-left:8px">กลับเป็น Admin</button></div>
   <div id="linkBox" style="margin-top:12px"></div>
+  <div id="welcome" class="viewonly"></div>
   <div id="mine"></div>
   <div id="myHome" class="viewonly"></div>
   <div id="msg" role="status"></div>
@@ -396,7 +401,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 </section>
 
 <section id="access" class="card staffonly" hidden>
-  <div class="head"><h2>สิทธิ์เข้าดูเว็บ</h2><span class="note">เฉพาะหัวหน้า/รองหัวหน้าเห็นส่วนนี้</span></div>
+  <div class="head"><h2>สิทธิ์เข้าดูเว็บ</h2><div class="row"><button class="sm pri" data-invite="1">📋 คัดลอกข้อความเชิญเข้าเว็บ</button><span class="note">เฉพาะหัวหน้า/รองหัวหน้าเห็นส่วนนี้</span></div></div>
   <div id="accessBody"></div>
 </section>
 
@@ -472,6 +477,14 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"หัวหน้ายังไม่ได้จัดปาร์ตี้":["Leaders haven't set the parties yet", "Pemimpin belum mengatur party", "Wala pang party"],
+"ยินดีต้อนรับสู่เว็บกิลด์ TheMoon":["Welcome to the TheMoon guild site", "Selamat datang di situs guild TheMoon", "Welcome sa TheMoon guild site"],
+"เข้าใจแล้ว ✕":["Got it ✕", "Mengerti ✕", "Sige ✕"],
+"ดูว่าคุณอยู่ปาร์ตี้ไหน ในการ์ด \"ปาร์ตี้ของฉันสัปดาห์นี้\"":["See your party in \"My parties this week\"", "Lihat party Anda di \"Party saya minggu ini\"", "Tingnan ang party mo sa \"My parties this week\""],
+"ไม่ว่างวันไหน กด \"แจ้งลา\" — หัวหน้าจะเห็นและหาคนแทน":["Can't make it? Tap \"Request leave\" — leaders will find a replacement", "Tidak bisa ikut? Tekan \"Ajukan izin\"", "Hindi makakasali? I-tap ang \"Mag-leave\""],
+"อยากได้ของประมูล ไปเมนู \"ประมูล\" แล้วกด \"จองคิว\"":["Want an auction item? Go to \"Auction\" and tap \"Queue\"", "Mau item lelang? Buka \"Lelang\" lalu \"Antri\"", "Gusto ng auction item? Pumunta sa \"Auction\" at i-tap ang \"Queue\""],
+"มือถือ: กด แชร์/เมนู ⋮ → \"เพิ่มลงหน้าจอโฮม\" จะเปิดได้เหมือนแอป":["Phone: Share/⋮ menu → \"Add to Home screen\" to open it like an app", "HP: Bagikan/⋮ → \"Tambahkan ke layar utama\"", "Phone: Share/⋮ → \"Add to Home screen\""],
+"คัดลอกข้อความเชิญแล้ว — วางใน Discord/LINE ได้เลย":["Invite copied — paste it in Discord/LINE", "Undangan disalin", "Nakopya ang invite"],
 "หน้าของฉัน":["My page", "Halaman saya", "Aking page"],
 "แจ้งลา":["Request leave", "Ajukan izin", "Mag-leave"],
 "🙋 แจ้งลา":["🙋 Request leave", "🙋 Ajukan izin", "🙋 Mag-leave"],
@@ -1698,7 +1711,7 @@ async function saveMyChar(v){
     await db.doc('claims/'+k).set({email:user.email,char:v,ts:Date.now()}).catch(()=>{});
     ls.set('tm-mychar',v);editChar=false;say(T('เชื่อมตัวละครแล้ว')+': '+v)}catch(e){ferr(e)}
 }
-function setView(v){view=v;document.body.dataset.view=v;document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',(a.dataset.view||'dash')===v));if(v==='auction')renderAuction();if(v==='party')renderParty()}
+function setView(v){view=v;document.body.dataset.view=v;document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',(a.dataset.view||'dash')===v&&(v!=='dash'||a.getAttribute('href')==='#overview')));if(v==='auction')renderAuction();if(v==='party')renderParty()}
 function rulesBanner(old){if(!old)return '';return `<div class="warnbox" style="margin-bottom:12px">${stfx()?T('ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะลงชื่อได้ — เมนู "สิทธิ์เข้าดู" → กฎ Firebase → คัดลอกไปวางใน Firebase Console'):T('ระบบลงชื่อยังไม่เปิด — รอหัวหน้าตั้งค่า')}</div>`}
 
 /* auction */
@@ -1875,10 +1888,11 @@ function renderParty(){
       ${warn.length?`<div class="why noc">⚠ ${warn.join(' · ')}</div>`:''}
       <ul>${p.m.map((c,j)=>{const pi=c&&pInfo(c),gone=c&&!pi,lv=c&&onLeave(c,k);return c?`<li class="pbs full ${canon(c)===canon(me||'')?'me':''} ${gone?'gone':''} ${lv?'leave':''}" data-slot="${r}|${i}|${j}" ${staff&&!p.lock?`data-drag="${esc(c)}"`:''}>${pi?ico(pi.cls,24):'⚠️'}<span class="grow nm"><b>${esc(c)}</b>${gone?` <span class="noc">${T('ไม่อยู่ในกิลแล้ว')}</span>`:''}${lv?` <span class="tag t-new">${T('ลา')}</span>`:''}</span><span class="rt r-${roleC(c)}">${RSHORT[roleC(c)]}</span>${staff&&!p.lock?`<button class="sm ghost x" data-pb="rm" data-r="${r}" data-i="${i}" data-j="${j}" aria-label="remove">×</button>`:''}</li>`
         :`<li class="pbs empty" data-slot="${r}|${i}|${j}">${staff&&!p.lock?T('ลากชื่อมาวาง'):'—'}</li>`}).join('')}</ul></div>`};
-  const room=(r,P,title)=>`${title?`<div class="pbroom"><h3>${title}</h3>${staff?`<button class="sm ghost" data-pb="add" data-r="${r}">＋ ${T('ปาร์ตี้')}</button>`:''}</div>`:''}<div class="pbgrid">${P.map((p,i)=>card(r,p,i)).join('')}</div>`;
+  const vis=P=>staff?P.map((p,i)=>[p,i]):P.map((p,i)=>[p,i]).filter(([p])=>p.m.some(Boolean));
+  const room=(r,P,title)=>`${title?`<div class="pbroom"><h3>${title}</h3>${staff?`<button class="sm ghost" data-pb="add" data-r="${r}">＋ ${T('ปาร์ตี้')}</button>`:''}</div>`:''}<div class="pbgrid">${vis(P).map(([p,i])=>card(r,p,i)).join('')||(staff?'':`<p class="note">${T('หัวหน้ายังไม่ได้จัดปาร์ตี้')}</p>`)}</div>`;
   $('pbBoard').innerHTML=(k==='polar'?room('up',d.up,'⬆ '+T('ห้องบน')+` (${T('ดันเจี้ยนดาว')} · ${T('สูงสุด')} ${POLCAP})`)+room('down',d.down,'⬇ '+T('ห้องล่าง')+` (${T('ดันเจี้ยนปกติ')})`)
     :room('main',d.parties,''))+(staff&&k!=='polar'?`<div class="row" style="margin-top:10px"><button class="sm ghost" data-pb="add" data-r="main">＋ ${T('เพิ่มปาร์ตี้')}</button><button class="sm ghost" data-pb="del" data-r="main">− ${T('ลบปาร์ตี้สุดท้าย')}</button></div>`:'')+
-    (!d.ts&&k!=='polar'?`<p class="note">${T('ยังไม่ได้จัด — ลากชื่อจากรายชื่อด้านซ้ายมาวางในช่อง')}</p>`:'')+(k==='polar'&&!d.up.length&&!d.down.length?`<div class="empty">${T('ยังไม่ได้จัดรอบสัปดาห์นี้')}${staff?' — '+T('กด "จัดรอบสัปดาห์นี้ (สลับห้อง)"'):''}</div>`:'');
+    (staff&&!d.ts&&k!=='polar'?`<p class="note">${T('ยังไม่ได้จัด — ลากชื่อจากรายชื่อด้านซ้ายมาวางในช่อง')}</p>`:'')+(k==='polar'&&!d.up.length&&!d.down.length?`<div class="empty">${T('ยังไม่ได้จัดรอบสัปดาห์นี้')}${staff?' — '+T('กด "จัดรอบสัปดาห์นี้ (สลับห้อง)"'):''}</div>`:'');
   /* roster */
   $('pbWrap').classList.toggle('noroster',!staff);
   if(staff&&model){const q=pbQ.toLowerCase(),hist=k==='polar'?(d.hist||{}):{};
@@ -1970,7 +1984,10 @@ async function leaveAction(t){
   rerLeave();return true}
 function rerLeave(){renderMyHome();renderParty()}
 /* ---------- member home ---------- */
-function renderMyHome(){
+function renderWelcome(){const el=$('welcome');if(!el)return;let off=false;try{off=!!localStorage.getItem('tm-welcome-off')}catch(_){}
+  el.innerHTML=off||!user||!isCloud()?'':`<div class="card welcome"><div class="row" style="justify-content:space-between;align-items:flex-start"><h2 style="margin:0">👋 ${T('ยินดีต้อนรับสู่เว็บกิลด์ TheMoon')}</h2><button class="sm ghost" data-welcomeoff="1">${T('เข้าใจแล้ว ✕')}</button></div>
+   <ol class="wsteps"><li>🗓 ${T('ดูว่าคุณอยู่ปาร์ตี้ไหน ในการ์ด "ปาร์ตี้ของฉันสัปดาห์นี้"')}</li><li>🙋 ${T('ไม่ว่างวันไหน กด "แจ้งลา" — หัวหน้าจะเห็นและหาคนแทน')}</li><li>💰 ${T('อยากได้ของประมูล ไปเมนู "ประมูล" แล้วกด "จองคิว"')}</li><li>📱 ${T('มือถือ: กด แชร์/เมนู ⋮ → "เพิ่มลงหน้าจอโฮม" จะเปิดได้เหมือนแอป')}</li></ol></div>`}
+function renderMyHome(){renderWelcome();
   const el=$('myHome');if(!el)return;if(!model||!user||!isCloud()){el.innerHTML='';return}
   const me=myChar();
   const parts=ACT.map(([k,ic,n])=>{const key=k==='polar'?'polar':k,d=pbDoc(key),w=me&&pbWhere(d,key,me),lv=me&&leaveOf(me,k);
@@ -2062,6 +2079,8 @@ document.addEventListener('click',e=>{
   {const tb=e.target.closest('[data-tbl]');if(tb){const v=tb.dataset.tbl;tblLimit=v==='all'?1e9:v==='less'?20:tblLimit+20;renderTable();if(v==='less')$('members').scrollIntoView({behavior:'smooth'});return}}
   {const v=e.target.closest('[data-viewas]');if(v){if(role==='owner')setViewAs(v.dataset.viewas);return}}
   {const a=e.target.closest('a[data-view]');if(a){setView(a.dataset.view)}}
+  {const iv=e.target.closest('[data-invite]');if(iv){const u=location.origin+location.pathname;const t=`🌙 TheMoon Guild — เว็บกิลด์ของเรามาแล้ว!\n${u}\n\n1) เข้าลิงก์ แล้วกด "เข้าสู่ระบบด้วย Google"\n2) พิมพ์ชื่อตัวละครในเกม แล้วกด "เชื่อมตัวละคร"\n3) ดูว่าอยู่ปาร์ตี้ไหน · ไม่ว่างกด 🙋 แจ้งลา · อยากได้ของประมูลกด "จองคิว"\n📱 มือถือ: กดแชร์/เมนู ⋮ → "เพิ่มลงหน้าจอโฮม" เปิดได้เหมือนแอป\n\nEN: open the link → Sign in with Google → type your in-game name → Link. Change language at the top (EN/ID/PH).`;navigator.clipboard.writeText(t).then(()=>say(T('คัดลอกข้อความเชิญแล้ว — วางใน Discord/LINE ได้เลย')),()=>say(T('คัดลอกไม่ได้ในหน้านี้')));return}}
+  {const wo=e.target.closest('[data-welcomeoff]');if(wo){try{localStorage.setItem('tm-welcome-off','1')}catch(_){}renderWelcome();return}}
   {const ao=e.target.closest('[data-anaopen]');if(ao){const o=!document.body.classList.contains('anaopen');document.body.classList.toggle('anaopen',o);try{localStorage.setItem('tm-anaopen',o?'1':'')}catch(_){}if(o){if(mode==='all')mode='guild';drawChart();requestAnimationFrame(()=>{Object.values(CH).forEach(c=>c.resize());$('anaSec').scrollIntoView({behavior:'smooth'})})}return}}
   {const m=e.target.closest('[data-mychar]');if(m){editChar=true;render();renderAuction();renderParty();return}const ms=e.target.closest('[data-mycharsave]');if(ms){const v=ms.parentElement.querySelector('.mycharIn').value.trim();if(v)saveMyChar(v);return}}
   const t=e.target,cl=s=>t.closest(s);let el;
