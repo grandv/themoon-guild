@@ -120,7 +120,7 @@ body.gated main>section:not(#gate),body.gated main>#msg{display:none!important}
 body.gated .bar nav,body.gated .bar .right label.btn,body.gated #langTop{display:none}
 body.viewer .staffonly,body.norisk .riskonly{display:none!important}
 .viewonly,.nv-m{display:none}body.viewer .viewonly{display:block}body.viewer .nv-m{display:inline}body.viewer .nv-a{display:none}
-body.viewer:not(.anaopen) #anaSec .acard:not([data-cat=game]),body.viewer:not(.anaopen) #anaSec .acat,body.viewer:not(.anaopen) #anaTab,body.viewer:not(.anaopen) #chartNote,body.viewer:not(.anaopen) #anaSec>.head .tools{display:none!important}body.viewer:not(.anaopen) #anaSec .acard[data-cat=game]{display:block!important}body.viewer #anaTab [data-v=all]{display:none}body.viewer #classes,body.viewer nav a[href="#classes"],body.viewer #kpis,body.viewer #impSec{display:none!important}.lvchip{white-space:normal;max-width:100%;height:auto}
+body.viewer:not(.anaopen) #anaSec{display:none}body.viewer #anaTab [data-v=all]{display:none}body.viewer #classes,body.viewer nav a[href="#classes"],body.viewer #kpis,body.viewer #impSec{display:none!important}.lvchip{white-space:normal;max-width:100%;height:auto}
 body:not([data-view="dash"]) .anatoggle,body:not([data-view="dash"]) #myHome{display:none!important}.anatoggle{text-align:center;margin:18px 0 6px}.anatoggle button{font-size:16px;padding:10px 22px}.ao-o{display:none}body.anaopen .ao-o{display:inline}body.anaopen .ao-c{display:none}
 button.big{font-size:16px;padding:9px 18px;min-height:42px}
 .welcome{margin-top:14px;font-size:16px;border-color:color-mix(in srgb,var(--acc) 50%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 12%,var(--card)),var(--card))}.wsteps{margin:10px 0 0;padding-left:4px;list-style:none;display:grid;gap:8px}.wsteps li{line-height:1.5}
@@ -439,10 +439,9 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 <section class="card" id="anaSec" data-tab="guild">
   <div class="head"><h2>กราฟวิเคราะห์</h2>
     <div class="tools"><div class="seg" id="range"><button data-v="7" aria-pressed="false">7 วัน</button><button data-v="30" aria-pressed="false">30 วัน</button><button data-v="0" aria-pressed="true">ทั้งหมด</button></div></div></div>
-  <div class="seg anatab" id="anaTab" role="tablist"><button data-v="game" aria-pressed="true">🎮 สนามประลอง</button><button data-v="guild" aria-pressed="false">🏰 ภาพรวมกิลด์</button><button data-v="class" aria-pressed="false">⚔️ อาชีพ</button><button data-v="person" aria-pressed="false">👤 รายคน</button><button data-v="all" aria-pressed="false">📊 รวมทุกอย่าง</button></div>
+  <div class="seg anatab" id="anaTab" role="tablist"><button data-v="guild" aria-pressed="true">🏰 ภาพรวมกิลด์</button><button data-v="class" aria-pressed="false">⚔️ อาชีพ</button><button data-v="person" aria-pressed="false">👤 รายคน</button><button data-v="all" aria-pressed="false">📊 รวมทุกอย่าง</button></div>
   <p class="note" id="chartNote"></p>
   <div class="anagrid">
-    <div class="acard wide gamecard" data-cat="game"><div id="gameView"></div></div>
     <div class="acat" data-cat="guild">🏰 ภาพรวมกิลด์</div>
     <div class="acard" data-cat="guild"><div class="ah"><h3>Gear ตามวัน (เฉลี่ย · มัธยฐาน · Top 10)</h3><button class="sm ghost" data-zr="trend" hidden>↺</button><button class="sm ghost" data-png="trend" title="บันทึกเป็นรูป">📷</button></div><div class="insight" id="in_trend"></div><div class="fig"><canvas id="chart"></canvas></div></div>
     <div class="acard" data-cat="guild"><div class="ah"><h3>Gear รวมทั้งกิลด์ + จำนวนสมาชิก</h3><button class="sm ghost" data-zr="tot" hidden>↺</button><button class="sm ghost" data-png="tot" title="บันทึกเป็นรูป">📷</button></div><div class="insight" id="in_tot"></div><div class="fig"><canvas id="cTot"></canvas></div><p class="note">เส้น = Gear รวม · แท่ง = จำนวนคน — ถ้าเส้นขึ้นแต่แท่งเท่าเดิม แปลว่าคนเก่าเก่งขึ้นจริง</p></div>
@@ -1227,7 +1226,7 @@ const effRole=()=>role==='owner'&&viewAs==='member'?'member':role;
 const isStaff=()=>!isCloud()||effRole()==='owner'||effRole()==='officer';
 const NR=()=>isCloud()&&effRole()==='member'&&!!S.hideRisk;
 function setViewAs(v){viewAs=v;try{sessionStorage.setItem('tm-viewas',v)}catch(e){}editChar=false;closeProfileSafe();render();renderAuction();renderParty();say(v==='member'?T('กำลังดูในมุมมองสมาชิก — ปุ่มของหัวหน้าถูกซ่อนไว้'):'')}
-let snaps=[],meta=blankMeta(),S={...DEF},store=null,user=null,model=null,pend=[],mode=(()=>{try{return sessionStorage.getItem('tm-ana')||'game'}catch(e){return 'game'}})(),range=0,picked=null,fClass='',sortK='sev',sortD=-1,chart=null,delArm=null,pCharts=[],openName=null;
+let snaps=[],meta=blankMeta(),S={...DEF},store=null,user=null,model=null,pend=[],mode=(()=>{try{return (s=>s&&s!=='game'?s:'guild')(sessionStorage.getItem('tm-ana'))}catch(e){return 'guild'}})(),range=0,picked=null,fClass='',sortK='sev',sortD=-1,chart=null,delArm=null,pCharts=[],openName=null;
 function blankMeta(){return {exempt:{},kicks:[],renames:{},notRename:{},settings:{}}}
 function setMeta(m){meta={...blankMeta(),...(m||{})};S={...DEF,...(meta.settings||{})}}
 const ls={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){say('พื้นที่เก็บในเบราว์เซอร์เต็ม — สำรองข้อมูลแล้วลบวันที่เก่าออก');return false}}};
