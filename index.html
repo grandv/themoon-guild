@@ -218,7 +218,7 @@ button.chip{min-height:36px;cursor:pointer}
 .pbwrap{display:grid;grid-template-columns:290px minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}.pbwrap.noroster{grid-template-columns:1fr}.pbwrap.noroster .pbroster{display:none}
 .pbroster{position:sticky;top:70px;max-height:calc(100vh - 90px);display:flex;flex-direction:column;gap:6px;padding:12px}
 .pbroster.over{outline:2px dashed var(--bad)}
-.pbrh{display:flex;justify-content:space-between;align-items:center}.pbrf{gap:4px}.pbrf .chip{padding:2px 8px;min-height:28px}
+.pbrh{display:flex;justify-content:space-between;align-items:center}.pbrf{gap:4px}.pbrf .chip{padding:2px 8px;min-height:28px}.pbrf{flex:none;max-height:170px;overflow-y:auto;flex-wrap:wrap!important;overflow-x:hidden}.clschip{border:1px solid var(--cc)!important;background:color-mix(in srgb,var(--cc) 18%,var(--card2))!important;display:inline-flex;align-items:center;gap:4px;font-size:12px}.clschip.on{background:var(--cc)!important;color:#fff}.clschip .cn{max-width:7.5em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pbrl{list-style:none;margin:0;padding:0;overflow-y:auto;flex:1;display:grid;gap:4px;align-content:start}
 .pbri{display:flex;gap:8px;align-items:center;padding:5px 8px;border:1px solid var(--line);border-radius:10px;background:var(--card2);cursor:grab;user-select:none}
 .pbri:hover{border-color:var(--acc)}.pbri.placed{opacity:.5}.pbri.sel,.pbs.sel{outline:2px solid var(--acc);outline-offset:1px;opacity:1}
@@ -241,7 +241,7 @@ button.chip{min-height:36px;cursor:pointer}
 .pbs .x{padding:0 6px;min-height:0}
 .pbghost{position:fixed;z-index:80;pointer-events:none;background:var(--acc);color:#fff;font-weight:600;padding:5px 10px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.3)}
 .dragsrc{opacity:.35}body.pbdragging{cursor:grabbing;user-select:none}
-@media(max-width:820px){.pbwrap{grid-template-columns:1fr}.pbroster{position:static;max-height:380px}#pbTab button{flex:1 1 45%}}
+@media(max-width:820px){.pbwrap{grid-template-columns:1fr}.pbroster{position:static;max-height:560px}.pbrf{max-height:112px!important}#pbTab button{flex:1 1 45%}}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:10px}
 .party{background:var(--card2);border-radius:14px;padding:10px}
 .party .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
@@ -1855,11 +1855,11 @@ function renderParty(){
   /* roster */
   $('pbWrap').classList.toggle('noroster',!staff);
   if(staff&&model){const q=pbQ.toLowerCase(),hist=k==='polar'?(d.hist||{}):{};
-    const R=[...model.P].sort((a,b)=>b.gear-a.gear).map(p=>({p,w:pbWhere(d,k,p.name),r:CLASS_ROLE[p.cls]||'melee'})).filter(x=>(!q||x.p.name.toLowerCase().includes(q))&&(!pbRole||x.r===pbRole)&&(!pbHide||!x.w));
+    const R=[...model.P].sort((a,b)=>b.gear-a.gear).map(p=>({p,w:pbWhere(d,k,p.name),r:CLASS_ROLE[p.cls]||'melee'})).filter(x=>(!q||x.p.name.toLowerCase().includes(q))&&(!pbRole||x.p.cls===pbRole)&&(!pbHide||!x.w));
     const cnt=model.P.filter(p=>!pbWhere(d,k,p.name)).length;
     $('pbRoster').innerHTML=`<div class="pbrh"><b>${T('รายชื่อในกิล')}</b><span class="note">${T('ยังไม่ได้จัด')} ${cnt}</span></div>
       <input id="pbQ" placeholder="${T('ค้นหาชื่อ')}" value="${esc(pbQ)}">
-      <div class="chips pbrf">${[['','ทั้งหมด'],...ROLES].map(([v,l])=>`<button class="chip ${pbRole===v?'on':''}" data-pbrole="${v}">${v?`<span class="rt r-${v}">${RSHORT[v]}</span>`:T(l)}</button>`).join('')}</div>
+      <div class="chips pbrf"><button class="chip ${pbRole===''?'on':''}" data-pbrole="">${T('ทั้งหมด')} ${model.P.length}</button>${Object.entries(model.P.reduce((m,p)=>(m[p.cls]=(m[p.cls]||0)+1,m),{})).sort((a,b)=>b[1]-a[1]).map(([c,n])=>{const free=model.P.filter(p=>p.cls===c&&!pbWhere(d,k,p.name)).length;return `<button class="chip clschip ${pbRole===c?'on':''}" data-pbrole="${esc(c)}" style="--cc:${clsCol(c)}" title="${esc(c)}: ${T('ยังไม่ได้จัด')} ${free}/${n}">${ico(c,20)}<span class="cn">${esc(c)}</span><b>${free}</b></button>`}).join('')}</div>
       <label class="note" style="display:flex;gap:6px;align-items:center;margin:4px 0"><input type="checkbox" id="pbHide" ${pbHide?'checked':''}> ${T('ซ่อนคนที่จัดแล้ว')}</label>
       <p class="note" style="margin:2px 0 6px">${matchMedia('(pointer:coarse)').matches?T('แตะชื่อ แล้วแตะช่องว่างเพื่อวาง'):T('ลากชื่อไปวางในช่อง · หรือคลิกชื่อแล้วคลิกช่อง')}</p>
       <ul class="pbrl">${R.map(({p,w,r})=>{const lv=onLeave(p.name,k);return `<li class="pbri ${w?'placed':''} ${lv?'leave':''} ${pbSel===p.name?'sel':''}" style="--cc:${clsCol(p.cls)}" ${lv?`title="${T('แจ้งลา — ลากเข้าไม่ได้')}"`:`data-drag="${esc(p.name)}" data-pick-c="${esc(p.name)}"`}>${ico(p.cls,24)}<div class="grow" style="min-width:0"><div class="nm"><b>${esc(p.name)}</b>${onLeave(p.name,k)?` <span class="tag t-new">${T('ลา')}</span>`:''}</div><div class="note nm">${esc(p.cls)} · ${fmt(p.gear)}${k==='polar'?` · ${T('เคยห้องบน')} ${hist[p.name]||0}`:''}</div></div>${w?`<span class="pbat">${k==='polar'?(w.r==='up'?'⬆':'⬇'):''}P${w.i+1}</span>`:''}</li>`}).join('')}</ul>`;
