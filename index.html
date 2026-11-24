@@ -149,6 +149,20 @@ body.viewer #impSec{grid-template-columns:1fr}
 .mine .mstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0}
 .mine .mstats div{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:2px}.mine .mstats span{font-size:12.5px;color:var(--mute)}.mine .mstats b{font-size:20px;font-family:'Chakra Petch',sans-serif}
 .mine .mfig{position:relative;height:220px}
+[data-zr][hidden]{display:none!important}
+.anatab{display:flex;flex-wrap:wrap;margin:2px 0 10px}.anatab button{font-size:14.5px;min-height:38px;padding:4px 14px}
+.anagrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:8px}
+.acard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card2);min-width:0}.acard.wide{grid-column:1/-1}
+.acard .ah{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.acard h3{margin:0;font-size:15px;flex:1 1 12em}.acard .fig{height:300px;margin-top:8px}
+.acat{grid-column:1/-1;display:none;font-weight:600;font-size:16px;margin-top:6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+#anaSec[data-tab=all] .acat{display:block}
+#anaSec[data-tab=guild] .acard:not([data-cat=guild]),#anaSec[data-tab=class] .acard:not([data-cat=class]),#anaSec[data-tab=person] .acard:not([data-cat=person]){display:none}
+.heat{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px;background:var(--card)}
+.heat table{border-collapse:separate;border-spacing:2px;font-size:12px}.heat th{position:sticky;top:0;background:var(--card);z-index:1;font-weight:500;color:var(--mute);padding:2px 0;min-width:16px}
+.heat td.n,.heat th.n{position:sticky;left:0;background:var(--card);text-align:left;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis;padding:0 6px 0 4px}.heat th.n{z-index:2}
+.heat td{padding:0}.heat td.n .lnk{min-height:0!important;height:18px;padding:0!important;font-size:12.5px;line-height:18px;display:inline}.heat tr{height:20px}
+.heat td.c{width:16px;height:16px;min-width:16px;border-radius:4px}
+@media(max-width:820px){.anagrid{grid-template-columns:1fr}.acard .fig{height:260px}.anatab button{flex:1 1 45%}}
 .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;max-height:320px;overflow-y:auto;margin-top:10px;padding:2px}
 .catgrid button{flex-direction:column;gap:4px;padding:8px 4px;min-height:0;font-weight:500;font-size:11.5px;line-height:1.25;text-align:center;background:var(--card2)}
 .catgrid button[aria-pressed=true]{outline:2px solid var(--acc);background:var(--accbg)}
@@ -277,14 +291,27 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   <div class="card staffonly" id="renCard" hidden style="margin-top:16px;border-color:color-mix(in srgb,var(--warn) 55%,var(--line))"><div class="head"><h2>ยืนยันการเปลี่ยนชื่อ <span class="note" id="renN"></span></h2></div><p class="note" style="margin:-6px 0 10px">คนเหล่านี้อาจเป็นคนเดิมที่เปลี่ยนชื่อ (อาชีพเดียวกัน Gear และแต้มสะสมใกล้กัน) — กดยืนยันแล้วประวัติจะรวมกัน และจะไม่นับเป็นคนใหม่</p><ul class="list" id="renList"></ul></div>
 </section>
 
-<section class="card">
-  <div class="head"><h2>ค่าพลัง (Gear) ตามวัน</h2>
-    <div class="tools"><div class="seg" id="mode"><button data-v="guild" aria-pressed="true">ทั้งกิลด์</button><button data-v="class" aria-pressed="false">แยกอาชีพ</button><button data-v="person" aria-pressed="false">รายคน</button></div>
-    <div class="seg" id="range"><button data-v="7" aria-pressed="false">7 วัน</button><button data-v="30" aria-pressed="false">30 วัน</button><button data-v="0" aria-pressed="true">ทั้งหมด</button></div></div></div>
-  <div class="row" id="pickWrap" hidden><input list="names" id="pick" placeholder="พิมพ์ชื่อผู้เล่นเพื่อเพิ่มเส้น" style="width:16em"><datalist id="names"></datalist></div>
-  <div class="chips" id="picked"></div>
-  <div class="fig"><canvas id="chart"></canvas></div>
+<section class="card" id="anaSec" data-tab="guild">
+  <div class="head"><h2>กราฟวิเคราะห์</h2>
+    <div class="tools"><div class="seg" id="range"><button data-v="7" aria-pressed="false">7 วัน</button><button data-v="30" aria-pressed="false">30 วัน</button><button data-v="0" aria-pressed="true">ทั้งหมด</button></div></div></div>
+  <div class="seg anatab" id="anaTab" role="tablist"><button data-v="guild" aria-pressed="true">🏰 ภาพรวมกิลด์</button><button data-v="class" aria-pressed="false">⚔️ อาชีพ</button><button data-v="person" aria-pressed="false">👤 รายคน</button><button data-v="all" aria-pressed="false">📊 รวมทุกอย่าง</button></div>
   <p class="note" id="chartNote"></p>
+  <div class="anagrid">
+    <div class="acat" data-cat="guild">🏰 ภาพรวมกิลด์</div>
+    <div class="acard" data-cat="guild"><div class="ah"><h3>Gear ตามวัน (เฉลี่ย · มัธยฐาน · Top 10)</h3><button class="sm ghost" data-zr="trend" hidden>↺</button><button class="sm ghost" data-png="trend" title="บันทึกเป็นรูป">📷</button></div><div class="fig"><canvas id="chart"></canvas></div></div>
+    <div class="acard" data-cat="guild"><div class="ah"><h3>Gear รวมทั้งกิลด์ + จำนวนสมาชิก</h3><button class="sm ghost" data-zr="tot" hidden>↺</button><button class="sm ghost" data-png="tot" title="บันทึกเป็นรูป">📷</button></div><div class="fig"><canvas id="cTot"></canvas></div><p class="note">เส้น = Gear รวม · แท่ง = จำนวนคน — ถ้าเส้นขึ้นแต่แท่งเท่าเดิม แปลว่าคนเก่าเก่งขึ้นจริง</p></div>
+    <div class="acard riskonly" data-cat="guild"><div class="ah"><h3>Gear เทียบกิจกรรม (รายคน)</h3><button class="sm ghost" data-png="sc" title="บันทึกเป็นรูป">📷</button></div><div class="fig"><canvas id="cSc"></canvas></div><p class="note" id="scNote"></p></div>
+    <div class="acard riskonly" data-cat="guild"><div class="ah"><h3>แผนที่ความร้อนกิจกรรมรายวัน</h3><select id="heatSort" class="sm"><option value="low">น้อยสุดก่อน</option><option value="high">มากสุดก่อน</option><option value="name">ตามชื่อ</option></select></div><div class="heat" id="heat"></div><p class="note">ช่อง = กิจกรรมที่เพิ่มขึ้นในวันนั้น · <b style="color:var(--good)">เขียว</b> เข้มยิ่งเล่นเยอะ · <b style="color:var(--bad)">แดง</b> = ไม่ได้เล่น · ช่องว่าง = ไม่มีข้อมูล</p></div>
+    <div class="acat" data-cat="class">⚔️ อาชีพ</div>
+    <div class="acard" data-cat="class"><div class="ah"><h3>Gear เฉลี่ยแยกอาชีพตามวัน</h3><button class="sm ghost" data-zr="cls" hidden>↺</button><button class="sm ghost" data-png="cls" title="บันทึกเป็นรูป">📷</button></div><div class="fig"><canvas id="cCls"></canvas></div></div>
+    <div class="acard" data-cat="class"><div class="ah"><h3>สัดส่วนอาชีพในกิลด์</h3><button class="sm ghost" data-png="do" title="บันทึกเป็นรูป">📷</button></div><div class="fig"><canvas id="cDo"></canvas></div><div class="chips" id="roleSum" style="margin-top:8px"></div></div>
+    <div class="acard wide" data-cat="class"><div class="ah"><h3>ช่วง Gear ของแต่ละอาชีพ</h3><button class="sm ghost" data-png="box" title="บันทึกเป็นรูป">📷</button></div><div class="fig" style="height:320px"><canvas id="cBox"></canvas></div><p class="note">เส้นบาง = ต่ำสุด–สูงสุด · แท่งสี = ช่วงกลาง 50% · ขีดเข้ม = มัธยฐาน</p></div>
+    <div class="acat" data-cat="person">👤 รายคน</div>
+    <div class="acard wide" data-cat="person"><div class="ah"><h3>เปรียบเทียบผู้เล่น</h3><label class="note" style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="proj" checked> คาดการณ์ 7 วัน</label><button class="sm ghost" data-zr="cmp" hidden>↺</button><button class="sm ghost" data-png="cmp" title="บันทึกเป็นรูป">📷</button></div>
+      <div class="row" style="justify-content:flex-start"><input list="names" id="pick" placeholder="พิมพ์ชื่อผู้เล่นเพื่อเพิ่มเส้น" style="width:16em"><datalist id="names"></datalist></div><div class="chips" id="picked"></div>
+      <div class="fig"><canvas id="cCmp"></canvas></div><p class="note">เส้นประ = คาดการณ์จากความเร็วการโต 14 วันล่าสุด (วันที่มี * คืออนาคต)</p></div>
+    <div class="acard wide" data-cat="person"><div class="ah"><h3>อันดับในกิลด์ตามวัน</h3><button class="sm ghost" data-zr="rank" hidden>↺</button><button class="sm ghost" data-png="rank" title="บันทึกเป็นรูป">📷</button></div><div class="fig"><canvas id="cRank"></canvas></div><p class="note">อันดับเรียงตาม Gear · ยิ่งเส้นอยู่สูงยิ่งอันดับดี</p></div>
+  </div>
 </section>
 
 <section id="classes" class="g2">
@@ -391,6 +418,53 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"ถ้าโตด้วยความเร็วเท่าเดิม อีก 7 วันจะได้ประมาณ":["At the current pace, in 7 days you will be around","Dengan laju sekarang, 7 hari lagi sekitar","Sa kasalukuyang bilis, sa 7 araw ay mga"],
+"กราฟวิเคราะห์":["Analytics", "Analitik", "Analytics"],
+"🏰 ภาพรวมกิลด์":["🏰 Guild overview", "🏰 Ringkasan guild", "🏰 Guild overview"],
+"⚔️ อาชีพ":["⚔️ Classes", "⚔️ Kelas", "⚔️ Classes"],
+"👤 รายคน":["👤 Players", "👤 Per pemain", "👤 Players"],
+"📊 รวมทุกอย่าง":["📊 Everything", "📊 Semua", "📊 Lahat"],
+"Gear ตามวัน (เฉลี่ย · มัธยฐาน · Top 10)":["Gear by day (avg · median · top 10)", "Gear per hari (rata-rata · median · top 10)", "Gear bawat araw (avg · median · top 10)"],
+"Gear รวมทั้งกิลด์ + จำนวนสมาชิก":["Total guild Gear + member count", "Total Gear guild + jumlah anggota", "Kabuuang Gear + bilang ng miyembro"],
+"เส้น = Gear รวม · แท่ง = จำนวนคน — ถ้าเส้นขึ้นแต่แท่งเท่าเดิม แปลว่าคนเก่าเก่งขึ้นจริง":["Line = total Gear · bars = members — line up with flat bars means existing members really got stronger", "Garis = total Gear · batang = anggota — garis naik dengan batang tetap berarti anggota lama makin kuat", "Linya = kabuuang Gear · bar = miyembro"],
+"Gear เทียบกิจกรรม (รายคน)":["Gear vs activity (per player)", "Gear vs aktivitas (per pemain)", "Gear vs aktibidad"],
+"แผนที่ความร้อนกิจกรรมรายวัน":["Daily activity heatmap", "Heatmap aktivitas harian", "Daily activity heatmap"],
+"น้อยสุดก่อน":["Least active first", "Paling sedikit dulu", "Pinakakaunti muna"],
+"มากสุดก่อน":["Most active first", "Paling banyak dulu", "Pinakamarami muna"],
+"ตามชื่อ":["By name", "Menurut nama", "Ayon sa pangalan"],
+"Gear เฉลี่ยแยกอาชีพตามวัน":["Average Gear by class per day", "Rata-rata Gear per kelas", "Average Gear bawat class"],
+"สัดส่วนอาชีพในกิลด์":["Class mix", "Komposisi kelas", "Class mix"],
+"ช่วง Gear ของแต่ละอาชีพ":["Gear range by class", "Rentang Gear per kelas", "Gear range bawat class"],
+"เส้นบาง = ต่ำสุด–สูงสุด · แท่งสี = ช่วงกลาง 50% · ขีดเข้ม = มัธยฐาน":["Thin line = min–max · coloured bar = middle 50% · dark tick = median", "Garis tipis = min–maks · batang = 50% tengah · garis gelap = median", "Manipis = min–max · kulay = gitnang 50% · madilim = median"],
+"เปรียบเทียบผู้เล่น":["Compare players", "Bandingkan pemain", "Ikumpara ang players"],
+"คาดการณ์ 7 วัน":["7-day forecast", "Prediksi 7 hari", "7-day forecast"],
+"(คาดการณ์)":["(forecast)", "(prediksi)", "(forecast)"],
+"เส้นประ = คาดการณ์จากความเร็วการโต 14 วันล่าสุด (วันที่มี * คืออนาคต)":["Dashed = forecast from the last 14 days of growth (* = future dates)", "Putus-putus = prediksi dari 14 hari terakhir (* = masa depan)", "Dashed = forecast (* = hinaharap)"],
+"อันดับในกิลด์ตามวัน":["Guild rank by day", "Peringkat guild per hari", "Ranggo bawat araw"],
+"อันดับเรียงตาม Gear · ยิ่งเส้นอยู่สูงยิ่งอันดับดี":["Ranked by Gear · higher line = better rank", "Peringkat menurut Gear · makin tinggi makin baik", "Ayon sa Gear · mas mataas = mas maganda"],
+"บันทึกเป็นรูป":["Save as image", "Simpan gambar", "I-save bilang larawan"],
+"ลากบนกราฟเพื่อซูม · ดับเบิลคลิกเพื่อรีเซ็ต":["Drag on a chart to zoom · double-click to reset", "Seret untuk zoom · klik dua kali untuk reset", "I-drag para mag-zoom · double-click para i-reset"],
+"Gear รวม":["Total Gear", "Total Gear", "Total Gear"],
+"Gear รวมทั้งกิลด์":["Total guild Gear", "Total Gear guild", "Kabuuang Gear"],
+"จำนวนสมาชิก":["Members", "Anggota", "Miyembro"],
+"สมาชิก":["Members", "Anggota", "Miyembro"],
+"Gear ต่ำ + กิจกรรมต่ำ":["Low Gear + low activity", "Gear rendah + aktivitas rendah", "Mababang Gear + aktibidad"],
+"Gear สูง + ขยัน":["High Gear + active", "Gear tinggi + aktif", "Mataas na Gear + aktibo"],
+"เส้นประตั้ง = เกณฑ์กิจกรรมตอนนี้":["Vertical dashed = current activity threshold", "Garis vertikal = ambang aktivitas", "Vertical = activity threshold"],
+"เส้นประนอน = Gear มัธยฐาน":["horizontal dashed = median Gear", "garis horizontal = median Gear", "horizontal = median Gear"],
+"กดจุดเพื่อดูประวัติ":["tap a dot for history", "klik titik untuk riwayat", "i-tap ang tuldok"],
+"ช่อง = กิจกรรมที่เพิ่มขึ้นในวันนั้น":["Cell = activity gained that day", "Sel = aktivitas hari itu", "Cell = aktibidad sa araw na iyon"],
+"เขียว":["Green", "Hijau", "Green"],
+"เข้มยิ่งเล่นเยอะ":["darker = more", "makin gelap makin banyak", "mas madilim = mas marami"],
+"แดง":["Red", "Merah", "Red"],
+"= ไม่ได้เล่น":["= did not play", "= tidak main", "= hindi naglaro"],
+"ช่องว่าง = ไม่มีข้อมูล":["empty = no data", "kosong = tidak ada data", "walang laman = walang data"],
+"ต้องมีข้อมูลอย่างน้อย 2 วัน":["Need at least 2 days of data", "Perlu minimal 2 hari data", "Kailangan ng 2 araw"],
+"ชื่อ":["Name", "Nama", "Pangalan"],
+"ต่ำสุด":["Min", "Min", "Min"],
+"สูงสุด":["Max", "Maks", "Max"],
+"อื่นๆ":["Other", "Lainnya", "Iba pa"],
+"ค่าเฉลี่ยอาชีพ":["Class average", "Rata-rata kelas", "Class average"],
 "ความสามารถ":["Effects", "Efek", "Effects"],
 "โบนัสชุด 2 ชิ้น":["2-piece set bonus", "Bonus set 2 bagian", "2-piece set bonus"],
 "สายรีลิก":["Relic line", "Jenis relic", "Relic line"],
@@ -844,7 +918,7 @@ const effRole=()=>role==='owner'&&viewAs==='member'?'member':role;
 const isStaff=()=>!isCloud()||effRole()==='owner'||effRole()==='officer';
 const NR=()=>isCloud()&&effRole()==='member'&&!!S.hideRisk;
 function setViewAs(v){viewAs=v;try{sessionStorage.setItem('tm-viewas',v)}catch(e){}editChar=false;closeProfileSafe();render();renderAuction();renderParty();say(v==='member'?T('กำลังดูในมุมมองสมาชิก — ปุ่มของหัวหน้าถูกซ่อนไว้'):'')}
-let snaps=[],meta=blankMeta(),S={...DEF},store=null,user=null,model=null,pend=[],mode='guild',range=0,picked=null,fClass='',sortK='sev',sortD=-1,chart=null,delArm=null,pCharts=[],openName=null;
+let snaps=[],meta=blankMeta(),S={...DEF},store=null,user=null,model=null,pend=[],mode=(()=>{try{return sessionStorage.getItem('tm-ana')||'guild'}catch(e){return 'guild'}})(),range=0,picked=null,fClass='',sortK='sev',sortD=-1,chart=null,delArm=null,pCharts=[],openName=null;
 function blankMeta(){return {exempt:{},kicks:[],renames:{},notRename:{},settings:{}}}
 function setMeta(m){meta={...blankMeta(),...(m||{})};S={...DEF,...(meta.settings||{})}}
 const ls={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){say('พื้นที่เก็บในเบราว์เซอร์เต็ม — สำรองข้อมูลแล้วลบวันที่เก่าออก');return false}}};
@@ -1004,36 +1078,98 @@ function renderSnaps(){
 }
 
 /* ---------- chart ---------- */
-const IMG={};function icoImg(c){const id=JOB[c];if(!id)return 'circle';if(!IMG[id]){const im=new Image(18,18);im.referrerPolicy='no-referrer';im.onload=()=>{if(mode==='class')drawChart()};im.src=icoUrl(id);IMG[id]=im}return IMG[id].complete&&IMG[id].naturalWidth?IMG[id]:'circle'}
+let icoT=0;const IMG={};function icoImg(c){const id=JOB[c];if(!id)return 'circle';if(!IMG[id]){const im=new Image(18,18);im.referrerPolicy='no-referrer';im.onload=()=>{clearTimeout(icoT);icoT=setTimeout(drawChart,150)};im.src=icoUrl(id);IMG[id]=im}return IMG[id].complete&&IMG[id].naturalWidth?IMG[id]:'circle'}
 function chartOpts(ink,line,mute,legend){return {responsive:true,maintainAspectRatio:false,animation:matchMedia('(prefers-reduced-motion: reduce)').matches?false:{duration:300},interaction:{mode:'nearest',intersect:false},
   plugins:{legend:{display:legend,position:'bottom',labels:{color:ink,boxWidth:12,usePointStyle:mode==='class',font:{family:'IBM Plex Sans Thai',size:12.5}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
   scales:{x:{ticks:{color:mute,maxTicksLimit:10,maxRotation:0,autoSkip:true},grid:{color:line}},y:{ticks:{color:mute,callback:v=>fmt(v)},grid:{color:line}}}}}
+const CH={};
+function mkChart(key,id,cfg){const cv=$(id);if(!cv||typeof Chart=='undefined')return null;let c=CH[key];if(c&&(c.canvas!==cv||c.config.type!==cfg.type)){c.destroy();c=null}
+  if(c){c.data=cfg.data;c.options=cfg.options;c.update()}else c=CH[key]=new Chart(cv,cfg);const zr=document.querySelector(`[data-zr="${key}"]`);if(zr)zr.hidden=true;return c}
+const DZ={id:'dz',afterEvent(c,a){const po=c.options.plugins&&c.options.plugins.dz;if(!po||!po.on)return;const e=a.event,x=c.scales.x;if(!x)return;
+  if(e.type==='mousedown'){c.$dz={x0:e.x,x1:e.x}}else if(e.type==='mousemove'&&c.$dz){c.$dz.x1=e.x;a.changed=true}
+  else if(e.type==='mouseup'&&c.$dz){const {x0,x1}=c.$dz;c.$dz=null;a.changed=true;if(Math.abs(x1-x0)>14){const i0=Math.max(0,Math.round(x.getValueForPixel(Math.min(x0,x1)))),i1=Math.round(x.getValueForPixel(Math.max(x0,x1)));if(i1>i0){c.options.scales.x.min=i0;c.options.scales.x.max=i1;c.update();const k=Object.keys(CH).find(k=>CH[k]===c),zr=document.querySelector(`[data-zr="${k}"]`);if(zr)zr.hidden=false}}}
+  else if(e.type==='mouseout'&&c.$dz){c.$dz=null;a.changed=true}else if(e.type==='dblclick')zoomReset(c)},
+  afterDraw(c){if(!c.$dz)return;const {ctx,chartArea:A}=c;ctx.save();ctx.fillStyle='rgba(109,124,255,.18)';ctx.fillRect(Math.min(c.$dz.x0,c.$dz.x1),A.top,Math.abs(c.$dz.x1-c.$dz.x0),A.bottom-A.top);ctx.restore()}};
+function zoomReset(c){if(!c)return;delete c.options.scales.x.min;delete c.options.scales.x.max;c.update();const k=Object.keys(CH).find(k=>CH[k]===c),zr=document.querySelector(`[data-zr="${k}"]`);if(zr)zr.hidden=true}
+let dzReg=false;const zo=o=>{if(!dzReg&&typeof Chart!='undefined'){Chart.register(DZ);dzReg=true}o.events=['mousemove','mouseout','click','touchstart','touchmove','mousedown','mouseup','dblclick'];o.plugins.dz={on:true};return o};
+const ser=o=>Object.assign(o,{tension:.3,borderWidth:2.2,spanGaps:true,segment:{borderDash:c=>(c.p0.skip||c.p1.skip||c.p1DataIndex-c.p0DataIndex>1)?[6,6]:undefined}});
+function slopeFit(vals,n=14){const pts=vals.map((v,i)=>[i,v]).filter(p=>p[1]!=null).slice(-n);if(pts.length<3)return null;const m=pts.length,sx=pts.reduce((a,p)=>a+p[0],0),sy=pts.reduce((a,p)=>a+p[1],0),sxx=pts.reduce((a,p)=>a+p[0]*p[0],0),sxy=pts.reduce((a,p)=>a+p[0]*p[1],0);const d=m*sxx-sx*sx;if(!d)return null;const b=(m*sxy-sx*sy)/d;return {b,last:pts[m-1]}}
+function quart(a){a=[...a].sort((x,y)=>x-y);const q=f=>{const i=(a.length-1)*f,lo=Math.floor(i),hi=Math.ceil(i);return a[lo]+(a[hi]-a[lo])*(i-lo)};return [a[0],q(.25),q(.5),q(.75),a[a.length-1]]}
+function clsRole(c){try{return CLASS_ROLE[c]||'other'}catch(e){return 'other'}}
 function drawChart(){
+  const sec=$('anaSec');if(sec)sec.dataset.tab=mode;setSeg('anaTab',mode);
   if(typeof Chart=='undefined'){$('chartNote').textContent='โหลดไลบรารีกราฟไม่สำเร็จ';return}
-  const ink=cssv('--ink')||'#888',line=cssv('--line')||'#ddd',mute=cssv('--mute')||'#888';
-  let labels=[],ds=[],D0=[];
-  if(model){
-    D0=model.daySn;const byDay=new Map(D0.map(s=>[dstr(s.ts),s])),D=[];
-    if(D0.length){const a=new Date(D0[0].ts),b=new Date(D0[D0.length-1].ts);a.setHours(12,0,0,0);b.setHours(12,0,0,0);for(let t=a.getTime();t<=b.getTime()+1;t+=DAY){D.push(byDay.get(dstr(t))||{ts:t,rows:null})}}
-    labels=D.map(s=>dTh(s.ts));const R=f=>D.map(s=>s.rows?f(s):null);
-    if(mode==='guild'){
-      ds=[[T('เฉลี่ยทั้งกิลด์'),R(s=>s.rows.reduce((a,r)=>a+r[6],0)/s.rows.length),PAL[0]],[T('มัธยฐาน'),R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>a-b);return g[g.length>>1]}),PAL[3]],[T('เฉลี่ย Top 10'),R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>b-a).slice(0,10);return g.reduce((a,b)=>a+b,0)/g.length}),PAL[2]]].map(([l,d,c])=>({label:l,data:d,borderColor:c,backgroundColor:c}));
-    }else if(mode==='class'){
-      const cnt={};model.P.forEach(p=>cnt[p.cls]=(cnt[p.cls]||0)+1);const cls=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
-      ds=cls.map((c,i)=>({label:c,data:R(s=>{const g=s.rows.filter(r=>r[2]===c);return g.length?g.reduce((a,r)=>a+r[6],0)/g.length:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],hidden:!!fClass&&c!==fClass,pointStyle:icoImg(c)}));
-    }else{
-      if(picked==null)picked=[...model.P].sort((a,b)=>(b.dG??0)-(a.dG??0)||b.gear-a.gear).slice(0,5).map(p=>p.name);
-      ds=picked.map((n,i)=>({label:n,data:R(s=>{const r=s.rows.find(r=>canon(r[0])===n);return r?r[6]:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]}));
-    }
-    ds.forEach(d=>Object.assign(d,{tension:.3,pointRadius:D0.length<20?3.5:1.5,borderWidth:2.2,spanGaps:true,segment:{borderDash:c=>(c.p0.skip||c.p1.skip||c.p1DataIndex-c.p0DataIndex>1)?[6,6]:undefined}}));
-  }
-  $('pickWrap').hidden=mode!=='person';
-  $('picked').innerHTML=mode==='person'&&picked?picked.map(n=>`<span class="chip">${esc(n)}<button data-rm="${esc(n)}" aria-label="เอาออก">×</button></span>`).join(''):'';
+  const ink=cssv('--ink')||'#888',line=cssv('--line')||'#ddd',mute=cssv('--mute')||'#888',good=cssv('--good'),warn=cssv('--warn'),bad=cssv('--bad');
+  const O=(lg=true)=>chartOpts(ink,line,mute,lg);
+  if(!model){Object.values(CH).forEach(c=>c.destroy());for(const k in CH)delete CH[k];$('chartNote').textContent='';$('heat').innerHTML='';$('roleSum').innerHTML='';$('picked').innerHTML='';return}
+  const D0=model.daySn,byDay=new Map(D0.map(s=>[dstr(s.ts),s])),D=[];
+  if(D0.length){const a=new Date(D0[0].ts),b=new Date(D0[D0.length-1].ts);a.setHours(12,0,0,0);b.setHours(12,0,0,0);for(let t=a.getTime();t<=b.getTime()+1;t+=DAY)D.push(byDay.get(dstr(t))||{ts:t,rows:null})}
+  const labels=D.map(s=>dTh(s.ts)),R=f=>D.map(s=>s.rows?f(s):null),pr=D0.length<20?3.5:1.5;
   let miss=[];if(D0.length>1){const have=new Set(D0.map(s=>dstr(s.ts)));const a=new Date(D0[0].ts);a.setHours(12,0,0,0);for(let t=a.getTime();t<D0[D0.length-1].ts;t+=DAY)if(!have.has(dstr(t)))miss.push(t)}
-  $('chartNote').textContent=!model?'':D0.length<2?'มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม':`มีข้อมูล ${D0.length} วัน`+(miss.length?` · ขาด ${miss.length} วัน (${miss.slice(0,10).map(dTh).join(', ')}${miss.length>10?' …':''}) เส้นประ = ช่วงที่ไม่มีไฟล์`:'')+' · กดชื่อใต้กราฟเพื่อซ่อน/แสดงเส้น';
-  const opt=chartOpts(ink,line,mute,true);
-  if(chart){chart.data={labels,datasets:ds};chart.options=opt;chart.update()}else chart=new Chart($('chart'),{type:'line',data:{labels,datasets:ds},options:opt});
+  $('chartNote').textContent=D0.length<2?'มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม':`มีข้อมูล ${D0.length} วัน`+(miss.length?` · ขาด ${miss.length} วัน (${miss.slice(0,10).map(dTh).join(', ')}${miss.length>10?' …':''}) เส้นประ = ช่วงที่ไม่มีไฟล์`:'')+' · '+T('ลากบนกราฟเพื่อซูม · ดับเบิลคลิกเพื่อรีเซ็ต');
+  /* G1 trend */
+  {const ds=[[T('เฉลี่ยทั้งกิลด์'),R(s=>s.rows.reduce((a,r)=>a+r[6],0)/s.rows.length),PAL[0]],[T('มัธยฐาน'),R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>a-b);return g[g.length>>1]}),PAL[3]],[T('เฉลี่ย Top 10'),R(s=>{const g=s.rows.map(r=>r[6]).sort((a,b)=>b-a).slice(0,10);return g.reduce((a,b)=>a+b,0)/g.length}),PAL[2]]].map(([l,d,c])=>ser({label:l,data:d,borderColor:c,backgroundColor:c,pointRadius:pr}));
+   mkChart('trend','chart',{type:'line',data:{labels,datasets:ds},options:zo(O())})}
+  /* G2 total + members */
+  {const o=zo(O());const cnts=D.filter(s=>s.rows).map(s=>s.rows.length);o.scales.y1={position:'right',grid:{display:false},ticks:{color:mute,precision:0},min:Math.max(0,Math.floor(Math.min(...cnts)*.8)),max:Math.ceil(Math.max(...cnts)*1.5)};o.scales.y.title={display:true,text:T('Gear รวม'),color:mute};o.scales.y1.title={display:true,text:T('จำนวนสมาชิก'),color:mute};
+   o.plugins.tooltip.callbacks.label=c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`;
+   mkChart('tot','cTot',{type:'bar',data:{labels,datasets:[ser({type:'line',label:T('Gear รวมทั้งกิลด์'),data:R(s=>s.rows.reduce((a,r)=>a+r[6],0)),borderColor:PAL[0],backgroundColor:PAL[0],pointRadius:pr,yAxisID:'y',order:0}),{type:'bar',label:T('จำนวนสมาชิก'),data:R(s=>s.rows.length),backgroundColor:'rgba(16,185,129,.35)',borderColor:'rgba(16,185,129,.8)',borderWidth:1,borderRadius:4,yAxisID:'y1',order:1}]},options:o})}
+  /* G3 scatter */
+  {const med=quart(model.P.map(p=>p.gear))[2],thr=Math.round(model.curThr),nr=NR();
+   const grp=nr?[[T('สมาชิก'),PAL[0],()=>true]]:[[T('Active'),good,p=>p.sev===0],[T('เฝ้าระวัง'),warn,p=>p.sev===1],[T('เสี่ยงเตะ'),bad,p=>p.sev===2]];
+   const ds=grp.map(([l,c,f])=>({label:l,data:model.P.filter(f).map(p=>({x:p.act,y:p.gear,n:p.name,c:p.cls})),backgroundColor:c,borderColor:c,pointRadius:4.5,pointHoverRadius:7}));
+   const o=O();o.interaction={mode:'nearest',intersect:true};o.scales.x={type:'linear',min:0,ticks:{color:mute},grid:{color:line},title:{display:true,text:T('กิจกรรมสัปดาห์นี้'),color:mute}};o.scales.y.title={display:true,text:'Gear',color:mute};
+   o.plugins.tooltip.callbacks.label=c=>`${c.raw.n} (${c.raw.c}) · Gear ${fmt(c.raw.y)} · ${T('กิจกรรม')} ${c.raw.x}`;
+   o.onClick=(e,els,ch)=>{if(els[0])openProfile(ch.data.datasets[els[0].datasetIndex].data[els[0].index].n)};
+   const quad={id:'quad',afterDatasetsDraw(c){const {ctx,chartArea:A,scales:{x,y}}=c;const px=x.getPixelForValue(thr),py=y.getPixelForValue(med);ctx.save();ctx.strokeStyle=mute;ctx.setLineDash([5,5]);ctx.lineWidth=1;
+     if(px>A.left&&px<A.right){ctx.beginPath();ctx.moveTo(px,A.top);ctx.lineTo(px,A.bottom);ctx.stroke()}if(py>A.top&&py<A.bottom){ctx.beginPath();ctx.moveTo(A.left,py);ctx.lineTo(A.right,py);ctx.stroke()}
+     ctx.setLineDash([]);ctx.font='12px IBM Plex Sans Thai';ctx.fillStyle=mute;ctx.textAlign='left';ctx.fillText(T('Gear ต่ำ + กิจกรรมต่ำ'),A.left+6,A.bottom-6);ctx.textAlign='right';ctx.fillText(T('Gear สูง + ขยัน'),A.right-6,A.top+14);ctx.restore()}};
+   mkChart('sc','cSc',{type:'scatter',data:{datasets:ds},options:o,plugins:[quad]});
+   $('scNote').textContent=`${T('เส้นประตั้ง = เกณฑ์กิจกรรมตอนนี้')} (${thr}) · ${T('เส้นประนอน = Gear มัธยฐาน')} (${fmt(med)}) · ${T('กดจุดเพื่อดูประวัติ')}`}
+  /* G4 heatmap */
+  {const DS=D0,mp=DS.map(s=>{const m=new Map();for(const r of s.rows)m.set(canon(r[0]),r);return m});
+   const gain=(n,j)=>{const r=mp[j].get(n);if(!r)return null;if(j===0)return null;const q=mp[j-1].get(n);if(!q)return r[7];return weekStart(DS[j].ts)===weekStart(DS[j-1].ts)?Math.max(0,r[7]-q[7]):r[7]};
+   const J=[];for(let j=Math.max(1,DS.length-21);j<DS.length;j++)J.push(j);
+   const rows=model.P.map(p=>{const v=J.map(j=>gain(p.name,j));return {p,v,sum:v.reduce((a,b)=>a+(b||0),0)}});
+   const all=rows.flatMap(r=>r.v).filter(v=>v>0).sort((a,b)=>a-b),p90=all.length?all[Math.floor(all.length*.9)]:1;
+   const hs=$('heatSort').value;rows.sort(hs==='name'?(a,b)=>a.p.name.localeCompare(b.p.name):hs==='high'?(a,b)=>b.sum-a.sum:(a,b)=>a.sum-b.sum||a.p.gear-b.p.gear);
+   const col=v=>v==null?'transparent':v===0?'rgba(244,63,94,.42)':`rgba(16,185,129,${(.22+.78*Math.min(1,v/p90)).toFixed(2)})`;
+   $('heat').innerHTML=J.length?`<table><thead><tr><th class="n">${T('ชื่อ')}</th>${J.map(j=>{const d=new Date(DS[j].ts);return `<th title="${dTh(DS[j].ts)}">${d.getDate()}</th>`}).join('')}<th>Σ</th></tr></thead><tbody>${rows.map(r=>`<tr><td class="n"><button class="lnk" data-p="${esc(r.p.name)}">${esc(r.p.name)}</button></td>${r.v.map((v,i)=>`<td class="c" style="background:${col(v)}${v==null?';outline:1px dashed var(--line)':''}" title="${esc(r.p.name)} · ${dTh(DS[J[i]].ts)}: ${v==null?'–':'+'+v}"></td>`).join('')}<td class="note" style="text-align:right;padding-left:6px">${r.sum}</td></tr>`).join('')}</tbody></table>`:`<p class="note" style="padding:10px">${T('ต้องมีข้อมูลอย่างน้อย 2 วัน')}</p>`}
+  /* C1 class lines */
+  {const cnt={};model.P.forEach(p=>cnt[p.cls]=(cnt[p.cls]||0)+1);const cls=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
+   const ds=cls.map((c,i)=>ser({label:c,data:R(s=>{const g=s.rows.filter(r=>r[2]===c);return g.length?g.reduce((a,r)=>a+r[6],0)/g.length:null}),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],hidden:!!fClass&&c!==fClass,pointStyle:icoImg(c),pointRadius:x=>x.dataIndex===D.length-1?9:0,pointHoverRadius:9}));
+   const o=zo(O());o.plugins.legend.labels.usePointStyle=true;mkChart('cls','cCls',{type:'line',data:{labels,datasets:ds},options:o});
+  /* C2 doughnut */
+   const top=cls.slice(0,11),rest=cls.slice(11).reduce((a,c)=>a+cnt[c],0),lab=[...top,...(rest?[T('อื่นๆ')]:[])],val=[...top.map(c=>cnt[c]),...(rest?[rest]:[])];
+   const o2=O();delete o2.scales;o2.interaction={mode:'nearest',intersect:true};o2.cutout='62%';o2.plugins.legend.position=innerWidth<700?'bottom':'right';o2.plugins.tooltip.callbacks.label=c=>`${c.label}: ${c.parsed} ${T('คน')} (${Math.round(c.parsed/model.P.length*100)}%)`;
+   const ctr={id:'ctr',afterDraw(c){const m=c.getDatasetMeta(0);if(!m.data[0])return;const {x,y}=m.data[0];c.ctx.save();c.ctx.textAlign='center';c.ctx.fillStyle=ink;c.ctx.font='600 24px Chakra Petch';c.ctx.fillText(model.P.length,x,y+4);c.ctx.font='12px IBM Plex Sans Thai';c.ctx.fillStyle=mute;c.ctx.fillText(T('สมาชิก'),x,y+22);c.ctx.restore()}};
+   mkChart('do','cDo',{type:'doughnut',data:{labels:lab,datasets:[{data:val,backgroundColor:lab.map((_,i)=>PAL[i%PAL.length]),borderColor:cssv('--card2'),borderWidth:2}]},options:o2,plugins:[ctr]});
+   const rc={};model.P.forEach(p=>{const r=clsRole(p.cls);rc[r]=(rc[r]||0)+1});
+   let RL=[];try{RL=ROLES}catch(e){}
+   $('roleSum').innerHTML=[...RL,['other','อื่นๆ']].filter(([k])=>rc[k]).map(([k,l])=>`<span class="chip">${esc(T(l))} <b>${rc[k]}</b></span>`).join('');
+  /* C3 box */
+   const st=cls.filter(c=>cnt[c]>=2).map(c=>[c,quart(model.P.filter(p=>p.cls===c).map(p=>p.gear))]).sort((a,b)=>b[1][2]-a[1][2]);
+   const span=st.length?Math.max(...st.map(s=>s[1][4]))-Math.min(...st.map(s=>s[1][0])):1,dm=span*.004;
+   $('cBox').parentNode.style.height=Math.max(220,st.length*30+70)+'px';
+   const o3=O(false);o3.indexAxis='y';o3.interaction={mode:'index',intersect:false,axis:'y'};o3.scales={x:{ticks:{color:mute,callback:v=>fmt(v)},grid:{color:line}},y:{ticks:{color:ink},grid:{display:false}}};
+   o3.plugins.tooltip.callbacks={label:c=>c.datasetIndex!==1?null:(()=>{const q=st[c.dataIndex][1];return [`${T('ต่ำสุด')} ${fmt(q[0])}`,`Q1 ${fmt(q[1])}`,`${T('มัธยฐาน')} ${fmt(q[2])}`,`Q3 ${fmt(q[3])}`,`${T('สูงสุด')} ${fmt(q[4])}`,`${cnt[st[c.dataIndex][0]]} ${T('คน')}`]})()};
+   mkChart('box','cBox',{type:'bar',data:{labels:st.map(s=>s[0]),datasets:[{label:'range',data:st.map(s=>[s[1][0],s[1][4]]),backgroundColor:mute,barPercentage:.12,grouped:false},{label:'IQR',data:st.map(s=>[s[1][1],s[1][3]]),backgroundColor:st.map((s,i)=>PAL[i%PAL.length]+'b3'),borderColor:st.map((s,i)=>PAL[i%PAL.length]),borderWidth:1,borderRadius:4,barPercentage:.7,grouped:false},{label:'med',data:st.map(s=>[s[1][2]-dm,s[1][2]+dm]),backgroundColor:ink,barPercentage:.7,grouped:false}]},options:o3})}
+  /* P1 compare + projection */
+  {if(picked==null)picked=[...model.P].sort((a,b)=>(b.dG??0)-(a.dG??0)||b.gear-a.gear).slice(0,5).map(p=>p.name);
+   const proj=$('proj').checked,ext=proj&&D0.length>=3?7:0,last=D.length?D[D.length-1].ts:0,L2=[...labels,...Array.from({length:ext},(_,k)=>dTh(last+(k+1)*DAY)+'*')];
+   const ds=[];picked.forEach((n,i)=>{const v=R(s=>{const r=s.rows.find(r=>canon(r[0])===n);return r?r[6]:null}),c=PAL[i%PAL.length];ds.push(ser({label:n,data:[...v,...Array(ext).fill(null)],borderColor:c,backgroundColor:c,pointRadius:pr}));
+     if(ext){const f=slopeFit(v);if(f){const pv=Array(L2.length).fill(null);pv[f.last[0]]=f.last[1];for(let k=1;k<=ext;k++)pv[D.length-1+k]=Math.round(f.last[1]+f.b*(D.length-1+k-f.last[0]));ds.push({label:n+' '+T('(คาดการณ์)'),proj:1,data:pv,borderColor:c,backgroundColor:c,borderDash:[4,4],borderWidth:1.6,pointRadius:0,spanGaps:true,tension:0})}}});
+   const o=zo(O());o.plugins.legend.labels.filter=(it,d)=>!d.datasets[it.datasetIndex].proj;mkChart('cmp','cCmp',{type:'line',data:{labels:L2,datasets:ds},options:o});
+   $('picked').innerHTML=picked.map((n,i)=>`<span class="chip"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${PAL[i%PAL.length]}"></i> ${esc(n)}<button data-rm="${esc(n)}" aria-label="เอาออก">×</button></span>`).join('');
+  /* P2 rank */
+   const rk=R(s=>{const g=[...s.rows].sort((a,b)=>b[6]-a[6]);const m=new Map(g.map((r,i)=>[canon(r[0]),i+1]));return m});
+   const o2=zo(O());o2.scales.y={reverse:true,min:1,ticks:{color:mute,precision:0,callback:v=>'#'+v},grid:{color:line}};o2.plugins.tooltip.callbacks.label=c=>`${c.dataset.label}: #${c.parsed.y}`;
+   mkChart('rank','cRank',{type:'line',data:{labels,datasets:picked.map((n,i)=>ser({label:n,data:rk.map(m=>m?m.get(n)??null:null),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],pointRadius:pr,stepped:false}))},options:o2})}
 }
+function savePng(key){const c=CH[key];if(!c)return;const src=c.canvas,s=src.width/src.clientWidth,head=46*s,out=document.createElement('canvas');out.width=src.width;out.height=src.height+head+16*s;const x=out.getContext('2d');
+  x.fillStyle=cssv('--card')||'#111';x.fillRect(0,0,out.width,out.height);const t=(src.closest('.acard').querySelector('h3')||{}).textContent||'';x.fillStyle=cssv('--ink')||'#fff';x.font=`600 ${17*s}px IBM Plex Sans Thai`;x.textBaseline='middle';x.fillText(t,14*s,head/2);
+  x.fillStyle=cssv('--mute')||'#999';x.font=`${12*s}px IBM Plex Sans Thai`;x.textAlign='right';x.fillText('TheMoon · '+dTh(model?model.L.ts:Date.now()),out.width-14*s,head/2);x.drawImage(src,0,head);
+  const a=document.createElement('a');a.download=`themoon-${key}-${dstr(Date.now())}.png`;a.href=out.toDataURL('image/png');a.click()}
 
 let mineChart=null;
 function renderMine(){
@@ -1041,7 +1177,7 @@ function renderMine(){
   if(!me||!model){el.innerHTML='';return}
   const name=canon(me),p=model.P.find(x=>x.name===name);
   if(!p){el.innerHTML=`<div class="card mine" style="margin-top:12px"><b>${T('ตัวละครของฉัน')}: ${esc(me)}</b><p class="note" style="margin:4px 0 0">${T('ไม่พบตัวละคร')} ${T('ในข้อมูลล่าสุด')}</p></div>`;return}
-  const H=[];snaps.forEach((s,i)=>{const r=model.maps[i].get(name);if(r)H.push({ts:s.ts,gear:r[6],avg:s.rows.reduce((a,x)=>a+x[6],0)/s.rows.length})});
+  const H=[];snaps.forEach((s,i)=>{const r=model.maps[i].get(name);if(r){const cr=s.rows.filter(x=>x[2]===p.cls);H.push({ts:s.ts,gear:r[6],avg:s.rows.reduce((a,x)=>a+x[6],0)/s.rows.length,cavg:cr.length?cr.reduce((a,x)=>a+x[6],0)/cr.length:null})}});
   const byDay=new Map();H.forEach(h=>byDay.set(dstr(h.ts),h));const D=[...byDay.values()];
   const f=D[0],grow=p.gear-f.gear,pct=f.gear?grow/f.gear*100:0,wk=[...D].reverse().find(h=>h.ts<=model.L.ts-7*DAY+3600e3)||f,g7=p.gear-wk.gear;
   const byG=[...model.P].sort((a,b)=>b.gear-a.gear),rk=byG.indexOf(p)+1,cl=byG.filter(x=>x.cls===p.cls),crk=cl.indexOf(p)+1,beat=Math.round((model.P.filter(x=>x.gear<p.gear).length)/Math.max(1,model.P.length-1)*100);
@@ -1052,9 +1188,16 @@ function renderMine(){
     <div><span>${T('อันดับในกิลด์')}</span><b>#${rk}<small class="note" style="font-size:13px"> / ${model.P.length}</small></b><span>${T('สูงกว่า')} ${beat}% ${T('ของสมาชิก')}</span></div>
     <div><span>${T('อันดับในอาชีพ')}</span><b>#${crk}<small class="note" style="font-size:13px"> / ${cl.length}</small></b><span>${esc(p.cls)}</span></div>
     <div><span>${T('กิจกรรมสัปดาห์นี้')}</span><b>${p.act}<small class="note" style="font-size:13px"> /205</small></b></div></div>
-   ${D.length>1?'<div class="mfig"><canvas id="mineC"></canvas></div>':`<p class="note">${T('มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม')}</p>`}</div>`;
+   ${D.length>1?'<div class="mfig"><canvas id="mineC"></canvas></div><p class="note" id="mineProj" style="margin:6px 0 0"></p>':`<p class="note">${T('มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม')}</p>`}</div>`;
   if(D.length>1&&typeof Chart!='undefined'){const ink=cssv('--ink')||'#888',line=cssv('--line')||'#ddd',mute=cssv('--mute')||'#888';
-    mineChart=new Chart($('mineC'),{type:'line',data:{labels:D.map(h=>dTh(h.ts)),datasets:[{label:p.name,data:D.map(h=>h.gear),borderColor:PAL[0],backgroundColor:PAL[0],tension:.3,borderWidth:2.6,pointRadius:D.length<25?3.5:1.5,fill:false},{label:T('ค่าเฉลี่ยกิลด์'),data:D.map(h=>h.avg),borderColor:mute,backgroundColor:mute,borderDash:[6,5],tension:.3,borderWidth:1.6,pointRadius:0}]},options:chartOpts(ink,line,mute,true)})}
+    const f2=D.length>=3?slopeFit(D.map(h=>h.gear)):null,ext=f2?7:0,lb=[...D.map(h=>dTh(h.ts)),...Array.from({length:ext},(_,k)=>dTh(D[D.length-1].ts+(k+1)*DAY)+'*')],pad=a=>[...a,...Array(ext).fill(null)];
+    const pv=Array(lb.length).fill(null);if(f2){pv[D.length-1]=D[D.length-1].gear;for(let k=1;k<=ext;k++)pv[D.length-1+k]=Math.round(D[D.length-1].gear+f2.b*k)}
+    const o=chartOpts(ink,line,mute,true);
+    mineChart=new Chart($('mineC'),{type:'line',data:{labels:lb,datasets:[{label:p.name,data:pad(D.map(h=>h.gear)),borderColor:PAL[0],backgroundColor:PAL[0],tension:.3,borderWidth:2.6,pointRadius:D.length<25?3.5:1.5,fill:false},
+      ...(f2?[{label:T('คาดการณ์ 7 วัน'),data:pv,borderColor:PAL[0],backgroundColor:PAL[0],borderDash:[4,4],borderWidth:1.6,pointRadius:0,spanGaps:true}]:[]),
+      {label:T('ค่าเฉลี่ยอาชีพ')+' '+p.cls,data:pad(D.map(h=>h.cavg)),borderColor:PAL[3],backgroundColor:PAL[3],borderDash:[2,3],tension:.3,borderWidth:1.6,pointRadius:0},
+      {label:T('ค่าเฉลี่ยกิลด์'),data:pad(D.map(h=>h.avg)),borderColor:mute,backgroundColor:mute,borderDash:[6,5],tension:.3,borderWidth:1.6,pointRadius:0}]},options:o});
+    if(f2)$('mineProj').textContent=`${T('ถ้าโตด้วยความเร็วเท่าเดิม อีก 7 วันจะได้ประมาณ')} ${fmt(pv[pv.length-1])} Gear (${sgn(Math.round(f2.b))}/${T('วัน')})`}
 }
 /* ---------- profile ---------- */
 function openProfile(name){
@@ -1522,9 +1665,10 @@ async function importBackup(f){
 
 /* ---------- events ---------- */
 function setSeg(id,v){[...$(id).children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v==v))}
-$('mode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.v;setSeg('mode',mode);drawChart()};
+$('anaTab').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.v;try{sessionStorage.setItem('tm-ana',mode)}catch(_){}$('anaSec').dataset.tab=mode;setSeg('anaTab',mode);requestAnimationFrame(()=>Object.values(CH).forEach(c=>c.resize()))};
+$('heatSort').onchange=drawChart;$('proj').onchange=drawChart;
 $('range').onclick=e=>{const b=e.target.closest('button');if(!b)return;range=+b.dataset.v;setSeg('range',range);render()};
-$('pick').onchange=e=>{const n=e.target.value;picked=picked||[];if(model&&model.P.some(p=>p.name===n)&&!picked.includes(n)){picked.push(n);if(picked.length>10)picked.shift()}e.target.value='';drawChart()};
+$('pick').onchange=e=>{const n=e.target.value;picked=picked||[];if(model&&model.P.some(p=>p.name===n)&&!picked.includes(n)){picked.push(n);if(picked.length>8)picked.shift()}e.target.value='';drawChart()};
 document.addEventListener('click',e=>{
   if(FB&&user&&(e.target.closest('#auction')&&aucActionSync(e.target)||e.target.closest('#party')&&partyActionSync(e.target)))return;
   {const v=e.target.closest('[data-viewas]');if(v){if(role==='owner')setViewAs(v.dataset.viewas);return}}
@@ -1533,6 +1677,8 @@ document.addEventListener('click',e=>{
   const t=e.target,cl=s=>t.closest(s);let el;
   if(t.id==='modal'||cl('#pClose')){closeProfile();return}
   if(el=cl('[data-p]')){openProfile(el.dataset.p);return}
+  if(el=cl('[data-png]')){savePng(el.dataset.png);return}
+  if(el=cl('[data-zr]')){zoomReset(CH[el.dataset.zr]);return}
   if(el=cl('[data-rm]')){picked=(picked||[]).filter(n=>n!==el.dataset.rm);drawChart();return}
   if(el=cl('[data-c]')){fClass=fClass===el.dataset.c?'':el.dataset.c;render();return}
   if(el=cl('th[data-k]')){const k=el.dataset.k;sortD=sortK===k?-sortD:(['name','cls','rank'].includes(k)?1:-1);sortK=k;renderTable();return}
