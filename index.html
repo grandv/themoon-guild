@@ -128,6 +128,13 @@ nav a.on{background:var(--accbg);color:var(--acc);font-weight:600}
 .itimg{width:56px;height:56px;border-radius:12px;background:var(--card2);border:2px solid var(--qc,var(--line));object-fit:contain;flex:none}
 .itimg.sm{width:34px;height:34px;border-radius:8px;border-width:1.5px}
 .q2{--qc:#22c55e}.q3{--qc:#3b82f6}.q4{--qc:#a855f7}.q5{--qc:#f59e0b}.q6{--qc:#ef4444}
+#itip{position:fixed;z-index:60;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 12px 32px -8px rgba(0,0,0,.35);font-size:13.5px;pointer-events:none}
+#itip.pin{pointer-events:auto}
+#itip .th{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+#itip .tr{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-top:1px solid var(--line)}
+#itip .tr span:first-child{color:var(--mute);white-space:nowrap}#itip .tr span:last-child{text-align:right}
+.tq.q2{color:#22c55e}.tq.q3{color:#3b82f6}.tq.q4{color:#a855f7}.tq.q5{color:#f59e0b}.tq.q6{color:#ef4444}
+img.itimg[data-iid]{cursor:help}
 .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;max-height:320px;overflow-y:auto;margin-top:10px;padding:2px}
 .catgrid button{flex-direction:column;gap:4px;padding:8px 4px;min-height:0;font-weight:500;font-size:11.5px;line-height:1.25;text-align:center;background:var(--card2)}
 .catgrid button[aria-pressed=true]{outline:2px solid var(--acc);background:var(--accbg)}
@@ -369,6 +376,18 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"เพิ่มทีละ":["step", "naik", "step"],
+"ระดับ":["Quality", "Kualitas", "Quality"],
+"เขียว":["Green", "Hijau", "Green"],
+"น้ำเงิน":["Blue", "Biru", "Blue"],
+"ม่วง":["Purple", "Ungu", "Purple"],
+"ส้ม":["Orange", "Oranye", "Orange"],
+"แดง":["Red", "Merah", "Red"],
+"เลเวลที่ใช้ได้":["Use level", "Level pakai", "Use level"],
+"ราคาประมูล":["Auction price", "Harga lelang", "Presyo sa auction"],
+"ราคาประมูลสมบัติ":["Treasure auction", "Lelang harta", "Treasure auction"],
+"ได้จาก":["Where to get", "Didapat dari", "Makukuha sa"],
+"ข้อมูลจาก":["Data from", "Data dari", "Data mula sa"],
 "กำลังดูในมุมมองสมาชิก — ปุ่มของหัวหน้าถูกซ่อนไว้":["Viewing as a member — leader buttons are hidden", "Melihat sebagai anggota — tombol ketua disembunyikan", "Tinitingnan bilang miyembro — nakatago ang mga button ng leader"],
 "สลับมุมมอง":["Switch view", "Ganti tampilan", "Palitan ang view"],
 "กำลังดูในมุมมองสมาชิก":["Viewing as a member", "Melihat sebagai anggota", "Tinitingnan bilang miyembro"],
@@ -1203,9 +1222,25 @@ const catOf=t=>t==='Mount'?'mount':/Card$/.test(t||'')?'card':t==='Pack'?'box':t
 const CI=new Map(CATALOG.map(a=>[a[0],{id:a[0],q:a[1],type:a[2],ic:a[3],en:a[4],th:a[5],cat:catOf(a[2])}]));
 const imgUrl=ic=>'https://roworlddb.com/media/images/'+(ic[0]==='~'?'item/'+ic.slice(1):ic)+'.webp';
 const itName=it=>LANG==='th'&&it.th?it.th:it.en;
-const lotInfo=l=>{const c=l.itemId&&CI.get(+l.itemId)||[...CI.values()].find(x=>x.en===l.name||x.th===l.name);return {name:c?itName(c):l.name,img:c?imgUrl(c.ic):'',q:c?c.q:0,cat:l.cat||(c?c.cat:'other')}};
-const imgTag=(i,cls='')=>i.img?`<img class="itimg ${cls} q${i.q}" src="${i.img}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">`:`<span class="itimg ${cls}" style="display:inline-grid;place-items:center;font-size:20px">🎁</span>`;
+const lotInfo=l=>{const c=l.itemId&&CI.get(+l.itemId)||[...CI.values()].find(x=>x.en===l.name||x.th===l.name);return {id:c?c.id:0,name:c?itName(c):l.name,img:c?imgUrl(c.ic):'',q:c?c.q:0,cat:l.cat||(c?c.cat:'other')}};
+const imgTag=(i,cls='')=>i.img?`<img class="itimg ${cls} q${i.q}" ${i.id?`data-iid="${i.id}" tabindex="0"`:''} src="${i.img}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">`:`<span class="itimg ${cls}" style="display:inline-grid;place-items:center;font-size:20px">🎁</span>`;
 let aucTab='lots',aucCat='all',catCat='all',catPick=null;
+const CDET=Object.assign({"10543017":[0,0,[100000,500,200000],0,[402],1,9999],"10543018":[0,0,[100000,500,200000],0,[402],1,9999],"10543019":[0,0,[100000,500,200000],0,[311,402,312],1,9999],"10543021":[0,0,[100000,500,200000],0,[309,402,312],1,9999],"10543022":[0,0,[100000,500,200000],0,[402],1,9999],"10543023":[0,0,[100000,500,200000],0,[402,312],1,9999],"10543025":[0,0,[100000,500,200000],0,[309,402,312],1,9999],"10543026":[0,0,[100000,500,200000],0,[402],1,9999],"10543048":[0,0,[100000,500,200000],0,[309,402],1,9999],"10543067":[0,0,[100000,500,200000],0,[402],1,9999],"10543068":[0,0,[100000,500,200000],0,[402],1,9999],"10543069":[0,0,[100000,500,200000],0,[402],1,9999],"10543085":[0,0,[100000,500,200000],0,[402],1,9999],"10543096":[0,0,[100000,500,200000],0,[402],1,9999],"10543502":[0,0,[150000,750,300000],0,[309,402],1,9999],"10543503":[0,0,[100000,500,200000],0,[311,402,312],1,9999],"11594067":[0,[2500,50,7500],0,0,[703,323,314],0,9999],"11594068":[0,[500,10,1500],0,0,[703,323,314],0,9999],"11594070":[0,[300,10,900],0,0,[703,103],0,9999],"11594104":[0,[600,30,1800],0,0,[703],1,9999],"11602246":[40,[600,50,1800],0,0,[703,305,323],1,9999],"11602247":[40,[2400,50,7200],0,0,[703,305,323],1,9999],"11602248":[40,[9600,50,28800],0,0,[703,305,323],1,9999],"12033009":[0,0,[150000,750,300000],0,[],0,1],"12033010":[0,0,[150000,750,300000],0,[309],0,1],"12033011":[0,0,[150000,750,300000],0,[312],0,1],"12333004":[0,0,[150000,750,300000],0,[],0,1],"12333014":[0,0,[100000,500,200000],0,[],0,1],"12433022":[0,0,[100000,500,200000],0,[],0,1],"12433025":[0,0,[150000,750,300000],0,[],0,1],"12533001":[0,0,[100000,500,200000],0,[],0,1],"12533009":[0,0,[150000,750,300000],0,[311,312],0,1],"12533010":[0,0,[100000,500,200000],0,[],0,1],"12633002":[0,0,[150000,750,300000],0,[309,312],0,1],"12833009":[0,0,[150000,750,300000],0,[],0,1],"12833022":[0,0,[150000,750,300000],0,[309,312],0,1],"12833037":[0,0,[150000,750,300000],0,[309],0,1],"12933016":[0,0,[100000,500,200000],0,[],0,1],"12933026":[0,0,[100000,500,200000],0,[],0,1],"12933033":[0,0,[100000,500,200000],0,[309,312],0,1],"12933034":[0,0,[100000,500,200000],0,[311],0,1],"12933035":[0,0,[100000,500,200000],0,[311,312],0,1],"12933051":[0,0,[100000,500,200000],0,[],0,1],"12933061":[0,0,[100000,500,200000],0,[309],0,1],"13033006":[0,0,[100000,500,200000],0,[309,312],0,1],"13033061":[0,0,[150000,750,300000],0,[],0,1],"13033064":[0,0,[150000,750,300000],0,[],0,1],"13033070":[0,0,[150000,750,300000],0,[],0,1],"13033076":[0,0,[150000,750,300000],0,[],0,1],"13033077":[0,0,[150000,750,300000],0,[],0,1],"13033078":[0,0,[150000,750,300000],0,[],0,1],"13033118":[0,0,[150000,750,300000],0,[],0,1],"13033123":[0,0,[150000,750,300000],0,[],0,1],"13133001":[0,[3500,175,10500],0,[1750000,7000000],[702,703,305,314],0,1],"13133002":[0,[3500,175,10500],0,[1750000,7000000],[702,703,305,314],0,1],"13133003":[0,[3500,175,10500],0,[1750000,7000000],[702,703,305,314],0,1],"13133004":[0,[3500,175,10500],0,[1750000,7000000],[702,703,305,314],0,1],"13133005":[0,[3500,175,10500],0,0,[703],0,1],"13133006":[0,[3500,175,10500],0,0,[703],0,1],"13133007":[0,[3500,175,10500],0,0,[703],0,1],"13133008":[0,[3500,175,10500],0,0,[703],0,1],"13133009":[0,[3500,175,10500],0,[1750000,7000000],[702,703,305,314],0,1],"13133010":[0,[3500,175,10500],0,0,[703],0,1],"13133011":[0,[3500,175,10500],0,[1750000,7000000],[702,703,305,314],0,1],"13133012":[0,[3500,175,10500],0,0,[703],0,1],"13133013":[0,[3500,175,10500],0,[1750000,7000000],[702,703,305,314],0,1],"13133014":[0,[3500,175,10500],0,[1750000,7000000],[702,703,305,314],0,1],"13133015":[0,[3500,175,10500],0,0,[703],0,1],"13133016":[0,[3500,175,10500],0,0,[703],0,1],"13133017":[0,[3500,175,10500],0,0,[703],0,1],"14336103":[0,[2500,100,7500],0,0,[703,9,303,305],0,9999],"14336104":[0,[2500,100,7500],0,0,[703,305,323],0,9999],"18412001":[0,[40,5,120],0,0,[703,103,109,315],1,999],"18413001":[0,[150,8,450],0,0,[703,109,9,305],1,999],"18414001":[0,[600,30,1800],0,0,[703,601],1,999],"18415001":[0,[2400,150,7200],0,0,[703,305,323,601],1,999]},Object.fromEntries(CATALOG.filter(a=>a[2]==='Advanced Relic').map(a=>[a[0],[50,[400,20,1200],0,[250000,1000000],[702,703,314],1,1]])));
+const SRCN={402:['MVP','MVP'],311:['Time Echoes'],312:['Endless Tower'],309:['Time Corridor'],703:['Auction','ประมูล'],323:['Guild League'],314:['Polarity Zone','Monochrome War'],103:['Guild Shop','ร้าน Guild'],305:['Hazy Forest'],702:['Trade House'],9:['Top-Up Gift','ของขวัญเติมเงิน'],303:['Mirror World'],109:['Points Shop','ร้านแต้ม'],315:['Brave Trials','Brave Trial'],601:['Fuse','รวม']};
+const QN={2:'เขียว',3:'น้ำเงิน',4:'ม่วง',5:'ส้ม',6:'แดง'};
+function tipHtml(id){
+  const c=CI.get(+id);if(!c)return '';const d=CDET[c.id]||[];const [lv,au,ta,tr,src]=d;
+  const rng=a=>`${fmt(a[0])} ~ ${fmt(a[2])} <span class="note">(${T('เพิ่มทีละ')} ${fmt(a[1])})</span>`;
+  const row=(k,v)=>`<div class="tr"><span>${k}</span><span>${v}</span></div>`;
+  return `<div class="th">${imgTag({img:imgUrl(c.ic),q:c.q})}<div><b class="tq q${c.q}">${esc(itName(c))}</b>${LANG==='th'&&c.th?`<div class="note">${esc(c.en)}</div>`:''}<div class="note">${esc(c.type)} · ${T('ระดับ')} ${T(QN[c.q]||'')}</div></div></div>
+  ${lv?row(T('เลเวลที่ใช้ได้'),lv):''}${au?row(T('ราคาประมูล'),rng(au)):''}${ta?row(T('ราคาประมูลสมบัติ'),rng(ta)):''}${tr?row('Trade House',`${fmt(tr[0])} ~ ${fmt(tr[1])} Zeny`):''}
+  ${src&&src.length?row(T('ได้จาก'),src.map(k=>esc((SRCN[k]||[])[LANG==='th'?1:0]||(SRCN[k]||[])[0]||'')).filter(Boolean).join(', ')):''}
+  <div class="note" style="margin-top:6px">${T('ข้อมูลจาก')} roworlddb.com</div>`}
+let tipEl=null,tipPin=false;
+function showTip(el,pin){const id=el.dataset.iid;const h=tipHtml(id);if(!h)return;if(!tipEl){tipEl=document.createElement('div');tipEl.id='itip';tipEl.setAttribute('role','tooltip');document.body.appendChild(tipEl)}
+  tipEl.innerHTML=h;tipEl.hidden=false;tipPin=!!pin;const r=el.getBoundingClientRect(),w=Math.min(320,innerWidth-16);tipEl.style.width=w+'px';
+  let x=r.left,y=r.bottom+8;const th=tipEl.offsetHeight;if(x+w>innerWidth-8)x=innerWidth-8-w;if(x<8)x=8;if(y+th>innerHeight-8)y=Math.max(8,r.top-8-th);tipEl.style.left=x+'px';tipEl.style.top=y+'px'}
+function hideTip(){if(tipEl){tipEl.hidden=true;tipPin=false}}
 const SRC={gl:'Guild League',siege:'Siege War',polar:'Polarity Zone',other:'อื่นๆ'};
 const EVT={glm:{n:'Guild League – สนามหลัก',p:12},gls:{n:'Guild League – สนามรอง',p:12},siege:{n:'Siege War',p:12},polar:{n:'Polarity Zone',p:6},other:{n:'กิจกรรมอื่น',p:4}};
 const ROLES=[['tank','แทงค์'],['heal','ฮีล/ซัพพอร์ต'],['melee','DPS ระยะประชิด'],['ranged','DPS ระยะไกล/AOE']];
@@ -1237,9 +1272,9 @@ function renderCatalog(){
   if(!$('catGrid'))return;const q=($('catQ').value||'').trim().toLowerCase();
   $('catCats').innerHTML=CATS.filter(c=>c[0]!=='other').map(([k,l])=>`<button class="chip ${catCat===k?'on':''}" data-catc="${k}">${T(l)}</button>`).join('');
   const L=[...CI.values()].filter(c=>(catCat==='all'||c.cat===catCat)&&(!q||c.en.toLowerCase().includes(q)||(c.th||'').toLowerCase().includes(q))).slice(0,120);
-  $('catGrid').innerHTML=L.map(c=>`<button data-pick="${c.id}" aria-pressed="${catPick===c.id}">${imgTag({img:imgUrl(c.ic),q:c.q},'sm')}<span>${esc(itName(c))}</span></button>`).join('')||`<p class="note">${T('ไม่พบไอเทม — กดเพิ่มเพื่อใช้ชื่อที่พิมพ์เอง')}</p>`;
+  $('catGrid').innerHTML=L.map(c=>`<button data-pick="${c.id}" aria-pressed="${catPick===c.id}">${imgTag({id:c.id,img:imgUrl(c.ic),q:c.q},'sm')}<span>${esc(itName(c))}</span></button>`).join('')||`<p class="note">${T('ไม่พบไอเทม — กดเพิ่มเพื่อใช้ชื่อที่พิมพ์เอง')}</p>`;
   const c=catPick&&CI.get(catPick);
-  $('catSel').innerHTML=c?`<div class="row" style="justify-content:flex-start">${imgTag({img:imgUrl(c.ic),q:c.q})}<div><b>${esc(itName(c))}</b><div class="note">${esc(T(CATS.find(x=>x[0]===c.cat)[1]))} · ${esc(c.type)}</div></div><button class="sm ghost" data-pick="">×</button></div>`:(q?`${T('จะเพิ่มเป็นไอเทมชื่อ')}: <b>${esc($('catQ').value.trim())}</b>`:T('ยังไม่ได้เลือกไอเทม — กดรูปด้านบน หรือพิมพ์ชื่อเองในช่องค้นหาแล้วกดเพิ่ม'));
+  $('catSel').innerHTML=c?`<div class="row" style="justify-content:flex-start">${imgTag({id:c.id,img:imgUrl(c.ic),q:c.q})}<div><b>${esc(itName(c))}</b><div class="note">${esc(T(CATS.find(x=>x[0]===c.cat)[1]))} · ${esc(c.type)}</div></div><button class="sm ghost" data-pick="">×</button></div>`:(q?`${T('จะเพิ่มเป็นไอเทมชื่อ')}: <b>${esc($('catQ').value.trim())}</b>`:T('ยังไม่ได้เลือกไอเทม — กดรูปด้านบน หรือพิมพ์ชื่อเองในช่องค้นหาแล้วกดเพิ่ม'));
 }
 function gotCount(){const now=Date.now(),got={};aucItems.forEach(it=>(it.winners||[]).forEach(w=>{if(now-w.ts<30*DAY)got[w.char]=(got[w.char]||0)+1}));return got}
 function renderAuction(){
@@ -1480,6 +1515,13 @@ document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList
 
 {const d=new Date();d.setDate(d.getDate()+((2-d.getDay()+7)%7));d.setHours(21,30,0,0);$('evAt').value=toLocal(d);$('aucDate').value=dstr(Date.now())}
 $('aucAdd').addEventListener('toggle',()=>{if($('aucAdd').open)renderCatalog()});$('catQ').addEventListener('input',()=>{catPick=null;if($('catQ').value.trim())catCat='all';renderCatalog()});
+document.addEventListener('mouseover',e=>{const el=e.target.closest&&e.target.closest('[data-iid]');if(el&&!tipPin)showTip(el)});
+document.addEventListener('mouseout',e=>{const el=e.target.closest&&e.target.closest('[data-iid]');if(el&&!tipPin&&!(e.relatedTarget&&el.contains(e.relatedTarget)))hideTip()});
+document.addEventListener('focusin',e=>{const el=e.target.closest&&e.target.closest('[data-iid]');if(el)showTip(el)});
+document.addEventListener('focusout',e=>{if(e.target.closest&&e.target.closest('[data-iid]')&&!tipPin)hideTip()});
+document.addEventListener('touchstart',e=>{const el=e.target.closest&&e.target.closest('img[data-iid]');if(el){if(!el.closest('button'))e.preventDefault();showTip(el,true)}else if(tipEl&&!tipEl.hidden&&!e.target.closest('#itip'))hideTip()},{passive:false});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')hideTip()});
+window.addEventListener('scroll',()=>{if(!tipPin)hideTip()},{passive:true});
 const hv=()=>{const h=location.hash.slice(1);setView(h==='auction'||h==='party'?h:'dash')};window.addEventListener('hashchange',hv);hv();
 startTr();
 const cfg=FB_CONFIG||ls.get('tm-fb');
