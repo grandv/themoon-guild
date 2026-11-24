@@ -132,11 +132,23 @@ nav a.on{background:var(--accbg);color:var(--acc);font-weight:600}
 .q2{--qc:#22c55e}.q3{--qc:#3b82f6}.q4{--qc:#a855f7}.q5{--qc:#f59e0b}.q6{--qc:#ef4444}
 #itip{position:fixed;z-index:60;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 12px 32px -8px rgba(0,0,0,.35);font-size:13.5px;pointer-events:none}
 #itip.pin{pointer-events:auto}
+#itip .tfx{margin:2px 0 8px;padding:8px 10px;border-radius:10px;background:var(--accbg)}#itip .tfx ul{margin:4px 0 0;padding-left:18px}#itip .tfx li{margin:2px 0;line-height:1.45}
 #itip .th{display:flex;gap:10px;align-items:center;margin-bottom:8px}
 #itip .tr{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-top:1px solid var(--line)}
 #itip .tr span:first-child{color:var(--mute);white-space:nowrap}#itip .tr span:last-child{text-align:right}
 .tq.q2{color:#22c55e}.tq.q3{color:#3b82f6}.tq.q4{color:#a855f7}.tq.q5{color:#f59e0b}.tq.q6{color:#ef4444}
 img.itimg[data-iid]{cursor:help}
+.mvsum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.mvk{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column}.mvk span{font-size:12.5px;color:var(--mute)}.mvk b{font-size:22px;font-family:'Chakra Petch',sans-serif}
+.mvg{border-top:1px solid var(--line);padding:8px 0}.mvg summary{cursor:pointer;padding:4px 0;list-style-position:inside}
+.mvl{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px;margin-top:6px;max-height:320px;overflow-y:auto;padding-right:2px}
+.mvi{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:var(--card2);min-width:0}
+.mvi .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.viewer #impSec{grid-template-columns:1fr}
+.mine{border-color:color-mix(in srgb,var(--acc) 45%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 10%,var(--card)),var(--card))}
+.mine .mstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0}
+.mine .mstats div{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:2px}.mine .mstats span{font-size:12.5px;color:var(--mute)}.mine .mstats b{font-size:20px;font-family:'Chakra Petch',sans-serif}
+.mine .mfig{position:relative;height:220px}
 .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;max-height:320px;overflow-y:auto;margin-top:10px;padding:2px}
 .catgrid button{flex-direction:column;gap:4px;padding:8px 4px;min-height:0;font-weight:500;font-size:11.5px;line-height:1.25;text-align:center;background:var(--card2)}
 .catgrid button[aria-pressed=true]{outline:2px solid var(--acc);background:var(--accbg)}
@@ -259,6 +271,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   </div>
   <div id="previewBar" class="warnbox" style="margin-top:12px">👁 <b>กำลังดูในมุมมองสมาชิก</b> — สิ่งที่สมาชิกทั่วไปเห็น <button class="sm" data-viewas="admin" style="margin-left:8px">กลับเป็น Admin</button></div>
   <div id="linkBox" style="margin-top:12px"></div>
+  <div id="mine"></div>
   <div id="msg" role="status"></div>
   <div class="kpis" id="kpis"></div>
   <div class="card staffonly" id="renCard" hidden style="margin-top:16px;border-color:color-mix(in srgb,var(--warn) 55%,var(--line))"><div class="head"><h2>ยืนยันการเปลี่ยนชื่อ <span class="note" id="renN"></span></h2></div><p class="note" style="margin:-6px 0 10px">คนเหล่านี้อาจเป็นคนเดิมที่เปลี่ยนชื่อ (อาชีพเดียวกัน Gear และแต้มสะสมใกล้กัน) — กดยืนยันแล้วประวัติจะรวมกัน และจะไม่นับเป็นคนใหม่</p><ul class="list" id="renList"></ul></div>
@@ -281,9 +294,9 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
     <ul class="list" id="kick"></ul><p class="note" id="copied"></p></div>
 </section>
 
-<section class="g2">
+<section class="g2" id="impSec">
   <div class="card"><div class="head"><h2>พัฒนาเร็วที่สุด</h2><span class="note" id="impNote"></span></div><ul class="list" id="improved"></ul></div>
-  <div class="card"><div class="head"><h2>ความเคลื่อนไหวสมาชิก</h2></div><div id="moves"></div></div>
+  <div class="card staffonly"><div class="head"><h2>ความเคลื่อนไหวสมาชิก</h2><span class="note" id="movesCmp"></span></div><div id="moves"></div></div>
 </section>
 
 <section id="members" class="card">
@@ -378,6 +391,30 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"ความสามารถ":["Effects", "Efek", "Effects"],
+"โบนัสชุด 2 ชิ้น":["2-piece set bonus", "Bonus set 2 bagian", "2-piece set bonus"],
+"สายรีลิก":["Relic line", "Jenis relic", "Relic line"],
+"ตัวละครของฉัน":["My character", "Karakter saya", "Aking karakter"],
+"Gear ของฉัน":["My Gear", "Gear saya", "Aking Gear"],
+"โตขึ้นทั้งหมด":["Total growth", "Total pertumbuhan", "Kabuuang paglago"],
+"ตั้งแต่":["since", "sejak", "mula"],
+"7 วันล่าสุด":["Last 7 days", "7 hari terakhir", "Huling 7 araw"],
+"อันดับในกิลด์":["Guild rank", "Peringkat guild", "Ranggo sa guild"],
+"อันดับในอาชีพ":["Class rank", "Peringkat kelas", "Ranggo sa class"],
+"สูงกว่า":["Higher than", "Lebih tinggi dari", "Mas mataas sa"],
+"ของสมาชิก":["of members", "anggota", "ng miyembro"],
+"กิจกรรมสัปดาห์นี้":["Activity this week", "Aktivitas minggu ini", "Aktibidad ngayong linggo"],
+"ค่าเฉลี่ยกิลด์":["Guild average", "Rata-rata guild", "Average ng guild"],
+"ดูประวัติ":["History", "Riwayat", "Kasaysayan"],
+"ไม่พบตัวละคร":["Character not found", "Karakter tidak ditemukan", "Hindi nakita ang karakter"],
+"ในข้อมูลล่าสุด":["in the latest data", "di data terbaru", "sa pinakabagong data"],
+"ออก":["Left", "Keluar", "Umalis"],
+"เข้าใหม่":["Joined", "Bergabung", "Sumali"],
+"สุทธิ":["Net", "Bersih", "Net"],
+"เทียบกับ":["Compared with", "Dibandingkan", "Kumpara sa"],
+"คน":["people", "orang", "tao"],
+"ไม่มี":["None", "Tidak ada", "Wala"],
+"ต้องมีข้อมูลอย่างน้อย 2 ครั้งเพื่อเทียบ":["Need at least 2 uploads to compare", "Perlu minimal 2 data untuk dibandingkan", "Kailangan ng 2 upload para ikumpara"],
 "เพิ่มทีละ":["step", "naik", "step"],
 "ระดับ":["Quality", "Kualitas", "Quality"],
 "เขียว":["Green", "Hijau", "Green"],
@@ -900,7 +937,7 @@ function render(){
   const nNew=P.filter(p=>p.isNew).length,nEx=P.filter(p=>p.ex).length;
   const K6=[['สมาชิก',P.length+d(P.length,prevS&&prevS.rows.length),'var(--acc)'],['Gear เฉลี่ย',fmt(avg)+d(avg,pAvg),'var(--acc)'],['Active',cnt[0],'var(--good)'],['เฝ้าระวัง',cnt[1],'var(--warn)'],['เสี่ยงเตะ',cnt[2],'var(--bad)','risk'],['คนใหม่ / ยกเว้น',`${nNew} / ${nEx}`,'var(--mute)']]
     ;$('kpis').innerHTML=(NR()?[K6[0],K6[1],[ 'Gear สูงสุด',fmt(Math.max(...P.map(p=>p.gear))),'var(--good)']]:K6).map(([l,v,c,k])=>`<div class="kpi ${k||''}"><span><i style="background:${c}"></i>${l}</span><b>${v}</b></div>`).join('');
-  renderClasses();renderKick();renderImproved();renderMoves();renderTable();renderKicks();renderSnaps();
+  renderMine();renderClasses();renderKick();renderImproved();renderMoves();renderTable();renderKicks();renderSnaps();
   $('names').innerHTML=P.map(p=>`<option value="${esc(p.name)}">`).join('');
   drawChart();
   if(openName&&!$('modal').hidden)openProfile(openName);
@@ -934,7 +971,15 @@ function renderMoves(){
   const {left,joined,sugg,prevS,P}=model;const back=P.filter(p=>p.tags.includes('back'));let h='';
   renderRenames();
   if(back.length&&!NR())h+=`<ul class="list" style="margin-bottom:12px">${back.map(p=>`<li class="k"><div class="grow"><b>${esc(p.name)}</b> <span class="tag t-back">เคยถูกเตะ</span><div class="why">ถูกเตะเมื่อ ${dTh(model.kicked.get(p.name).ts)} — ${esc(model.kicked.get(p.name).reason||'')}</div></div></li>`).join('')}</ul>`;
-  h+=prevS?`<p class="note" style="margin:0">เทียบกับ ${dtTh(prevS.ts)}</p><p style="margin:6px 0"><b class="dn">ออก ${left.length} คน</b>${left.length?': '+left.map(esc).join(', '):''}</p><p style="margin:6px 0"><b class="up">เข้าใหม่ ${joined.length} คน</b>${joined.length?': '+joined.map(esc).join(', '):''}</p>`:'<p class="note">ต้องมีข้อมูลอย่างน้อย 2 ครั้งเพื่อเทียบ</p>';
+  $('movesCmp').textContent=prevS?`${T('เทียบกับ')} ${dtTh(prevS.ts)}`:'';
+  if(!prevS){$('moves').innerHTML=h+`<p class="note">${T('ต้องมีข้อมูลอย่างน้อย 2 ครั้งเพื่อเทียบ')}</p>`;return}
+  const pm=model.maps[model.N-2],lm=model.maps[model.N-1];
+  const item=(n,r,cur)=>`<div class="mvi">${r?ico(r[2],26):''}<div class="grow" style="min-width:0"><div class="nm">${cur?`<button class="lnk" data-p="${esc(canon(n))}">${esc(n)}</button>`:esc(n)}</div><div class="note nm">${r?esc(r[2])+' · Gear '+fmt(r[6]):''}</div></div></div>`;
+  const grp=(arr,map,cur,cls,lab)=>{const L=arr.map(n=>[n,map.get(n)]).sort((a,b)=>(b[1]?b[1][6]:0)-(a[1]?a[1][6]:0));
+    return `<details class="mvg" ${L.length?'open':''}><summary><b class="${cls}">${lab}</b> <span class="note">${L.length} ${T('คน')}</span></summary>${L.length?`<div class="mvl">${L.map(([n,r])=>item(n,r,cur)).join('')}</div>`:`<p class="note" style="margin:6px 0">${T('ไม่มี')}</p>`}</details>`};
+  const net=joined.length-left.length;
+  h+=`<div class="mvsum"><div class="mvk"><span>${T('ออก')}</span><b class="${left.length?'dn':''}">${left.length?'−'+left.length:0}</b></div><div class="mvk"><span>${T('เข้าใหม่')}</span><b class="${joined.length?'up':''}">${joined.length?'+'+joined.length:0}</b></div><div class="mvk"><span>${T('สุทธิ')}</span><b class="${net>=0?'up':'dn'}">${sgn(net)}</b></div></div>`;
+  h+=grp(joined,lm,true,'up','🟢 '+T('เข้าใหม่'))+grp(left,pm,false,'dn','🔴 '+T('ออก'));
   $('moves').innerHTML=h;
 }
 const tagsHtml=p=>p.tags.filter(t=>!NR()||t==='new').map(t=>t==='new'?'<span class="tag t-new">ใหม่</span>':t==='ex'?'<span class="tag t-ex">ยกเว้น</span>':'<span class="tag t-back">เคยถูกเตะ</span>').join('');
@@ -990,6 +1035,27 @@ function drawChart(){
   if(chart){chart.data={labels,datasets:ds};chart.options=opt;chart.update()}else chart=new Chart($('chart'),{type:'line',data:{labels,datasets:ds},options:opt});
 }
 
+let mineChart=null;
+function renderMine(){
+  const el=$('mine');if(!el)return;const me=myChar();if(mineChart){mineChart.destroy();mineChart=null}
+  if(!me||!model){el.innerHTML='';return}
+  const name=canon(me),p=model.P.find(x=>x.name===name);
+  if(!p){el.innerHTML=`<div class="card mine" style="margin-top:12px"><b>${T('ตัวละครของฉัน')}: ${esc(me)}</b><p class="note" style="margin:4px 0 0">${T('ไม่พบตัวละคร')} ${T('ในข้อมูลล่าสุด')}</p></div>`;return}
+  const H=[];snaps.forEach((s,i)=>{const r=model.maps[i].get(name);if(r)H.push({ts:s.ts,gear:r[6],avg:s.rows.reduce((a,x)=>a+x[6],0)/s.rows.length})});
+  const byDay=new Map();H.forEach(h=>byDay.set(dstr(h.ts),h));const D=[...byDay.values()];
+  const f=D[0],grow=p.gear-f.gear,pct=f.gear?grow/f.gear*100:0,wk=[...D].reverse().find(h=>h.ts<=model.L.ts-7*DAY+3600e3)||f,g7=p.gear-wk.gear;
+  const byG=[...model.P].sort((a,b)=>b.gear-a.gear),rk=byG.indexOf(p)+1,cl=byG.filter(x=>x.cls===p.cls),crk=cl.indexOf(p)+1,beat=Math.round((model.P.filter(x=>x.gear<p.gear).length)/Math.max(1,model.P.length-1)*100);
+  el.innerHTML=`<div class="card mine" style="margin-top:12px"><div class="row" style="justify-content:flex-start;gap:12px">${ico(p.cls,52)}<div class="grow"><div class="note">${T('ตัวละครของฉัน')}</div><h2 style="margin:0;font-size:22px">${esc(p.name)}</h2><div class="note">${esc(p.cls)} · Lv.${p.lv} · ${esc(p.rank)}</div></div><button class="sm ghost" data-p="${esc(p.name)}">${T('ดูประวัติ')}</button></div>
+   <div class="mstats"><div><span>${T('Gear ของฉัน')}</span><b>${fmt(p.gear)}</b></div>
+    <div><span>${T('โตขึ้นทั้งหมด')}</span><b class="${grow>0?'up':''}">${sgn(grow)}</b><span>${grow?pct.toFixed(1)+'% · ':''}${T('ตั้งแต่')} ${dTh(f.ts)}</span></div>
+    <div><span>${T('7 วันล่าสุด')}</span><b class="${g7>0?'up':''}">${sgn(g7)}</b></div>
+    <div><span>${T('อันดับในกิลด์')}</span><b>#${rk}<small class="note" style="font-size:13px"> / ${model.P.length}</small></b><span>${T('สูงกว่า')} ${beat}% ${T('ของสมาชิก')}</span></div>
+    <div><span>${T('อันดับในอาชีพ')}</span><b>#${crk}<small class="note" style="font-size:13px"> / ${cl.length}</small></b><span>${esc(p.cls)}</span></div>
+    <div><span>${T('กิจกรรมสัปดาห์นี้')}</span><b>${p.act}<small class="note" style="font-size:13px"> /205</small></b></div></div>
+   ${D.length>1?'<div class="mfig"><canvas id="mineC"></canvas></div>':`<p class="note">${T('มีข้อมูลวันเดียว — อัปโหลดไฟล์เพิ่มเพื่อให้เห็นเส้นแนวโน้ม')}</p>`}</div>`;
+  if(D.length>1&&typeof Chart!='undefined'){const ink=cssv('--ink')||'#888',line=cssv('--line')||'#ddd',mute=cssv('--mute')||'#888';
+    mineChart=new Chart($('mineC'),{type:'line',data:{labels:D.map(h=>dTh(h.ts)),datasets:[{label:p.name,data:D.map(h=>h.gear),borderColor:PAL[0],backgroundColor:PAL[0],tension:.3,borderWidth:2.6,pointRadius:D.length<25?3.5:1.5,fill:false},{label:T('ค่าเฉลี่ยกิลด์'),data:D.map(h=>h.avg),borderColor:mute,backgroundColor:mute,borderDash:[6,5],tension:.3,borderWidth:1.6,pointRadius:0}]},options:chartOpts(ink,line,mute,true)})}
+}
 /* ---------- profile ---------- */
 function openProfile(name){
   const p=model&&model.P.find(x=>x.name===name);if(!p)return;openName=name;
@@ -1235,12 +1301,22 @@ function tipHtml(id){
   const rng=a=>`${fmt(a[0])} ~ ${fmt(a[2])} <span class="note">(${T('เพิ่มทีละ')} ${fmt(a[1])})</span>`;
   const row=(k,v)=>`<div class="tr"><span>${k}</span><span>${v}</span></div>`;
   return `<div class="th">${imgTag({img:imgUrl(c.ic),q:c.q})}<div><b class="tq q${c.q}">${esc(itName(c))}</b>${LANG==='th'&&c.th?`<div class="note">${esc(c.en)}</div>`:''}<div class="note">${esc(c.type)} · ${T('ระดับ')} ${T(QN[c.q]||'')}</div></div></div>
-  ${lv?row(T('เลเวลที่ใช้ได้'),lv):''}${au?row(T('ราคาประมูล'),rng(au)):''}${ta?row(T('ราคาประมูลสมบัติ'),rng(ta)):''}${tr?row('Trade House',`${fmt(tr[0])} ~ ${fmt(tr[1])} Zeny`):''}
+  ${fxHtml(c.id)}${lv?row(T('เลเวลที่ใช้ได้'),lv):''}${au?row(T('ราคาประมูล'),rng(au)):''}${ta?row(T('ราคาประมูลสมบัติ'),rng(ta)):''}${tr?row('Trade House',`${fmt(tr[0])} ~ ${fmt(tr[1])} Zeny`):''}
   ${src&&src.length?row(T('ได้จาก'),src.map(k=>esc((SRCN[k]||[])[LANG==='th'?1:0]||(SRCN[k]||[])[0]||'')).filter(Boolean).join(', ')):''}
   <div class="note" style="margin-top:6px">${T('ข้อมูลจาก')} roworlddb.com</div>`}
+const CEFF={"12033009":[["PDMG Reduction% +15%","MDMG Reduction% +15%"],["ลดดาเมจกายภาพ % +15%","ลดดาเมจเวทมนตร์% +15%"],["% Pengurangan P.DMG +15%","% Pengurangan M.DMG +15%"]],"12033010":[["MDMG Bonus% +15%","Royal Might Damage+% +5%","Unique: Skill SP Cost -20%"],["โบนัสดาเมจเวทมนตร์% +15%","เพิ่มดาเมจพลังราชัน % +5%","เฉพาะตัว: การใช้ SP สกิล -20%"],["% Bonus M.DMG +15%","Peningkatan DMG Kerajaan% +5%","Unik: Konsumsi SP Skill -20%"]],"12033011":[["VIT +5","Unique: Immune to Stun"],["VIT +5","เฉพาะตัว: ป้องกันสถานะมึนงง"],["VIT +5","Unik: Kebal terhadap status abnormal Stun"]],"12333004":[["Holy DMG Reduction% +10%","Defense attribute changes to Holy"],["ลดดาเมจต่อธาตุ Holy % +10%","เปลี่ยนธาตุป้องกันเป็น Holy"],["% Pengurangan DMG Holy +10%","Atribut pertahanan berubah menjadi Holy"]],"12333014":[["Unique: Reflects 20% melee PDMG (Reflection ineffective against Boss, MVP, and Mini)"],["เฉพาะตัว:สะท้อน PHY.DMGระยะประชิด 20% (การสะท้อนไม่มีผลกับบอส MVP และ Mini)"],["Unik: Memantulkan 20% Physical DMG Jarak dekat (pantulan tidak berlaku pada Boss, MVP dan Mini)"]],"12433022":[["Reduces Neutral damage taken by 30%, but increases damage taken from all other elements by 10%. Royal Power damage reduction +5%."],["ลดความเสียหายจากธาตุ Neutral 30% แต่ได้รับความเสียหายจากธาตุอื่นทั้งหมดเพิ่มขึ้น 10% ลด DMG จาก Royal Power 5%"],["Mengurangi damage Neutral sebesar 30%, meningkatkan damage dari semua atribut lainnya sebesar 10%. Pengurangan damage Royal +5%."]],"12433025":[["Unique: 5% chance to inflict Critical Wound when dealing damage. Targets affected lose 1% HP per second. Received Healing -50% for 5s. This effect has a 10s cooldown. Ineffective against Boss, MVP, and Mini."],["เฉพาะตัว: เมื่อสร้าง DMG มีโอกาส 5% ที่จะทำให้เป้าหมายติดสถานะบาดเจ็บสาหัส: เสีย HP 1% ทุกวินาที Received Healing -50% เป็นเวลา 5s เอฟเฟกต์นี้มีคูลดาวน์ 10s ไม่มีผลกับบอส MVP และ Mini"],["Unik: Saat memberikan DMG, ada 5% peluang memberikan efek Critical Wound pada target. Target yang terkena Critical Wound kehilangan 1% HP per dtk, Efek Heal yang diterima -50%, berlangsung 5d. Efek ini memiliki CD 10d. Tidak berlaku pada Boss, MVP dan Mini."]],"12533001":[["Unique: When taking PDMG, 5% chance to cast Meteor Storm Lv.5 on the attacker (cast level scales with learned skill level). This effect has a 5s cooldown"],["เฉพาะตัว: เมื่อได้รับPHY.DMG มีโอกาส 5% ร่าย Meteor Storm Lv.5 ใส่ผู้โจมตี (เลเวลการร่ายขึ้นอยู่กับเลเวลสกิลที่ได้เรียน) คูลดาวน์ 5s"],["Unik: Saat menerima Physical DMG, ada 5% peluang untuk melancarkan Meteor Storm Lv.5 ke penyerang (Level cast meningkat berdasarkan Level skill yang dipelajari), efek ini memiliki CD 5d"]],"12533009":[["Unique: MSPD +25%"],["เฉพาะตัว: MSPD+25%"],["Unik: MSPD +25%"]],"12533010":[["STR +1","INT +1","AGI +1","DEX +1","VIT +1","LUK +1","Unique: When taking PDMG, 5% chance to gain a shield equal to 20% Max HP for 10s. Shield increases to 30% Max HP when INT reaches 99+. This effect has a 10s cooldown"],["STR +1","INT +1","AGI +1","DEX +1","VIT +1","LUK +1","เฉพาะตัว: เมื่อได้รับ PHY.DMG มีโอกาส 5% สร้างโล่ป้องกันให้ตนเองเท่ากับ 20% ของ Max HP เป็นเวลา 10s เมื่อค่า INT ตั้งแต่ 99 ขึ้นไป โล่ป้องกันจะเพิ่มขึ้นเป็น 30% ของ Max HP คูลดาวน์ 10s"],["STR +1","INT +1","AGI +1","DEX +1","VIT +1","LUK +1","Unik: Saat menerima Physical DMG, ada peluang 5% untuk mendapat Shield 20% Max HP selama 10d, saat INT mencapai 99 ke atas, Shield meningkat menjadi 30% Max HP, efek ini memiliki CD 10d"]],"12633002":[["Royal Might Damage Reduction+% +5%","Unique: Block 1x hard control effects and increase all Control Res by 70% for 5s. This effect has a 20s cooldown"],["ลดดาเมจพลังราชัน % +5%","เฉพาะตัว: ป้องกันสถานะ CC 1 ครั้ง และเพิ่ม Control RES ทั้งหมด 70% เป็นเวลา 5s คูลดาวน์ 20s"],["Pengurangan DMG Kerajaan% +5%","Unik: Kebal terhadap 1x status abnormal hard CC, dan Control RES +70% selama 5d; efek ini memiliki CD 20d"]],"12833009":[["Royal Might Damage Reduction+% +5%","Unique: When taking MDMG, immune to that instance of MDMG and gain Golden Thief Bug Shield for 10s. While active, MDMG taken -50%. This effect has a 25s cooldown."],["ลดดาเมจพลังราชัน % +5%","เฉพาะตัว: เมื่อได้รับ M.DMG จะทำให้การโจมตีนั้นไร้ผล และได้รับโล่ Golden Thief Bug เป็นเวลา 10s ในขณะที่มีโล่ M.DMG ที่ได้รับลดลง 50% คูลดาวน์ 25s"],["Pengurangan DMG Kerajaan% +5%","Unik: Saat menerima Magic DMG, kebal terhadap Magic DMG tersebut dan mendapat Golden Thief Bug Shield selama 10d, mengurangi Magic DMG yang diterima sebesar 50%, CD 25d."]],"12833022":[["Unique: Upon taking lethal DMG, survive with 1 HP and become Invincible for 3s. Restores 60% HP and SP during this time but unable to move or cast skills. This effect has a 180s cooldown."],["พิเศษ: เมื่อได้รับ DMG ถึงตาย จะเหลือ HP 1 หน่วย เป็นอมตะ 3s ฟื้นฟู HP และ SP 60% แต่จะเคลื่อนที่หรือใช้สกิลไม่ได้ เอฟเฟกต์นี้มีคูลดาวน์ 180s"],["Unik: Saat menerima DMG fatal, tersisa 1 HP, masuk status Invincible selama 3d dan memulihkan HP serta SP sampai 60%, tidak bisa bergerak dan menggunakan skill selama periode ini, efek ini memiliki CD 180d."]],"12833037":[["M.ATK +80","Royal Might Damage+% +7.50%","Unique: When SP > 50%, 50% chance to consume 5% SP and increase MDMG by 50% when dealing MDMG. When SP < 50%, 50% chance to recover 5% SP when dealing MDMG"],["M.ATK +80","เพิ่มดาเมจพลังราชัน % +7.50%","เฉพาะตัว: เมื่อสร้าง M.DMG หาก MP มากกว่า 50% มีโอกาส 50% ใช้ SP 5% เพื่อเพิ่ม DMG 50% หาก SP น้อยกว่า 50% มีโอกาส 50% ฟื้นฟู SP 5%"],["M.ATK +80","Peningkatan DMG Kerajaan% +7.50%","Unik: Saat SP lebih dari 50%, ada 50% peluang mengonsumsi 5% SP untuk meningkatkan DMG 50% ketika memberikan Magic DMG. Saat SP kurang dari 50%, ada 50% peluang memulihkan 5% SP ketika memberikan Magic DMG"]],"12933016":[["Royal Might Damage+% +5%","Unique: Basic Attacks deal 75% splash DMG vs up to 10 enemies within 3meters"],["เพิ่มดาเมจพลังราชัน % +5%","เฉพาะตัว: การโจมตีทั่วไปสร้าง Splash DMG 75% แก่ศัตรูสูงสุด 10 ตัวในรัศมี 3 เมตร"],["Peningkatan DMG Kerajaan% +5%","Unik: Saat Normal Attack, memberikan 75% Splash DMG pada maksimal 10 musuh dalam radius 3 meter"]],"12933026":[["HIT +100","PDMG Bonus% +15%","Royal Might Damage+% +7.50%"],["Hit +100","โบนัส P.ATK% +15%","เพิ่มดาเมจพลังราชัน % +7.50%"],["HIT +100","% Bonus P.DMG +15%","Peningkatan DMG Kerajaan% +7.50%"]],"12933033":[["Size Modifier% +25%","Royal Might Damage+% +5%","Weapon Size Modifier Ignore"],["ปรับสำหรับขนาดมาตรฐาน % +25%","เพิ่มดาเมจพลังราชัน % +5%","ไม่สนใจการลดทอนดาเมจตามขนาด"],["% Pengubah Ukuran +25%","Peningkatan DMG Kerajaan% +5%","Mengabaikan modifikasi ukuran senjata"]],"12933034":[["ATK +80","Royal Might Damage+% +7.50%","Unique: When SP>50%, P.ATK or skills have a 50% chance to consume 5% SP and increase DMG by 50%. When SP<50%, PDMG has a 50% chance to restore 5% SP"],["Atk +80","เพิ่มดาเมจพลังราชัน % +7.50%","เฉพาะตัว: เมื่อ SP มากกว่า 50% ขณะใช้ P.ATK หรือสกิล มีโอกาส 50% ที่จะใช้ SP 5% เพื่อเพิ่ม DMG 50% แต่เมื่อ SP น้อยกว่า 50% ขณะสร้าง PHY.DMG มีโอกาส 50% ที่จะฟื้นฟู SP 5%"],["ATK +80","Peningkatan DMG Kerajaan% +7.50%","Unik: Saat SP lebih dari 50%, menggunakan P.ATK atau Skill memiliki peluang 50% mengonsumsi 5% SP untuk meningkatkan DMG sebesar 50%. Saat SP kurang dari 50%, memberikan Physical memiliki peluang 50% untuk memulihkan 5% SP"]],"12933035":[["Damage to all Goblins +30%, All Race DMG Bonus +12%, Royal DMG Bonus +7.5%."],["สร้าง DMG ให้ Goblin ทั้งหมด +30% เพิ่ม DMG ทุกเผ่า +12% เพิ่ม DMG Royal Power +7.5%"],["DMG terhadap semua Goblin +30%, DMG terhadap semua ras +12%. DMG Royal +7,5%."]],"12933051":[["ASPD Bonus% +10%","CRIT +20","CRIT DMG% +15%","Royal Might Damage+% +7.50%"],["เพิ่ม ASPD% +10%","Crit +20","Crit Damage% +15%","เพิ่มดาเมจพลังราชัน % +7.50%"],["% Peningkatan ASPD +10%","CRIT +20","% CRIT DMG +15%","Peningkatan DMG Kerajaan% +7.50%"]],"12933061":[["PDMG Bonus% +15%","ATK +50","Royal Might Damage+% +7.50%","Dealing PDMG has a 1% chance to reach 193 ASPD for 5s. This effect has a 12s cooldown"],["โบนัส P.ATK% +15%","Atk +50","เพิ่มดาเมจพลังราชัน % +7.50%","เมื่อสร้าง PHY.DMG มีโอกาส 1% ทำให้ ASPD ของตนเองเป็น 193 นาน 5s เอฟเฟกต์นี้มีคูลดาวน์ 12s"],["% Bonus P.DMG +15%","ATK +50","Peningkatan DMG Kerajaan% +7.50%","Saat memberikan Physical DMG ada 1% peluang membuat ASPD diri sendiri mencapai 193 selama 5d, efek ini memiliki CD 12d"]],"13033006":[["Royal Might Damage Reduction+% +5%","Unique: 50% chance to reflect 30% MDMG (Reflection ineffective against Boss, MVP, and Mini)"],["ลดดาเมจพลังราชัน % +5%","เฉพาะตัว: มีโอกาส 50% สะท้อน M.DMG 30% (ไม่มีผลกับ Boss, MVP และ Mini)"],["Pengurangan DMG Kerajaan% +5%","Unik: 50% peluang memantulkan 30% Magic DMG (pantulan tidak berlaku pada Boss, MVP dan Mini)"]],"13033061":[["Unique: Immediately refresh Ultimate Skill cooldown after using Ultimate Skill; this effect has 180s cooldown"],["พิเศษ: เมื่อใช้สกิลอัลติเมท จะรีเซ็ตคูลดาวน์ทันที เอฟเฟกต์นี้มีคูลดาวน์ 180s"],["Unik: Setelah menggunakan Skill Ultimate, langsung refresh cooldown Skill Ultimate; efek ini memiliki cooldown 180 detik"]],"13033064":[["Unique: When taking DMG, 50% chance to inflict Freeze on the attacker that ignores Control Res and cannot be Cleared, lasting 2s. This effect has a 4s cooldown"],["เฉพาะตัว: เมื่อได้รับ DMG มีโอกาส 50% ทำให้ผู้โจมตีติดสถานะแช่แข็งที่เมิน Control RES และไม่สามารถ Clearance ได้นาน 2s เอฟเฟกต์นี้มีคูลดาวน์ 4s"],["Unik: Saat menerima DMG, ada 50% peluang membuat penyerang terkena status abnormal Freeze yang mengabaikan Control RES dan tidak dapat di-Clearance selama 2d; efek ini memiliki CD 4d"]],"13033070":[["Unique: Dealing DMG has a 5% chance to cast Storm Gust Lv.5 on the enemy (cast level scales with learned skill level). This effect has a 5s cooldown"],["เฉพาะตัว: เมื่อสร้าง DMG มีโอกาส 5% ร่าย Storm Gust Lv.5 ใส่ศัตรู (เลเวลที่ร่ายจะเพิ่มตามเลเวลสกิลที่เรียนรู้) มีคูลดาวน์ 5s"],["Unik: Saat memberikan DMG, ada 5% peluang untuk melancarkan Storm Gust 5 pada musuh (Level cast meningkat berdasarkan Level skill yang dipelajari), efek ini memiliki CD 5d"]],"13033076":[["Unique: When HP drops below 50%, gain Hardened Body, becoming immune to all crowd control effects and reducing damage taken by an additional 50% for 4s. This effect has a 75s cooldown."],["พิเศษ: เมื่อ HP ต่ำกว่า 50% จะได้รับสถานะร่างเหล็ก ทำให้ป้องกันสถานะควบคุมทั้งหมดและได้รับความเสียหายลดลง 50% เป็นเวลา 4s เอฟเฟกต์นี้มีคูลดาวน์ 75s"],["Unik: Saat HP di bawah 50%, dapatkan status Hardening, kebal terhadap semua status abnormal kontrol dan mengurangi damage yang diterima sebesar 50% tambahan, berlangsung 4 detik; efek ini memiliki cooldown 75 detik"]],"13033077":[["Unique: Damage dealt to poisoned or critically poisoned enemies increases by 15%. Damage taken from them decreases by 8%"],["เฉพาะตัว: สร้างความเสียหายเพิ่มขึ้น 15% และได้รับความเสียหายลดลง 8% ต่อเป้าหมายที่ติดสถานะพิษหรือพิษร้ายแรง"],["Unik: Terhadap unit yang terkena status abnormal Poison atau Deadly Poison, DMG yang diberikan meningkat 15%, DMG yang diterima berkurang 8%"]],"13033078":[["Unique: When taking damage, 20% chance to Clearance x2 random abnormal status; this effect has 5s cooldown"],[],[]],"13033118":[["Unique: Increases DMG dealt by self and up to 10 allies within 10m by 10%; multiple Halo effects do not stack"],["Unique: ตัวเองและพันธมิตรสูงสุด 10 คนในระยะ 10 เมตรสร้าง DMG เพิ่มขึ้น 10%; เอฟเฟกต์ Halo จะไม่ทับซ้อนกัน"],["Unik: DMG yang diberikan oleh diri sendiri dan maksimal 10 rekan di sekitar dalam jarak 10 meter meningkat ekstra 10%; efek beberapa Halo tidak dapat ditumpuk"]],"13033123":[["Unique: DMG taken by self and up to 10 allies within 10m reduced by an extra 10%; multiple Halo effects do not stack"],["Unique: ตนเองและพันธมิตรในระยะ 10 เมตร สูงสุด 10 คน ได้รับ DMG ลดลงเพิ่มเติม 10% เอฟเฟกต์ Halo จะไม่แสดงผลทับซ้อนกัน"],["Unik: DMG yang diterima diri sendiri dan maks. 10 rekan dalam jarak 10m berkurang ekstra 10%; efek beberapa Halo tidak dapat ditumpuk"]],"13133001":[["DMG Reduction vs Demi-Human% +3.60%~6%"],["ลดดาเมจต่อเผ่า Human % +3.60%~6%"],["% Pengurangan DMG vs Human +3.60%~6%"]],"13133002":[["DMG vs Medium% +3.60%~6%"],["เพิ่มดาเมจต่อขนาดกลาง % +3.60%~6%"],["% DMG vs Sedang +3.60%~6%"]],"13133003":[["DMG vs Large% +3.60%~6%"],["เพิ่มดาเมจต่อขนาดใหญ่ % +3.60%~6%"],["% DMG vs Besar +3.60%~6%"]],"13133004":[["DMG Reduction vs Large% +3.60%~6%"],["ลดดาเมจต่อยูนิตขนาดใหญ่ % +3.60%~6%"],["% Pengurangan DMG vs Besar +3.60%~6%"]],"13133009":[["Max HP% +3.60%~6%"],["HP สูงสุด% +3.60%~6%"],["% Max HP +3.60%~6%"]],"13133011":[["DMG Reduction vs Medium% +3.60%~6%"],["ลดดาเมจต่อขนาดกลาง % +3.60%~6%"],["% Pengurangan DMG vs Sedang +3.60%~6%"]],"13133013":[["DMG vs Human% +3.60%~6%"],["เพิ่มดาเมจต่อเผ่า Human % +3.60%~6%"],["% DMG vs Human +3.60%~6%"]],"13133014":[["DEF% +3.60%~6%"],["P.DEF% +3.60%~6%"],["% DEF +3.60%~6%"]]};
+const RELEL=['Neutral','Water','Earth','Fire','Wind','Poison','Holy','Shadow','Ghost','Undead'],RELST=[['Freeze','แช่แข็ง'],['Petrify','กลายเป็นหิน'],['Stun','สตัน'],['Root','ตรึง'],['Blind','มืดบอด'],['Silence','ใบ้'],['Slow','หน่วง'],['Knockback','ผลักกระเด็น'],['Sleep','หลับใหล'],['Confuse','สับสน']];
+function relFx(id){const k=Math.floor(id/10)-1811591;if(k<0||k>26)return null;const th=LANG==='th';let st;
+  if(k<6)st=['STR','INT','VIT','AGI','LUK','DEX'][k]+' +10';
+  else if(k<16){const e=RELEL[k-6];st=th?`${k>=14?'ความต้านทานธาตุ':'ต้านทานธาตุ'} ${e} +12`:`${e} RES +12`}
+  else if(k<26){const x=RELST[k-16];st=th?`ต้านทาน${x[1]} +40`:`${x[0]} RES +40`}
+  else st=th?'ความต้านทานธาตุทั้งหมด +6':LANG==='id'?'Resistensi Semua Elemen +6':'Elemental RES +6';
+  return {type:id%10===1?(th?'ล้างผลาญ':'Bane'):(th?'พิทักษ์':'Guard'),set:st}}
+function fxHtml(id){const c=CEFF[id];if(c){const L=(LANG==='th'&&c[1].length?c[1]:LANG==='id'&&c[2].length?c[2]:c[0]);return `<div class="tfx"><div class="note">${T('ความสามารถ')}</div><ul>${L.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`}
+  const r=relFx(+id);if(r)return `<div class="tfx"><div class="note">${T('ความสามารถ')}</div><ul><li><b>${T('โบนัสชุด 2 ชิ้น')}:</b> ${esc(r.set)}</li><li class="note">${T('สายรีลิก')}: ${esc(r.type)}</li></ul></div>`;return ''}
 let tipEl=null,tipPin=false;
 function showTip(el,pin){const id=el.dataset.iid;const h=tipHtml(id);if(!h)return;if(!tipEl){tipEl=document.createElement('div');tipEl.id='itip';tipEl.setAttribute('role','tooltip');document.body.appendChild(tipEl)}
-  tipEl.innerHTML=h;tipEl.hidden=false;tipPin=!!pin;const r=el.getBoundingClientRect(),w=Math.min(320,innerWidth-16);tipEl.style.width=w+'px';
+  tipEl.innerHTML=h;tipEl.hidden=false;tipPin=!!pin;const r=el.getBoundingClientRect(),w=Math.min(CEFF[id]||relFx(+id)?360:320,innerWidth-16);tipEl.style.width=w+'px';
   let x=r.left,y=r.bottom+8;const th=tipEl.offsetHeight;if(x+w>innerWidth-8)x=innerWidth-8-w;if(x<8)x=8;if(y+th>innerHeight-8)y=Math.max(8,r.top-8-th);tipEl.style.left=x+'px';tipEl.style.top=y+'px'}
 function hideTip(){if(tipEl){tipEl.hidden=true;tipPin=false}}
 const SRC={gl:'Guild League',siege:'Siege War',polar:'Polarity Zone',other:'อื่นๆ'};
