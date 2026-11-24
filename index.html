@@ -258,7 +258,15 @@ button.chip{min-height:36px;cursor:pointer}
 .pbri .nm,.pbs .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pbat{font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap}
 .pbroom{display:flex;align-items:center;gap:10px;margin:14px 0 8px}.pbroom:first-child{margin-top:0}.pbroom h3{margin:0;font-size:16px;flex:1}
-.pbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,235px),1fr));gap:10px}
+.pbgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media(max-width:1250px){.pbgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:980px){.pbgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.pbgrid{grid-template-columns:1fr}}
+.pbph{flex-wrap:wrap;row-gap:2px}.pbph b{flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pbph .note{order:3;flex-basis:100%;font-size:12px}
+.pbp.pcol,.pbp.lock.pcol{border-color:var(--pc);background:linear-gradient(170deg,color-mix(in srgb,var(--pc) 22%,var(--card2)) 0,var(--card2) 60%)}
+.pbp.pcol .pbph{border-bottom:2px solid var(--pc);padding-bottom:6px}.pbp.pcol .pbph b{color:color-mix(in srgb,var(--pc) 55%,var(--ink))}
+.pbnm{cursor:pointer}.pbpen{font-size:11px;opacity:.45}.pbnm:hover .pbpen{opacity:1}
+.pbname{flex:1;min-width:0;height:30px;padding:2px 8px;font-weight:700}
+.pbsw{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px;padding:6px;border-radius:10px;background:var(--card)}
+.sw{width:24px;height:24px;min-height:0;padding:0;border-radius:50%;border:2px solid transparent;cursor:pointer}.sw.on{border-color:var(--ink)}.sw.none{background:var(--card2);font-size:11px;color:var(--mute);border:1px solid var(--line)}
 .pbp{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px}
 .pbp.lock{border-color:color-mix(in srgb,var(--warn) 60%,var(--line));background:linear-gradient(160deg,color-mix(in srgb,var(--warn) 10%,var(--card2)),var(--card2))}
 .pbp.mine{box-shadow:0 0 0 2px var(--acc)}
@@ -514,6 +522,9 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"กดเพื่อเปลี่ยนชื่อ":["Click to rename", "Klik untuk ganti nama", "I-click para palitan ang pangalan"],
+"เปลี่ยนสีปาร์ตี้":["Change party colour", "Ganti warna party", "Palitan ang kulay"],
+"ไม่ใส่สี":["No colour", "Tanpa warna", "Walang kulay"],
 "ค้นหาไอเทม":["Search items", "Cari item", "Hanapin ang item"],
 "คิวของฉัน":["My queue", "Antrian saya", "Aking queue"],
 "ว่าง":["Open", "Kosong", "Bakante"],
@@ -1830,6 +1841,10 @@ const EVIMG={gl_tue:'gonghuiliansai',gl_thu:'gonghuiliansai',siege:'gongchengzha
 const evIco=(k,sz=24)=>`<img class="evico" src="https://roworlddb.com/media/images/activity/icon_activity_${EVIMG[k]}.webp" width="${sz}" height="${sz}" alt="" referrerpolicy="no-referrer">`;
 const PBDEF={gl_tue:{n:'Guild League',d:'วันอังคาร',t:'21:30–21:55 · 22:00–22:25',p:12,ic:'🏆'},gl_thu:{n:'Guild League',d:'วันพฤหัสบดี',t:'22:00–22:25',p:12,ic:'🏆'},siege:{n:'ศึกชิงปราสาท',d:'วันอาทิตย์',t:'21:00–22:00',p:12,ic:'🏰'},polar:{n:'Polarity Zone',d:'วันอาทิตย์',t:'12:00–21:00 · เปิดแล้วเล่นได้ 90 นาที',p:0,ic:'☯️'}};
 const PSIZE=5,POLCAP=50;
+const PCOLS=['#e05d5d','#f08c3a','#e6c14a','#5fb87c','#2fb3a6','#4f9de0','#6f6fe0','#a274e0','#e06fb4','#8a8f9e'];
+const pName=(p,i)=>p&&p.name?p.name:T('ปาร์ตี้')+' '+(i+1);
+const wName=(d,k,w)=>{const L=pbList(k,d,w.r)||[];return pName(L[w.i],w.i)};
+let pbEdit=null,pbColor=null;
 let pbData={},pbKey=(()=>{try{return sessionStorage.getItem('tm-pb')||'gl_tue'}catch(e){return 'gl_tue'}})(),pbSel=null,pbQ='',pbRole='',pbHide=false;
 /* leave system hook — will read the upcoming leave records (หน้า สมาชิก) */
 let onLeave=(c,key)=>false;
@@ -1882,7 +1897,7 @@ function polarNewWeek(){
   balancedFill(down,byGear(downS));
   /* unlock auto-filled parties so leaders can still tweak; keep originally locked ones */
   return {week:wk,baseHist,baseLast,hist:baseHist,up:up.filter(p=>p.m.some(Boolean)),down:down.filter(p=>p.m.some(Boolean)),cap:POLCAP}}
-function pbText(k,d){const head=`${PBDEF[k].n} · ${T(PBDEF[k].d)} ${PBDEF[k].t}`;const sec=(t,P)=>(t?`\n【${t}】`:'')+P.map((p,i)=>p.m.some(Boolean)?`\n${T('ปาร์ตี้')} ${i+1}${p.lock?' 🔒':''}: ${p.m.filter(Boolean).map(c=>`${c} (${RSHORT[roleC(c)]})`).join(', ')}`:'').join('');
+function pbText(k,d){const head=`${PBDEF[k].n} · ${T(PBDEF[k].d)} ${PBDEF[k].t}`;const sec=(t,P)=>(t?`\n【${t}】`:'')+P.map((p,i)=>p.m.some(Boolean)?`\n${pName(p,i)}${p.lock?' 🔒':''}: ${p.m.filter(Boolean).map(c=>`${c} (${RSHORT[roleC(c)]})`).join(', ')}`:'').join('');
   return k==='polar'?head+` · ${T('สัปดาห์')} ${d.week||sunKey()}`+sec(T('ห้องบน'),d.up)+'\n'+sec(T('ห้องล่าง'),d.down):head+sec('',d.parties)}
 function renderParty(){
   if(!$('pbBoard'))return;
@@ -1890,7 +1905,7 @@ function renderParty(){
   const staff=stfx(),k=pbKey,d=pbDoc(k),me=myChar(),def=PBDEF[k];
   setSeg('pbTab',k);$('evTop').innerHTML=myCharBox()+leaveBox();
   /* my parties summary */
-  const mine=Object.keys(PBDEF).map(x=>{const w=me&&pbWhere(pbDoc(x),x,me);return w?`<span class="chip">${evIco(x,20)} ${esc(PBDEF[x].n)} ${T(PBDEF[x].d)}: <b>${x==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${T('ปาร์ตี้')} ${w.i+1}</b></span>`:''}).join('');
+  const mine=Object.keys(PBDEF).map(x=>{const w=me&&pbWhere(pbDoc(x),x,me);return w?`<span class="chip">${evIco(x,20)} ${esc(PBDEF[x].n)} ${T(PBDEF[x].d)}: <b>${x==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${esc(wName(pbDoc(x),x,w))}</b></span>`:''}).join('');
   const all=pbRooms(k,d).flatMap(([,P])=>P),placed=all.reduce((a,p)=>a+p.m.filter(Boolean).length,0),locked=all.filter(p=>p.lock).length;
   let h=`<div class="pbinfo"><div><h2 style="margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap">${evIco(k,44)} ${esc(def.n)} <span class="note" style="font-size:15px">${T(def.d)} · ${def.t}</span></h2>
     <div class="row" style="margin-top:6px;justify-content:flex-start"><span class="chip">${T('จัดแล้ว')} <b>${placed}</b> ${T('คน')}</span><span class="chip">🔒 ${locked}/${all.length} ${T('ปาร์ตี้')}</span>${k==='polar'?`<span class="chip">${T('สัปดาห์')} <b>${esc(d.week||'—')}</b></span>`:''}</div>
@@ -1905,7 +1920,9 @@ function renderParty(){
   /* board */
   const card=(r,p,i)=>{const L=p.m.filter(Boolean),rs=L.map(roleC),avg=L.length?L.reduce((a,c)=>a+((pInfo(c)||{}).gear||0),0)/L.length:0,isMe=me&&L.some(c=>canon(c)===canon(me));
     const nl=L.filter(c=>onLeave(c,k)).length,warn=L.length?[nl?`${T('มีคนลา')} ${nl} — ${T('หาคนแทน')}`:'',!rs.includes('tank')?T('ไม่มีแทงค์'):'',!rs.includes('heal')?T('ไม่มีฮีล'):''].filter(Boolean):[];
-    return `<div class="pbp ${p.lock?'lock':''} ${isMe?'mine':''}"><div class="pbph"><b>${T('ปาร์ตี้')} ${i+1}</b><span class="note">${L.length}/${PSIZE}${avg?' · '+fmt(avg):''}</span>${staff?`<button class="sm ghost pblk" data-pb="lock" data-r="${r}" data-i="${i}" title="${p.lock?T('ปลดล็อค'):T('ล็อคปาร์ตี้')}">${p.lock?'🔒':'🔓'}</button>`:(p.lock?'<span title="locked">🔒</span>':'')}</div>
+    const isEd=pbEdit&&pbEdit.r===r&&pbEdit.i===i,isCol=pbColor&&pbColor.r===r&&pbColor.i===i;
+    return `<div class="pbp ${p.lock?'lock':''} ${isMe?'mine':''} ${p.col?'pcol':''}" ${p.col?`style="--pc:${p.col}"`:''}><div class="pbph">${isEd?`<input class="pbname" data-r="${r}" data-i="${i}" value="${esc(p.name||'')}" placeholder="${esc(T('ปาร์ตี้')+' '+(i+1))}" maxlength="24">`:`<b ${staff?`class="pbnm" data-pb="ren" data-r="${r}" data-i="${i}" title="${T('กดเพื่อเปลี่ยนชื่อ')}"`:''}>${esc(pName(p,i))}${staff?' <span class="pbpen">✏️</span>':''}</b>`}<span class="note">${L.length}/${PSIZE}${avg?' · '+fmt(avg):''}</span>${staff?`<button class="sm ghost pblk" data-pb="color" data-r="${r}" data-i="${i}" title="${T('เปลี่ยนสีปาร์ตี้')}">🎨</button><button class="sm ghost pblk" data-pb="lock" data-r="${r}" data-i="${i}" title="${p.lock?T('ปลดล็อค'):T('ล็อคปาร์ตี้')}">${p.lock?'🔒':'🔓'}</button>`:(p.lock?'<span title="locked">🔒</span>':'')}</div>
+      ${isCol?`<div class="pbsw">${PCOLS.map(c=>`<button class="sw ${p.col===c?'on':''}" style="background:${c}" data-pbcol="${c}" data-r="${r}" data-i="${i}" aria-label="${c}"></button>`).join('')}<button class="sw none" data-pbcol="" data-r="${r}" data-i="${i}" title="${T('ไม่ใส่สี')}">✕</button></div>`:''}
       ${warn.length?`<div class="why noc">⚠ ${warn.join(' · ')}</div>`:''}
       <ul>${p.m.map((c,j)=>{const pi=c&&pInfo(c),gone=c&&!pi,lv=c&&onLeave(c,k);return c?`<li class="pbs full ${canon(c)===canon(me||'')?'me':''} ${gone?'gone':''} ${lv?'leave':''}" style="--cc:${pi?clsCol(pi.cls):'#7b8094'}" title="${esc(c)}${pi?' · '+esc(pi.cls)+' · Gear '+fmt(pi.gear):''}" data-slot="${r}|${i}|${j}" ${staff&&!p.lock?`data-drag="${esc(c)}"`:''}>${pi?ico(pi.cls,24):'⚠️'}<span class="grow nm"><b>${esc(c)}</b>${gone?` <span class="noc">${T('ไม่อยู่ในกิลแล้ว')}</span>`:''}${lv?` <span class="tag t-new">${T('ลา')}</span>`:''}${pi?`<small class="pbsub">${esc(pi.cls)} · ${kfmt(pi.gear)}</small>`:''}</span>${staff&&!p.lock?`<button class="sm ghost x" data-pb="rm" data-r="${r}" data-i="${i}" data-j="${j}" aria-label="remove">×</button>`:''}</li>`
         :`<li class="pbs empty" data-slot="${r}|${i}|${j}">${staff&&!p.lock?T('ลากชื่อมาวาง'):'—'}</li>`}).join('')}</ul></div>`};
@@ -1949,6 +1966,8 @@ function pbAction(t){
     if(!staff)return true;
     const L=el.dataset.r?pbList(k,d,el.dataset.r):null;
     if(a==='lock'){const p=L[+el.dataset.i];p.lock=!p.lock;pbSave(k,d)}
+    else if(a==='ren'){pbEdit={r:el.dataset.r,i:+el.dataset.i};pbColor=null;renderParty();const x=document.querySelector('.pbname');if(x){x.focus();x.select()}}
+    else if(a==='color'){const t={r:el.dataset.r,i:+el.dataset.i};pbColor=pbColor&&pbColor.r===t.r&&pbColor.i===t.i?null:t;renderParty()}
     else if(a==='rm')pbRemove({r:el.dataset.r,i:+el.dataset.i,j:+el.dataset.j});
     else if(a==='add'){L.push(emptyParty());pbSave(k,d)}
     else if(a==='del'){const p=L[L.length-1];if(!p)return true;if(p.lock||p.m.some(Boolean)){say(T('ปาร์ตี้สุดท้ายยังมีคนอยู่ — เอาออกก่อน'));return true}L.pop();pbSave(k,d)}
@@ -1958,6 +1977,7 @@ function pbAction(t){
     else if(a==='newweek'){if(!model){say(T('ยังไม่มีข้อมูลสมาชิก'));return true}if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยันจัดรอบใหม่');return true}pbSave('polar',polarNewWeek());say(T('จัดรอบสัปดาห์นี้แล้ว — ปรับเพิ่มได้ด้วยการลากวาง'))}
     return true}
   if(!staff)return false;
+  if(el=cl('[data-pbcol]')){const d=pbDoc(k),p=pbList(k,d,el.dataset.r)[+el.dataset.i];if(p){p.col=el.dataset.pbcol||'';pbColor=null;pbSave(k,d)}return true}
   if(el=cl('#pbRoster [data-pick-c]')){const c=el.dataset.pickC;pbSel=pbSel===c?null:c;renderParty();return true}
   if(el=cl('#pbBoard [data-slot]')){const [r,i,j]=el.dataset.slot.split('|'),to={r,i:+i,j:+j};
     if(pbSel){const c=pbSel;pbSel=null;pbPlace(c,to,null);return true}
@@ -2012,7 +2032,7 @@ function renderMyHome(){renderWelcome();
   const el=$('myHome');if(!el)return;if(!model||!user||!isCloud()){el.innerHTML='';return}
   const me=myChar();
   const parts=ACT.map(([k,ic,n])=>{const key=k==='polar'?'polar':k,d=pbDoc(key),w=me&&pbWhere(d,key,me),lv=me&&leaveOf(me,k);
-    return `<li class="${lv?'lvoff':''}"><span class="ic">${evIco(k,36)}</span><div class="grow"><b>${T(n)}</b><div class="note">${dTh(actDate(k,nextOcc(k)).getTime())} · ${(PBDEF[key]||{}).t||''}</div></div><span class="pbwhere">${lv?`<span class="tag t-new">${T('ลา')}</span>`:w?`${key==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${T('ปาร์ตี้')} <b>${w.i+1}</b>`:`<span class="note">${T('ยังไม่ได้จัด')}</span>`}</span></li>`}).join('');
+    return `<li class="${lv?'lvoff':''}"><span class="ic">${evIco(k,36)}</span><div class="grow"><b>${T(n)}</b><div class="note">${dTh(actDate(k,nextOcc(k)).getTime())} · ${(PBDEF[key]||{}).t||''}</div></div><span class="pbwhere">${lv?`<span class="tag t-new">${T('ลา')}</span>`:w?`${key==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}<b>${esc(wName(d,key,w))}</b>`:`<span class="note">${T('ยังไม่ได้จัด')}</span>`}</span></li>`}).join('');
   const myQ=me?aucItems.filter(it=>it.status!=='closed').map(it=>{const Q=aucQ.filter(q=>q.itemId===it.id).sort((a,b)=>a.ts-b.ts),i=Q.findIndex(q=>canon(q.char)===canon(me));return i>=0?[it,i+1]:null}).filter(Boolean):[];
   const won=me?aucItems.filter(it=>(it.winners||[]).some(w=>canon(w.char)===canon(me))):[];
   const P=model.P,avg=P.reduce((a,p)=>a+p.gear,0)/P.length,top=[...P].filter(p=>p.dG!=null).sort((a,b)=>b.dG-a.dG).slice(0,5);
@@ -2164,6 +2184,9 @@ $('save').onclick=async()=>{
 
 /* ---------- start ---------- */
 $('langTop').innerHTML=langSel('langTopSel');document.documentElement.lang=LANG==='ph'?'fil':LANG;
+function pbRename(x){if(!x||!x.classList.contains('pbname'))return;const d=pbDoc(pbKey),p=pbList(pbKey,d,x.dataset.r)[+x.dataset.i];pbEdit=null;if(p&&(p.name||'')!==x.value.trim()){p.name=x.value.trim();pbSave(pbKey,d)}else renderParty()}
+document.addEventListener('keydown',e=>{if(e.target.classList&&e.target.classList.contains('pbname')){if(e.key==='Enter'){e.preventDefault();pbRename(e.target)}else if(e.key==='Escape'){pbEdit=null;renderParty()}}});
+document.addEventListener('focusout',e=>{if(e.target.classList&&e.target.classList.contains('pbname'))setTimeout(()=>{if(pbEdit)pbRename(e.target)},0)});
 document.addEventListener('input',e=>{if(e.target.id==='aucQs'){aucQs=e.target.value;renderAuction();return}if(e.target.id==='pbQ'){pbQ=e.target.value;renderParty();const q=$('pbQ');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}});
 document.addEventListener('change',e=>{if(e.target.id==='pbHide'){pbHide=e.target.checked;renderParty();return}if(e.target.classList&&e.target.classList.contains('langsel')){setLang(e.target.value);return}if(FB&&user&&e.target.closest&&e.target.closest('#party'))partyChange(e.target)});
 
