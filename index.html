@@ -232,7 +232,10 @@ button.chip{min-height:36px;cursor:pointer}
 .pbph{display:flex;align-items:center;gap:8px;margin-bottom:6px}.pbph b{flex:1}.pblk{padding:2px 6px;min-height:0}
 .pbp ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .pbs{display:flex;gap:6px;align-items:center;font-size:14px;min-height:34px;padding:2px 6px;border-radius:9px}
-.pbs.full{background:var(--card)}.pbs.full[data-drag]{cursor:grab}.pbs.me{box-shadow:inset 3px 0 0 var(--acc)}.pbs.gone{opacity:.6}
+.pbs.full{background:linear-gradient(100deg,color-mix(in srgb,var(--cc) 82%,#000) 0%,color-mix(in srgb,var(--cc) 62%,#1c1e2b) 100%);color:#fff;border:1px solid color-mix(in srgb,var(--cc) 60%,transparent);min-height:44px}
+.pbs.full .nm b{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.35)}.pbs.full .pbsub{display:block;font-size:11.5px;opacity:.85;line-height:1.2}.pbs.full .x{color:#fff}.pbs.full .job{background:rgba(255,255,255,.18);border-radius:50%}
+.pbs.full.leave{opacity:.55;filter:grayscale(.5)}
+.pbri{border-left:5px solid var(--cc)!important;background:linear-gradient(90deg,color-mix(in srgb,var(--cc) 22%,var(--card2)),var(--card2) 70%)}.pbs.full[data-drag]{cursor:grab}.pbs.me{box-shadow:inset 3px 0 0 var(--acc)}.pbs.gone{opacity:.6}
 .pbs.empty{justify-content:center;color:var(--mute);border:1px dashed var(--line);font-size:12.5px;cursor:pointer}
 .pbs.over{outline:2px solid var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}
 .pbs .x{padding:0 6px;min-height:0}
@@ -1094,6 +1097,8 @@ const DAY=864e5,ST=['Active','เฝ้าระวัง','เสี่ยง�
 const PAL=['#6d7cff','#f43f5e','#10b981','#f59e0b','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#3b82f6','#14b8a6','#eab308','#94a3b8','#d946ef','#22c55e'];
 const JOB={'Lord Knight':213,'Paladin':223,'High Wizard':313,'Professor':323,'Scholar':323,'Sniper':413,'Clown':423,'Minstrel':423,'Gypsy':433,'High Priest':513,'Champion':523,'Assassin Cross':613,'Stalker':623,'Whitesmith':713,'Mastersmith':713,'Creator':723,'Biochemist':723,'Night Walker':813,'อาลิเทีย':913,
  'Knight':212,'Crusader':222,'Wizard':312,'Sage':322,'Hunter':412,'Bard':422,'Dancer':432,'Priest':512,'Monk':522,'Assassin':612,'Rogue':622,'Blacksmith':712,'Alchemist':722,'Rebel':812,'คานอส':912};
+const JCOL={213:'#d9605a',223:'#d9605a',313:'#6f9fd8',323:'#6f9fd8',413:'#d6a24f',423:'#d6a24f',433:'#d6a24f',513:'#5fb87c',523:'#5fb87c',613:'#9b7fd4',623:'#9b7fd4',713:'#a8693c',723:'#a8693c',813:'#8b4a46',913:'#2f9e8c'};
+const clsCol=c=>JCOL[JOB[c]]||'#7b8094';
 const icoUrl=id=>`https://roworlddb.com/media/images/job/icon_jsxq_big_${id}.webp`;
 const ico=(c,sz=24)=>{const id=JOB[c];return id?`<img class="job" src="${icoUrl(id)}" width="${sz}" height="${sz}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''};
 const DEF={minAct:150,offDays:3,stagDays:7,grace:7,lowWeeks:2,resetDay:1,hideRisk:1};
@@ -1840,7 +1845,7 @@ function renderParty(){
     const nl=L.filter(c=>onLeave(c,k)).length,warn=L.length?[nl?`${T('มีคนลา')} ${nl} — ${T('หาคนแทน')}`:'',!rs.includes('tank')?T('ไม่มีแทงค์'):'',!rs.includes('heal')?T('ไม่มีฮีล'):''].filter(Boolean):[];
     return `<div class="pbp ${p.lock?'lock':''} ${isMe?'mine':''}"><div class="pbph"><b>${T('ปาร์ตี้')} ${i+1}</b><span class="note">${L.length}/${PSIZE}${avg?' · '+fmt(avg):''}</span>${staff?`<button class="sm ghost pblk" data-pb="lock" data-r="${r}" data-i="${i}" title="${p.lock?T('ปลดล็อค'):T('ล็อคปาร์ตี้')}">${p.lock?'🔒':'🔓'}</button>`:(p.lock?'<span title="locked">🔒</span>':'')}</div>
       ${warn.length?`<div class="why noc">⚠ ${warn.join(' · ')}</div>`:''}
-      <ul>${p.m.map((c,j)=>{const pi=c&&pInfo(c),gone=c&&!pi,lv=c&&onLeave(c,k);return c?`<li class="pbs full ${canon(c)===canon(me||'')?'me':''} ${gone?'gone':''} ${lv?'leave':''}" data-slot="${r}|${i}|${j}" ${staff&&!p.lock?`data-drag="${esc(c)}"`:''}>${pi?ico(pi.cls,24):'⚠️'}<span class="grow nm"><b>${esc(c)}</b>${gone?` <span class="noc">${T('ไม่อยู่ในกิลแล้ว')}</span>`:''}${lv?` <span class="tag t-new">${T('ลา')}</span>`:''}</span><span class="rt r-${roleC(c)}">${RSHORT[roleC(c)]}</span>${staff&&!p.lock?`<button class="sm ghost x" data-pb="rm" data-r="${r}" data-i="${i}" data-j="${j}" aria-label="remove">×</button>`:''}</li>`
+      <ul>${p.m.map((c,j)=>{const pi=c&&pInfo(c),gone=c&&!pi,lv=c&&onLeave(c,k);return c?`<li class="pbs full ${canon(c)===canon(me||'')?'me':''} ${gone?'gone':''} ${lv?'leave':''}" style="--cc:${pi?clsCol(pi.cls):'#7b8094'}" title="${esc(c)}${pi?' · '+esc(pi.cls)+' · Gear '+fmt(pi.gear):''}" data-slot="${r}|${i}|${j}" ${staff&&!p.lock?`data-drag="${esc(c)}"`:''}>${pi?ico(pi.cls,24):'⚠️'}<span class="grow nm"><b>${esc(c)}</b>${gone?` <span class="noc">${T('ไม่อยู่ในกิลแล้ว')}</span>`:''}${lv?` <span class="tag t-new">${T('ลา')}</span>`:''}${pi?`<small class="pbsub">${esc(pi.cls)} · ${kfmt(pi.gear)}</small>`:''}</span>${staff&&!p.lock?`<button class="sm ghost x" data-pb="rm" data-r="${r}" data-i="${i}" data-j="${j}" aria-label="remove">×</button>`:''}</li>`
         :`<li class="pbs empty" data-slot="${r}|${i}|${j}">${staff&&!p.lock?T('ลากชื่อมาวาง'):'—'}</li>`}).join('')}</ul></div>`};
   const vis=P=>staff?P.map((p,i)=>[p,i]):P.map((p,i)=>[p,i]).filter(([p])=>p.m.some(Boolean));
   const room=(r,P,title)=>`${title?`<div class="pbroom"><h3>${title}</h3>${staff?`<button class="sm ghost" data-pb="add" data-r="${r}">＋ ${T('ปาร์ตี้')}</button>`:''}</div>`:''}<div class="pbgrid">${vis(P).map(([p,i])=>card(r,p,i)).join('')||(staff?'':`<p class="note">${T('หัวหน้ายังไม่ได้จัดปาร์ตี้')}</p>`)}</div>`;
@@ -1857,7 +1862,7 @@ function renderParty(){
       <div class="chips pbrf">${[['','ทั้งหมด'],...ROLES].map(([v,l])=>`<button class="chip ${pbRole===v?'on':''}" data-pbrole="${v}">${v?`<span class="rt r-${v}">${RSHORT[v]}</span>`:T(l)}</button>`).join('')}</div>
       <label class="note" style="display:flex;gap:6px;align-items:center;margin:4px 0"><input type="checkbox" id="pbHide" ${pbHide?'checked':''}> ${T('ซ่อนคนที่จัดแล้ว')}</label>
       <p class="note" style="margin:2px 0 6px">${matchMedia('(pointer:coarse)').matches?T('แตะชื่อ แล้วแตะช่องว่างเพื่อวาง'):T('ลากชื่อไปวางในช่อง · หรือคลิกชื่อแล้วคลิกช่อง')}</p>
-      <ul class="pbrl">${R.map(({p,w,r})=>{const lv=onLeave(p.name,k);return `<li class="pbri ${w?'placed':''} ${lv?'leave':''} ${pbSel===p.name?'sel':''}" ${lv?`title="${T('แจ้งลา — ลากเข้าไม่ได้')}"`:`data-drag="${esc(p.name)}" data-pick-c="${esc(p.name)}"`}>${ico(p.cls,24)}<div class="grow" style="min-width:0"><div class="nm"><b>${esc(p.name)}</b>${onLeave(p.name,k)?` <span class="tag t-new">${T('ลา')}</span>`:''}</div><div class="note nm">${fmt(p.gear)}${k==='polar'?` · ${T('เคยห้องบน')} ${hist[p.name]||0}`:''}</div></div><span class="rt r-${r}">${RSHORT[r]}</span>${w?`<span class="pbat">${k==='polar'?(w.r==='up'?'⬆':'⬇'):''}P${w.i+1}</span>`:''}</li>`}).join('')}</ul>`;
+      <ul class="pbrl">${R.map(({p,w,r})=>{const lv=onLeave(p.name,k);return `<li class="pbri ${w?'placed':''} ${lv?'leave':''} ${pbSel===p.name?'sel':''}" style="--cc:${clsCol(p.cls)}" ${lv?`title="${T('แจ้งลา — ลากเข้าไม่ได้')}"`:`data-drag="${esc(p.name)}" data-pick-c="${esc(p.name)}"`}>${ico(p.cls,24)}<div class="grow" style="min-width:0"><div class="nm"><b>${esc(p.name)}</b>${onLeave(p.name,k)?` <span class="tag t-new">${T('ลา')}</span>`:''}</div><div class="note nm">${esc(p.cls)} · ${fmt(p.gear)}${k==='polar'?` · ${T('เคยห้องบน')} ${hist[p.name]||0}`:''}</div></div>${w?`<span class="pbat">${k==='polar'?(w.r==='up'?'⬆':'⬇'):''}P${w.i+1}</span>`:''}</li>`}).join('')}</ul>`;
   }else $('pbRoster').innerHTML='';
 }
 /* drag & drop (mouse) + tap-to-place */
