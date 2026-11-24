@@ -116,6 +116,21 @@ tr.r2 .why{color:light-dark(#7a2e0e,#fcd9a8)}
 body.gated main>section:not(#gate),body.gated main>#msg{display:none!important}
 body.gated .bar nav,body.gated .bar .right label.btn,body.gated #langTop{display:none}
 body.viewer .staffonly,body.norisk .riskonly{display:none!important}
+.viewonly,.nv-m{display:none}body.viewer .viewonly{display:block}body.viewer .nv-m{display:inline}body.viewer .nv-a{display:none}
+body.viewer:not(.anaopen) #anaSec{display:none}body.viewer #anaTab [data-v=all]{display:none}body.viewer #classes,body.viewer nav a[href="#classes"],body.viewer #kpis,body.viewer #impSec{display:none!important}.lvchip{white-space:normal;max-width:100%;height:auto}
+.anatoggle{text-align:center;margin:18px 0 6px}.anatoggle button{font-size:16px;padding:10px 22px}.ao-o{display:none}body.anaopen .ao-o{display:inline}body.anaopen .ao-c{display:none}
+button.big{font-size:16px;padding:9px 18px;min-height:42px}
+.myh{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px;margin-top:14px;font-size:16px}
+.myh .head h2{font-size:19px}
+.myparts{list-style:none;margin:0;padding:0;display:grid;gap:8px}.myparts li{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--card2)}
+.myparts .ic{font-size:22px}.myparts .pbwhere{white-space:nowrap;font-size:16px}.myparts li.lvoff b{text-decoration:line-through;opacity:.7}
+.myh .mstats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.myh .mstats div{background:var(--card2);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}.myh .mstats span{font-size:13px;color:var(--mute)}.myh .mstats b{font-size:24px;font-family:'Chakra Petch',sans-serif}
+.toplist{margin:0;padding-left:22px;display:grid;gap:6px}.toplist li{display:flex;align-items:center;gap:8px}.toplist li b{flex:1}
+.lvbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.lvchip{background:color-mix(in srgb,var(--warn) 18%,var(--card2))}
+.lvbox{margin-top:12px;border-color:color-mix(in srgb,var(--acc) 45%,var(--line))}.lvbox label input{display:block;width:100%;margin-top:4px}
+.lvacts{display:grid;gap:6px}.lvact{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:15px}.lvact input{width:20px;height:20px}.lvact span.note{margin-left:auto}.lvact.past{opacity:.5}
+.pbri.leave{opacity:.6;cursor:not-allowed}.pbri.leave .nm b,.pbs.leave .nm b{text-decoration:line-through}.pbs.leave{background:color-mix(in srgb,var(--warn) 14%,var(--card))}
+.lvlist{margin-top:10px}
 #gate{max-width:560px;margin:48px auto;text-align:center}
 #gate .moon{width:140px;height:140px;margin:0 auto 10px}
 #gate h1{font-size:30px}#gate p{color:var(--mute)}
@@ -312,7 +327,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 <body>
 <div class="bar"><div class="wrap">
   <div class="brand"><span class="moon"></span>TheMoon</div>
-  <nav><a href="#overview" data-view="dash">ภาพรวม</a><a href="#classes" data-view="dash">อาชีพ</a><a href="#members" data-view="dash">สมาชิก</a><a href="#log" class="riskonly" data-view="dash">ประวัติ</a><a href="#auction" data-view="auction" class="cloudonly">ประมูล</a><a href="#party" data-view="party" class="cloudonly">ปาร์ตี้</a><a href="#access" class="staffonly" id="navAccess" data-view="dash" hidden>สิทธิ์เข้าดู <span id="pendN"></span></a><a href="#settings" class="staffonly" data-view="dash">ตั้งค่า</a></nav>
+  <nav><a href="#overview" data-view="dash"><span class="nv-a">ภาพรวม</span><span class="nv-m">หน้าของฉัน</span></a><a href="#classes" data-view="dash">อาชีพ</a><a href="#members" data-view="dash">สมาชิก</a><a href="#log" class="riskonly" data-view="dash">ประวัติ</a><a href="#auction" data-view="auction" class="cloudonly">ประมูล</a><a href="#party" data-view="party" class="cloudonly">ปาร์ตี้</a><a href="#access" class="staffonly" id="navAccess" data-view="dash" hidden>สิทธิ์เข้าดู <span id="pendN"></span></a><a href="#settings" class="staffonly" data-view="dash">ตั้งค่า</a></nav>
   <div class="right"><span id="langTop"></span><span class="pill hide-s" id="storePill">เก็บในเครื่องนี้</span><span id="viewAs" hidden></span><span id="auth"></span>
     <label class="btn pri staffonly">อัปโหลด CSV<input type="file" id="file" accept=".csv,text/csv" multiple></label></div>
 </div></div>
@@ -329,11 +344,13 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   <div id="previewBar" class="warnbox" style="margin-top:12px">👁 <b>กำลังดูในมุมมองสมาชิก</b> — สิ่งที่สมาชิกทั่วไปเห็น <button class="sm" data-viewas="admin" style="margin-left:8px">กลับเป็น Admin</button></div>
   <div id="linkBox" style="margin-top:12px"></div>
   <div id="mine"></div>
+  <div id="myHome" class="viewonly"></div>
   <div id="msg" role="status"></div>
   <div class="kpis" id="kpis"></div>
   <div class="card staffonly" id="renCard" hidden style="margin-top:16px;border-color:color-mix(in srgb,var(--warn) 55%,var(--line))"><div class="head"><h2>ยืนยันการเปลี่ยนชื่อ <span class="note" id="renN"></span></h2></div><p class="note" style="margin:-6px 0 10px">คนเหล่านี้อาจเป็นคนเดิมที่เปลี่ยนชื่อ (อาชีพเดียวกัน Gear และแต้มสะสมใกล้กัน) — กดยืนยันแล้วประวัติจะรวมกัน และจะไม่นับเป็นคนใหม่</p><ul class="list" id="renList"></ul></div>
 </section>
 
+<div class="viewonly anatoggle"><button class="big" data-anaopen="1"><span class="ao-c">📊 ดูกราฟเพิ่มเติม</span><span class="ao-o">🙈 ซ่อนกราฟ</span></button></div>
 <section class="card" id="anaSec" data-tab="guild">
   <div class="head"><h2>กราฟวิเคราะห์</h2>
     <div class="tools"><div class="seg" id="range"><button data-v="7" aria-pressed="false">7 วัน</button><button data-v="30" aria-pressed="false">30 วัน</button><button data-v="0" aria-pressed="true">ทั้งหมด</button></div></div></div>
@@ -455,6 +472,41 @@ const LANGS=[['th','ไทย'],['en','English'],['id','Indonesia'],['ph','Filip
 const LOCALE={th:'th-TH',en:'en-GB',id:'id-ID',ph:'fil-PH'};
 let LANG=(()=>{try{const s=localStorage.getItem('tm-lang');if(s)return s}catch(e){}const n=(navigator.language||'th').toLowerCase();return n.startsWith('th')?'th':n.startsWith('id')||n.startsWith('ms')?'id':n.startsWith('fil')||n.startsWith('tl')?'ph':'en'})();
 const D={
+"หน้าของฉัน":["My page", "Halaman saya", "Aking page"],
+"แจ้งลา":["Request leave", "Ajukan izin", "Mag-leave"],
+"🙋 แจ้งลา":["🙋 Request leave", "🙋 Ajukan izin", "🙋 Mag-leave"],
+"ตัวละคร (หัวหน้าแจ้งแทนได้)":["Character (leaders can file for others)", "Karakter (pemimpin bisa mewakili)", "Character (puwedeng i-file ng leader)"],
+"ชื่อตัวละคร":["Character name", "Nama karakter", "Pangalan"],
+"ตัวละคร":["Character", "Karakter", "Character"],
+"สัปดาห์นี้":["This week", "Minggu ini", "Ngayong linggo"],
+"สัปดาห์หน้า":["Next week", "Minggu depan", "Susunod na linggo"],
+"ผ่านไปแล้ว":["passed", "sudah lewat", "tapos na"],
+"เหตุผล (ไม่บังคับ · เห็นเฉพาะหัวหน้า)":["Reason (optional · shown to leaders only)", "Alasan (opsional · hanya pemimpin)", "Dahilan (opsyonal · leaders lang)"],
+"บันทึกการลา":["Save leave", "Simpan izin", "I-save"],
+"ยกเลิกการลานี้":["Cancel this leave", "Batalkan izin", "I-cancel"],
+"ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะแจ้งลาได้":["Firebase rules must be updated before members can request leave", "Aturan Firebase harus diperbarui dulu", "Kailangang i-update ang Firebase rules"],
+"ยกเลิกการลาแล้ว":["Leave cancelled", "Izin dibatalkan", "Na-cancel"],
+"บันทึกการลาแล้ว — ชื่อในหน้าปาร์ตี้จะขึ้นว่าลา":["Leave saved — your name shows as on leave in parties", "Izin tersimpan — nama ditandai izin", "Na-save — naka-leave ka sa party"],
+"ไม่พบชื่อนี้ในรายชื่อกิลด์ล่าสุด":["Name not found in the latest roster", "Nama tidak ditemukan", "Hindi nakita ang pangalan"],
+"ปาร์ตี้ของฉันสัปดาห์นี้":["My parties this week", "Party saya minggu ini", "Aking party ngayong linggo"],
+"Guild League วันอังคาร":["Guild League Tuesday", "Guild League Selasa", "Guild League Martes"],
+"Guild League วันพฤหัส":["Guild League Thursday", "Guild League Kamis", "Guild League Huwebes"],
+"เชื่อมตัวละครก่อนเพื่อดูปาร์ตี้ของคุณ":["Link your character to see your parties", "Hubungkan karakter untuk melihat party", "I-link ang character"],
+"คิวประมูลของฉัน":["My auction queue", "Antrian lelang saya", "Aking auction queue"],
+"ไปหน้าประมูล":["Go to auction", "Ke lelang", "Pumunta sa auction"],
+"คิวที่":["Queue", "Antrian", "Queue"],
+"ยังไม่ได้จองคิวไอเทมไหน":["You haven't queued for any item", "Belum antri item apa pun", "Wala ka pang queue"],
+"ภาพรวมกิลด์":["Guild overview", "Ringkasan guild", "Guild overview"],
+"Gear เฉลี่ย":["Average Gear", "Rata-rata Gear", "Average Gear"],
+"Top 5 พัฒนาเร็วสุด":["Top 5 fastest growth", "Top 5 tercepat", "Top 5 pinakamabilis"],
+"📊 ดูกราฟเพิ่มเติม":["📊 Show more charts", "📊 Lihat grafik", "📊 Ipakita ang charts"],
+"🙈 ซ่อนกราฟ":["🙈 Hide charts", "🙈 Sembunyikan grafik", "🙈 Itago ang charts"],
+"แจ้งลา — ลากเข้าไม่ได้":["On leave — can't be placed", "Izin — tidak bisa dimasukkan", "Naka-leave — hindi mailalagay"],
+"มีคนลา":["On leave:", "Izin:", "Naka-leave:"],
+"หาคนแทน":["find a replacement", "cari pengganti", "maghanap ng kapalit"],
+"คนนี้แจ้งลากิจกรรมนี้ — ลากเข้าไม่ได้":["This member is on leave for this event — can't be placed", "Anggota ini izin — tidak bisa dimasukkan", "Naka-leave — hindi mailalagay"],
+"แจ้งลารอบนี้":["On leave this round", "Izin putaran ini", "Naka-leave ngayon"],
+"ยังไม่มีใครลา":["Nobody on leave", "Belum ada yang izin", "Walang naka-leave"],
 "Gear เฉลี่ยตอนนี้":["Average Gear now", "Rata-rata Gear sekarang", "Average Gear ngayon"],
 "ในช่วงที่เลือก":["in the selected range", "dalam rentang", "sa napiling range"],
 "กดชื่อเส้นด้านล่างเพื่อเปิด/ปิดเส้นอื่น":["tap a legend name to show/hide other lines", "ketuk nama legenda untuk tampil/sembunyi", "i-tap ang legend para ipakita/itago"],
@@ -1133,7 +1185,7 @@ function render(){
   const nNew=P.filter(p=>p.isNew).length,nEx=P.filter(p=>p.ex).length;
   const K6=[['สมาชิก',P.length+d(P.length,prevS&&prevS.rows.length),'var(--acc)'],['Gear เฉลี่ย',fmt(avg)+d(avg,pAvg),'var(--acc)'],['Active',cnt[0],'var(--good)'],['เฝ้าระวัง',cnt[1],'var(--warn)'],['เสี่ยงเตะ',cnt[2],'var(--bad)','risk'],['คนใหม่ / ยกเว้น',`${nNew} / ${nEx}`,'var(--mute)']]
     ;$('kpis').innerHTML=(NR()?[K6[0],K6[1],[ 'Gear สูงสุด',fmt(Math.max(...P.map(p=>p.gear))),'var(--good)']]:K6).map(([l,v,c,k])=>`<div class="kpi ${k||''}"><span><i style="background:${c}"></i>${l}</span><b>${v}</b></div>`).join('');
-  renderMine();renderClasses();renderKick();renderImproved();renderMoves();renderTable();renderKicks();renderSnaps();
+  renderMine();renderMyHome();renderClasses();renderKick();renderImproved();renderMoves();renderTable();renderKicks();renderSnaps();
   $('names').innerHTML=P.map(p=>`<option value="${esc(p.name)}">`).join('');
   drawChart();
   if(openName&&!$('modal').hidden)openProfile(openName);
@@ -1434,7 +1486,7 @@ async function useCloud(cfg){
     },e=>setGate('error',e.message)));
   });
 }
-function stopData(){const had=dataOn||snaps.length;aucItems=[];events=[];aucQ=[];signups=[];dataUnsubs.forEach(f=>{try{f()}catch(e){}});dataUnsubs=[];dataOn=false;snaps=[];members=[];rosterSynced=false;setMeta(null);closeProfileSafe();if(had)render()}
+function stopData(){const had=dataOn||snaps.length;aucItems=[];leaves=[];events=[];aucQ=[];signups=[];dataUnsubs.forEach(f=>{try{f()}catch(e){}});dataUnsubs=[];dataOn=false;snaps=[];members=[];rosterSynced=false;setMeta(null);closeProfileSafe();if(had)render()}
 function closeProfileSafe(){try{if(!$('modal').hidden)closeProfile()}catch(e){}}
 function startData(){
   if(dataOn){setGate(null);return}dataOn=true;setGate(null);const db=FB.db;
@@ -1443,6 +1495,7 @@ function startData(){
   dataUnsubs.push(db.doc('meta/state').onSnapshot(d=>{setMeta(d.exists?d.data():null);render()},()=>{}));
   dataUnsubs.push(db.collection('meta').onSnapshot(q=>{aucItems=[];events=[];q.docs.forEach(d=>{const x={...d.data(),id:d.id};if(d.id.startsWith('auc_'))aucItems.push(x);else if(d.id.startsWith('evt_'))events.push(x);else if(d.id.startsWith('pb_')){const k=d.id.slice(3);if(!(pbDrag&&pbDrag.el))pbData[k]=d.data()}});renderAuction();renderParty()},()=>{}));
   dataUnsubs.push(db.collection('auction_queue').onSnapshot(q=>{aucQ=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.q=false;renderAuction()},()=>{rulesOld.q=true;renderAuction()}));
+  dataUnsubs.push(db.collection('leaves').onSnapshot(q=>{leaves=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.l=false;rerLeave()},()=>{rulesOld.l=true;rerLeave()}));
   dataUnsubs.push(db.collection('event_signups').onSnapshot(q=>{signups=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.s=false;renderParty()},()=>{rulesOld.s=true;renderParty()}));
   if(role==='owner'||role==='officer'){
     dataUnsubs.push(db.collection('members').onSnapshot(q=>{members=q.docs.map(d=>({...d.data(),email:d.id}));render();autoApprove()},e=>say('อ่านรายชื่อผู้ขอเข้าดูไม่ได้: '+e.message)));
@@ -1547,6 +1600,11 @@ service cloud.firestore {
       allow create, update: if isOfficer() || (isMember() && request.resource.data.email == email() && id == request.resource.data.eventId + '__' + email());
       allow delete: if isOfficer() || (isMember() && resource.data.email == email());
     }
+    match /leaves/{id} {
+      allow read: if isMember();
+      allow create, update: if isOfficer() || (isMember() && request.resource.data.email == email() && id == request.resource.data.week + '__' + email());
+      allow delete: if isOfficer() || (isMember() && resource.data.email == email());
+    }
     match /members/{mail} {
       allow read: if isOfficer() || (signedIn() && mail == email());
       allow create: if (signedIn() && mail == email() && request.resource.data.role == 'member'
@@ -1575,7 +1633,7 @@ function renderStore(){
 /* ---------- auction queue + party organizer ---------- */
 const aucActionSync=t=>{const hit=t.closest('[data-ungive],[data-qjoin],[data-qcancel],[data-qdel],[data-qadd],[data-give],[data-itoggle],[data-idel],#aucAddBtn,#aucSeg [data-f],[data-aucc],#aucTab [data-t],[data-tme],[data-catc],[data-pick]');if(!hit)return false;aucAction(t);return true};
 const partyActionSync=t=>pbAction(t);
-let aucItems=[],events=[],aucQ=[],signups=[],rulesOld={q:false,s:false},selEvt=null,aucFilter='open',view='dash';
+let aucItems=[],events=[],aucQ=[],signups=[],rulesOld={q:false,s:false,l:false},selEvt=null,aucFilter='open',view='dash';
 const CATALOG=[[10543017,5,"Mount","~icon_item_mount_huangjinchong","Golden Thief Bug","","ta"],[10543018,5,"Mount","~icon_item_mount_bafengte","Baphomet","","ta"],[10543019,5,"Mount","~icon_item_mount_yueyemao","Moonlight Flower","","ta"],[10543021,5,"Mount","~icon_item_mount_huwang","Eddga","","ta"],[10543022,5,"Mount","~icon_item_mount_shourenqiuzhang","Orc Lord","","ta"],[10543023,5,"Mount","~icon_item_mount_shourenyingxiong","Orc Hero","","ta"],[10543025,5,"Mount","~icon_item_mount_esailisi","Osiris","","ta"],[10543026,5,"Mount","~icon_item_mount_guaijiwang","Amon Ra","","ta"],[10543048,5,"Mount","~icon_item_mount_exiaonanjue","Owl Baron","บารอนอินทรีฮูก","ta"],[10543067,5,"Mount","~icon_item_mount_sjglz","Timekeeper","ผู้ควบคุมเวลา","ta"],[10543068,5,"Mount","~icon_item_mount_taaoqunka","Tao Gunka","","ta"],[10543069,5,"Mount","~icon_item_mount_kalun","Hatii","","ta"],[10543085,5,"Mount","~icon_item_mount_muxibeisikou","Mushbesco","มูชิเบสโก้","ta"],[10543096,5,"Mount","~icon_item_mount_jier","Kiel","","ta"],[10543502,5,"Mount","~icon_item_mount_fenghou","Mistress","","ta"],[10543503,5,"Mount","~icon_item_mount_gebulin","Jet Goblin","เจ็ทก็อบลิน","ta"],[11594067,5,"Pack","~icon_item_stonebox_14","Super Gem Choice Box","กล่องเลือกอัญมณีสุดยอด","au"],[11594068,5,"Pack","~icon_item_stonebox_14","Adv. Gem Choice Box","หีบเลือกอัญมณีขั้นสูง","au"],[11594070,5,"Pack","~icon_item_stonebox_14","Advanced Gem Box","หีบอัญมณีขั้นสูง","au"],[11594104,3,"Pack","~icon_item_bx_01","Exploration Chest","หีบสำรวจ","au"],[11602246,3,"Pack","~icon_item_bx_06","Adventure Fragment Chest","หีบ Adventure Scrap","au"],[11602247,4,"Pack","~icon_item_bx_06","Adventure Journal Chest","หีบ Adventure Journal","au"],[11602248,5,"Pack","~icon_item_bx_06","Pioneer Certificate Chest","หีบ Pioneer Certificate","au"],[12033009,5,"Armor Card","~icon_item_card_flw_01","Pharaoh Card","","ta"],[12033010,5,"Headwear Card","~icon_item_card_fh_01","Mistress Card","","ta"],[12033011,5,"Headwear Card","~icon_item_card_sryx_01","Orc Hero Card","","ta"],[12333004,5,"Armor Card","~icon_item_card_tsbl_01","Angeling Card","","ta"],[12333014,5,"Armor Card","~icon_item_card_srqz_01","Orc Lord Card","","ta"],[12433022,5,"Cape Card","~icon_item_card_embl_01","Deviling Card","","ta"],[12433025,5,"Weapon Card","~icon_item_card_mgdwz_01","Kraken Card","","ta"],[12533001,5,"Shoes Card","~icon_item_card_hazw_01","Dark Lord Card","","ta"],[12533009,5,"Shoes Card","~icon_item_card_yym_01","Moonlight Flower Card","","ta"],[12533010,5,"Shoes Card","~icon_item_card_gajw_01","Amon Ra Card","","ta"],[12633002,5,"Shoes Card","~icon_item_card_hw_01","Eddga Card","","ta"],[12833009,5,"Off-Hand Card","~icon_item_card_hjc_01","Golden Thief Bug Card","","ta"],[12833022,5,"Accessory Card","~icon_item_card_esls_01","Osiris Card","","ta"],[12833037,5,"Weapon Card","~icon_item_card_exnj_01","Baroness of Retribution Card","Owl Baron Card","ta"],[12933016,5,"Weapon Card","~icon_item_card_bft_01","Baphomet Card","","ta"],[12933026,5,"Weapon Card","~icon_item_card_pln_01","Phreeoni Card","","ta"],[12933033,5,"Weapon Card","~icon_item_card_hdzw_01","Drake Card","","ta"],[12933034,5,"Weapon Card","~icon_item_card_dglnj_01","Dracula Card","","ta"],[12933035,5,"Weapon Card","~icon_item_card_gblsl_01","Goblin Leader Card","","ta"],[12933051,5,"Weapon Card","~icon_item_card_sl_02","Doppelganger Card","","ta"],[12933061,5,"Weapon Card","~icon_item_card_atls_01","Atroce Card","","ta"],[13033006,5,"Off-Hand Card","~icon_item_card_yh_01","Maya Card","","ta"],[13033061,5,"Cape Card","~icon_item_card_sjglz_01","Time Manager Card","การ์ดผู้ควบคุมเวลา","ta"],[13033064,5,"Armor Card","~icon_item_card_kl_01","Hatii Card","","ta"],[13033070,5,"Weapon Card","~icon_item_card_bbqs_01","Stormy Knight Card","","ta"],[13033076,5,"Armor Card","~icon_item_card_taqk_01","Tao Gunka Card","","ta"],[13033077,5,"Weapon Card","~icon_item_card_kml_01","Revived Chimera Card","การ์ด Chimera คืนชีพ","ta"],[13033078,5,"Armor Card","~icon_item_card_xxqs_01","Revived Bloody Knight Card","การ์ด Bloody Knight คืนชีพ","ta"],[13033118,5,"Off-Hand Card","~icon_item_card_jymxbsk_01","Hard Muscipular Card","การ์ด Hard มูชิเบสโก้","ta"],[13033123,5,"Headwear Card","~icon_item_card_jed01_01","Kiel-D-01 Card","","ta"],[13133001,4,"Backwear Card","~icon_item_card_fh_01","Mirage: Mistress Card","มายา·Mistress Card","au"],[13133002,4,"Headwear Card","~icon_item_card_sryx_01","Mirage: Orc Hero Card","มายา·Orc Hero Card","au"],[13133003,4,"Backwear Card","~icon_item_card_tsbl_01","Mirage: Angeling Card","มายา·Angeling Card","au"],[13133004,4,"Headwear Card","~icon_item_card_srqz_01","Mirage: Orc Lord Card","มายา·Orc Lord Card","au"],[13133005,4,"Facewear Card","~icon_item_card_embl_01","Mirage: Deviling Card","มายา·Deviling Card","au"],[13133006,4,"Headwear Card","~icon_item_card_yym_01","Mirage: Moonlight Flower Card","มายา·Moonlight Flower Card","au"],[13133007,4,"Mouthwear Card","~icon_item_card_hw_01","Mirage: Eddga Card","มายา·Eddga Card","au"],[13133008,4,"Facewear Card","~icon_item_card_hjc_01","Mirage: Golden Thief Bug Card","มายา·Golden Thief Bug Card","au"],[13133009,4,"Mouthwear Card","~icon_item_card_esls_01","Mirage: Osiris Card","มายา·Osiris Card","au"],[13133010,4,"Mouthwear Card","~icon_item_card_bft_01","Mirage: Baphomet Card","มายา·Baphomet Card","au"],[13133011,4,"Mouthwear Card","~icon_item_card_pln_01","Mirage: Phreeoni Card","มายา·Phreeoni Card","au"],[13133012,4,"Backwear Card","~icon_item_card_hdzw_01","Mirage: Drake Card","มายา·Drake Card","au"],[13133013,4,"Facewear Card","~icon_item_card_dglnj_01","Mirage: Dracula Card","มายา·Dracula Card","au"],[13133014,4,"Facewear Card","~icon_item_card_gblsl_01","Mirage: Goblin Leader Card","มายา·Goblin Leader Card","au"],[13133015,4,"Mouthwear Card","~icon_item_card_sl_02","Mirage: Doppelganger Card","มายา·Doppelganger Card","au"],[13133016,4,"Mouthwear Card","~icon_item_card_atls_01","Mirage: Atroce Card","มายา·Atroce Card","au"],[13133017,4,"Backwear Card","~icon_item_card_yh_01","Mirage: Maya Card","มายา·Maya Card","au"],[14336103,6,"Pet","pet/icon_pet_head_jjsn_3","Rita","","au"],[14336104,6,"Pet","pet/icon_pet_head_fbll_3","Fierce","เฟียร์ส","au"],[18115911,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Sage","","au"],[18115912,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Sage","","au"],[18115921,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Divine","","au"],[18115922,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Divine","","au"],[18115931,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Aurora","","au"],[18115932,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Aurora","","au"],[18115941,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Destiny","","au"],[18115942,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Destiny","","au"],[18115951,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Celestial","","au"],[18115952,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Celestial","","au"],[18115961,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Omniverse","","au"],[18115962,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Omniverse","","au"],[18115971,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Reflection","","au"],[18115972,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Reflection","","au"],[18115981,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Edgefall","","au"],[18115982,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Edgefall","","au"],[18115991,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Ice Coffin","","au"],[18115992,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Ice Coffin","","au"],[18116001,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Anchor","","au"],[18116002,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Anchor","","au"],[18116011,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Plague","","au"],[18116012,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Plague","","au"],[18116021,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Evernight","","au"],[18116022,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Evernight","","au"],[18116031,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Shadow","","au"],[18116032,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Shadow","","au"],[18116041,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Eclipse","","au"],[18116042,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Eclipse","","au"],[18116051,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Purity","","au"],[18116052,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Purity","","au"],[18116061,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Ignis","","au"],[18116062,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Ignis","","au"],[18116071,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Lithos","","au"],[18116072,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Injunction","","au"],[18116081,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Lucidity","","au"],[18116082,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Awakened","","au"],[18116091,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Eternal","","au"],[18116092,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Eternal","","au"],[18116101,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Gloom","","au"],[18116102,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Gloom","","au"],[18116111,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Judex","","au"],[18116112,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Dictum","","au"],[18116121,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Chrono","","au"],[18116122,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Chrono","","au"],[18116131,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Axis","","au"],[18116132,5,"Advanced Relic","hallows/icon_hallows_shield_01","Radiant Shield - Axis","","au"],[18116141,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Sanctum","","au"],[18116142,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Sanctum","","au"],[18116151,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Sword Tomb","","au"],[18116152,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Sword Tomb","","au"],[18116161,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Ruin: Runewheel","","au"],[18116162,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Runewheel","","au"],[18116171,5,"Advanced Relic","hallows/icon_hallows_spear_01","Blade of Oblivion - Shadow Shackle","","au"],[18116172,5,"Advanced Relic","hallows/icon_hallows_shield_01","Luminous Aegis: Shadow Shackle","","au"],[18412001,2,"Title Item","~icon_item_touxian_01","Traveler's Note","","au"],[18413001,3,"Title Item","~icon_item_touxian_02","Adventure Fragment","Adventure Scrap","au"],[18414001,4,"Title Item","~icon_item_touxian_03","Adventure Journal","","au"],[18415001,5,"Title Item","~icon_item_touxian_04","Pioneer Certificate","","au"],[56009017,6,"Accessory","~icon_equip_jewelry_102","Royal Orleans's Glove III","",""],[56009018,6,"Accessory","~icon_equip_jewelry_101","Royal Orleans's Necklace III","",""],[56009019,6,"Accessory","~icon_equip_jewelry_21","Royal Rogue's Treasure III","",""],[56009020,6,"Accessory","~icon_equip_jewelry_63","Royal Cold Heart III","",""],[56009021,6,"Accessory","~icon_equip_jewelry_36","Royal Morrigane's Pendant III","",""],[56009022,6,"Accessory","~icon_equip_jewelry_35","Royal Morrigane's Belt III","",""],[56009023,6,"Accessory","~icon_equip_jewelry_62","Royal Clamorous Ring III","",""],[56009024,6,"Accessory","~icon_equip_jewelry_81","Royal Golden Bell III","",""],[56009025,6,"Accessory","~icon_equip_jewelry_74","Royal Bradium Brooch III","",""],[56009026,6,"Accessory","~icon_equip_jewelry_32","Royal Nile Rose III","",""],[56009027,6,"Accessory","~icon_equip_jewelry_76","Royal Kind Heart III","",""],[56009028,6,"Accessory","~icon_equip_jewelry_13","Royal Flower Ring III","",""],[56009029,6,"Accessory","~icon_equip_jewelry_16","Royal Safety Ring III","",""],[56009030,6,"Accessory","~icon_equip_jewelry_15","Royal Eye of Dullahan III","",""]];
 const CATS=[['all','ทั้งหมด'],['mount','มอนต์ MVP'],['card','การ์ด'],['box','กล่อง/อัญมณี'],['pet','สัตว์เลี้ยง'],['relic','Relic'],['acc','ส่วนประดับ'],['title','ไอเทมยศ'],['other','อื่นๆ']];
 const catOf=t=>t==='Mount'?'mount':/Card$/.test(t||'')?'card':t==='Pack'?'box':t==='Pet'?'pet':t==='Advanced Relic'?'relic':t==='Accessory'?'acc':t==='Title Item'?'title':'other';
@@ -1740,7 +1798,7 @@ const PBDEF={gl_tue:{n:'Guild League',d:'วันอังคาร',t:'21:30�
 const PSIZE=5,POLCAP=50;
 let pbData={},pbKey=(()=>{try{return sessionStorage.getItem('tm-pb')||'gl_tue'}catch(e){return 'gl_tue'}})(),pbSel=null,pbQ='',pbRole='',pbHide=false;
 /* leave system hook — will read the upcoming leave records (หน้า สมาชิก) */
-const onLeave=(c,key)=>false;
+let onLeave=(c,key)=>false;
 const emptyParty=()=>({id:uid(),m:Array(PSIZE).fill(''),lock:false});
 function sunKey(ts=Date.now()){const d=new Date(ts);d.setHours(12,0,0,0);d.setDate(d.getDate()+((7-d.getDay())%7));return dstr(d.getTime())}
 function pbDoc(k){const d=pbData[k];if(k==='polar'){const x=d?JSON.parse(JSON.stringify(d)):{};x.up=x.up||[];x.down=x.down||[];x.hist=x.hist||{};return x}
@@ -1755,6 +1813,7 @@ function pbPlace(c,to,from){/* to/from: {r,i,j} ; c: char name (from roster) */
   if(tp.lock){say(T('ปาร์ตี้นี้ล็อคอยู่ — กด 🔓 ก่อนเปลี่ยน'));return}
   if(from){const fp=pbList(k,d,from.r)[from.i];if(fp.lock){say(T('ปาร์ตี้นี้ล็อคอยู่ — กด 🔓 ก่อนเปลี่ยน'));return}c=fp.m[from.j]}
   if(!c)return;
+  if(onLeave(c,k)){say(T('คนนี้แจ้งลากิจกรรมนี้ — ลากเข้าไม่ได้'));return}
   const cur=from||pbWhere(d,k,c);
   if(cur&&!from){const cp=pbList(k,d,cur.r)[cur.i];if(cp.lock){say(T('คนนี้อยู่ในปาร์ตี้ที่ล็อคไว้'));return}}
   if(k==='polar'&&to.r==='up'&&(!cur||cur.r!=='up')&&!tp.m[to.j]){const n=d.up.reduce((a,p)=>a+p.m.filter(Boolean).length,0);if(n>=POLCAP){say(T('ห้องบนเต็ม 50 คนแล้ว'));return}}
@@ -1795,7 +1854,7 @@ function renderParty(){
   if(!$('pbBoard'))return;
   if(!isCloud()){$('pbBoard').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อม Firebase')}</p>`;return}
   const staff=stfx(),k=pbKey,d=pbDoc(k),me=myChar(),def=PBDEF[k];
-  setSeg('pbTab',k);$('evTop').innerHTML=myCharBox();
+  setSeg('pbTab',k);$('evTop').innerHTML=myCharBox()+leaveBox();
   /* my parties summary */
   const mine=Object.keys(PBDEF).map(x=>{const w=me&&pbWhere(pbDoc(x),x,me);return w?`<span class="chip">${PBDEF[x].ic} ${esc(PBDEF[x].n)} ${T(PBDEF[x].d)}: <b>${x==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${T('ปาร์ตี้')} ${w.i+1}</b></span>`:''}).join('');
   const all=pbRooms(k,d).flatMap(([,P])=>P),placed=all.reduce((a,p)=>a+p.m.filter(Boolean).length,0),locked=all.filter(p=>p.lock).length;
@@ -1807,13 +1866,14 @@ function renderParty(){
   if(k==='polar'){const nu=d.up.reduce((a,p)=>a+p.m.filter(Boolean).length,0),nd=d.down.reduce((a,p)=>a+p.m.filter(Boolean).length,0),un=model?model.P.length-nu-nd:0;
     h+=`<div class="note pbrule">☯️ ${T('ห้องบน = ดันเจี้ยนดาว รับได้')} <b>${POLCAP}</b> ${T('คน (Warzone Elite) · ห้องล่าง = ดันเจี้ยนปกติ ทุกคนลงได้')} · ${T('ทุกสัปดาห์ระบบจะสลับให้คนที่อยู่ห้องล่างได้ขึ้นห้องบนก่อน ปาร์ตี้ที่ล็อคไว้จะย้ายไปด้วยกันทั้งปาร์ตี้')}
       <div class="row" style="margin-top:6px;justify-content:flex-start"><span class="chip">⬆ ${T('ห้องบน')} <b>${nu}/${POLCAP}</b></span><span class="chip">⬇ ${T('ห้องล่าง')} <b>${nd}</b></span><span class="chip">${T('ยังไม่ได้จัด')} <b>${un}</b></span></div></div>`}
+  {const LV=leaves.filter(l=>l.week===nextOcc(k)&&(l.acts||[]).includes(k));h+=`<div class="lvlist row" style="justify-content:flex-start"><b>🙋 ${T('แจ้งลารอบนี้')} (${LV.length})</b>${LV.map(l=>`<span class="chip" ${staff&&l.reason?`title="${esc(l.reason)}"`:''}>${esc(l.char)}${staff&&l.reason?' 💬':''}</span>`).join('')||`<span class="note">${T('ยังไม่มีใครลา')}</span>`}</div>`}
   $('pbHead').innerHTML=h;
   /* board */
   const card=(r,p,i)=>{const L=p.m.filter(Boolean),rs=L.map(roleC),avg=L.length?L.reduce((a,c)=>a+((pInfo(c)||{}).gear||0),0)/L.length:0,isMe=me&&L.some(c=>canon(c)===canon(me));
-    const warn=L.length?[!rs.includes('tank')?T('ไม่มีแทงค์'):'',!rs.includes('heal')?T('ไม่มีฮีล'):''].filter(Boolean):[];
+    const nl=L.filter(c=>onLeave(c,k)).length,warn=L.length?[nl?`${T('มีคนลา')} ${nl} — ${T('หาคนแทน')}`:'',!rs.includes('tank')?T('ไม่มีแทงค์'):'',!rs.includes('heal')?T('ไม่มีฮีล'):''].filter(Boolean):[];
     return `<div class="pbp ${p.lock?'lock':''} ${isMe?'mine':''}"><div class="pbph"><b>${T('ปาร์ตี้')} ${i+1}</b><span class="note">${L.length}/${PSIZE}${avg?' · '+fmt(avg):''}</span>${staff?`<button class="sm ghost pblk" data-pb="lock" data-r="${r}" data-i="${i}" title="${p.lock?T('ปลดล็อค'):T('ล็อคปาร์ตี้')}">${p.lock?'🔒':'🔓'}</button>`:(p.lock?'<span title="locked">🔒</span>':'')}</div>
       ${warn.length?`<div class="why noc">⚠ ${warn.join(' · ')}</div>`:''}
-      <ul>${p.m.map((c,j)=>{const pi=c&&pInfo(c),gone=c&&!pi,lv=c&&onLeave(c,k);return c?`<li class="pbs full ${canon(c)===canon(me||'')?'me':''} ${gone?'gone':''}" data-slot="${r}|${i}|${j}" ${staff&&!p.lock?`data-drag="${esc(c)}"`:''}>${pi?ico(pi.cls,24):'⚠️'}<span class="grow nm"><b>${esc(c)}</b>${gone?` <span class="noc">${T('ไม่อยู่ในกิลแล้ว')}</span>`:''}${lv?` <span class="tag t-new">${T('ลา')}</span>`:''}</span><span class="rt r-${roleC(c)}">${RSHORT[roleC(c)]}</span>${staff&&!p.lock?`<button class="sm ghost x" data-pb="rm" data-r="${r}" data-i="${i}" data-j="${j}" aria-label="remove">×</button>`:''}</li>`
+      <ul>${p.m.map((c,j)=>{const pi=c&&pInfo(c),gone=c&&!pi,lv=c&&onLeave(c,k);return c?`<li class="pbs full ${canon(c)===canon(me||'')?'me':''} ${gone?'gone':''} ${lv?'leave':''}" data-slot="${r}|${i}|${j}" ${staff&&!p.lock?`data-drag="${esc(c)}"`:''}>${pi?ico(pi.cls,24):'⚠️'}<span class="grow nm"><b>${esc(c)}</b>${gone?` <span class="noc">${T('ไม่อยู่ในกิลแล้ว')}</span>`:''}${lv?` <span class="tag t-new">${T('ลา')}</span>`:''}</span><span class="rt r-${roleC(c)}">${RSHORT[roleC(c)]}</span>${staff&&!p.lock?`<button class="sm ghost x" data-pb="rm" data-r="${r}" data-i="${i}" data-j="${j}" aria-label="remove">×</button>`:''}</li>`
         :`<li class="pbs empty" data-slot="${r}|${i}|${j}">${staff&&!p.lock?T('ลากชื่อมาวาง'):'—'}</li>`}).join('')}</ul></div>`};
   const room=(r,P,title)=>`${title?`<div class="pbroom"><h3>${title}</h3>${staff?`<button class="sm ghost" data-pb="add" data-r="${r}">＋ ${T('ปาร์ตี้')}</button>`:''}</div>`:''}<div class="pbgrid">${P.map((p,i)=>card(r,p,i)).join('')}</div>`;
   $('pbBoard').innerHTML=(k==='polar'?room('up',d.up,'⬆ '+T('ห้องบน')+` (${T('ดันเจี้ยนดาว')} · ${T('สูงสุด')} ${POLCAP})`)+room('down',d.down,'⬇ '+T('ห้องล่าง')+` (${T('ดันเจี้ยนปกติ')})`)
@@ -1829,7 +1889,7 @@ function renderParty(){
       <div class="chips pbrf">${[['','ทั้งหมด'],...ROLES].map(([v,l])=>`<button class="chip ${pbRole===v?'on':''}" data-pbrole="${v}">${v?`<span class="rt r-${v}">${RSHORT[v]}</span>`:T(l)}</button>`).join('')}</div>
       <label class="note" style="display:flex;gap:6px;align-items:center;margin:4px 0"><input type="checkbox" id="pbHide" ${pbHide?'checked':''}> ${T('ซ่อนคนที่จัดแล้ว')}</label>
       <p class="note" style="margin:2px 0 6px">${matchMedia('(pointer:coarse)').matches?T('แตะชื่อ แล้วแตะช่องว่างเพื่อวาง'):T('ลากชื่อไปวางในช่อง · หรือคลิกชื่อแล้วคลิกช่อง')}</p>
-      <ul class="pbrl">${R.map(({p,w,r})=>`<li class="pbri ${w?'placed':''} ${pbSel===p.name?'sel':''}" data-drag="${esc(p.name)}" data-pick-c="${esc(p.name)}">${ico(p.cls,24)}<div class="grow" style="min-width:0"><div class="nm"><b>${esc(p.name)}</b>${onLeave(p.name,k)?` <span class="tag t-new">${T('ลา')}</span>`:''}</div><div class="note nm">${fmt(p.gear)}${k==='polar'?` · ${T('เคยห้องบน')} ${hist[p.name]||0}`:''}</div></div><span class="rt r-${r}">${RSHORT[r]}</span>${w?`<span class="pbat">${k==='polar'?(w.r==='up'?'⬆':'⬇'):''}P${w.i+1}</span>`:''}</li>`).join('')}</ul>`;
+      <ul class="pbrl">${R.map(({p,w,r})=>{const lv=onLeave(p.name,k);return `<li class="pbri ${w?'placed':''} ${lv?'leave':''} ${pbSel===p.name?'sel':''}" ${lv?`title="${T('แจ้งลา — ลากเข้าไม่ได้')}"`:`data-drag="${esc(p.name)}" data-pick-c="${esc(p.name)}"`}>${ico(p.cls,24)}<div class="grow" style="min-width:0"><div class="nm"><b>${esc(p.name)}</b>${onLeave(p.name,k)?` <span class="tag t-new">${T('ลา')}</span>`:''}</div><div class="note nm">${fmt(p.gear)}${k==='polar'?` · ${T('เคยห้องบน')} ${hist[p.name]||0}`:''}</div></div><span class="rt r-${r}">${RSHORT[r]}</span>${w?`<span class="pbat">${k==='polar'?(w.r==='up'?'⬆':'⬇'):''}P${w.i+1}</span>`:''}</li>`}).join('')}</ul>`;
   }else $('pbRoster').innerHTML='';
 }
 /* drag & drop (mouse) + tap-to-place */
@@ -1871,6 +1931,61 @@ function pbAction(t){
     return true}
   return false}
 let pbSelSlot=null;
+/* ---------- leave (แจ้งลา) ---------- */
+let leaves=[],leaveOpen=false,leaveWk=0,leaveFor='';
+const ACT=[['gl_tue','🏆','Guild League วันอังคาร',1,[22,25]],['gl_thu','🏆','Guild League วันพฤหัส',3,[22,25]],['siege','🏰','ศึกชิงปราสาท',6,[22,0]],['polar','☯️','Polarity Zone',6,[21,0]]];
+function monKey(ts){const d=new Date(ts);d.setHours(12,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return dstr(d.getTime())}
+function actDate(k,wkMon){const a=ACT.find(x=>x[0]===k),d=new Date(wkMon+'T00:00:00');d.setDate(d.getDate()+a[3]);d.setHours(a[4][0],a[4][1],0,0);return d}
+function nextOcc(k){const w=monKey(Date.now());if(actDate(k,w).getTime()>Date.now())return w;const d=new Date(w+'T12:00:00');d.setDate(d.getDate()+7);return dstr(d.getTime())}
+function leaveOf(c,k){const n=canon(c),w=nextOcc(k);return leaves.find(l=>canon(l.char)===n&&l.week===w&&(l.acts||[]).includes(k))}
+onLeave=(c,k)=>!!(c&&leaveOf(c,k));
+function leaveBox(){
+  if(!isCloud()||!user)return '';const me=myChar(),staff=stfx(),who=(staff&&leaveFor)||me;
+  const wk=(()=>{const d=new Date(monKey(Date.now())+'T12:00:00');d.setDate(d.getDate()+7*leaveWk);return dstr(d.getTime())})();
+  const cur=who&&leaves.find(l=>canon(l.char)===canon(who)&&l.week===wk);
+  const mineL=me?leaves.filter(l=>canon(l.char)===canon(me)&&l.week>=monKey(Date.now())).sort((a,b)=>a.week.localeCompare(b.week)):[];
+  const btn=`<button class="pri big" data-lv="open">🙋 ${T('แจ้งลา')}</button>`;
+  if(!leaveOpen)return `<div class="lvbar">${btn}${mineL.length?mineL.map(l=>`<span class="chip lvchip">🙋 ${T('ลา')} ${l.acts.map(k=>{const a=ACT.find(x=>x[0]===k);return a?a[1]+' '+T(a[2])+' '+dTh(actDate(k,l.week).getTime()):''}).join(', ')}</span>`).join(''):''}${rulesOld.l?`<span class="note noc">${T('ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะแจ้งลาได้')}</span>`:''}</div>`;
+  return `<div class="card lvbox"><div class="row" style="justify-content:space-between"><h3 style="margin:0">🙋 ${T('แจ้งลา')}</h3><button class="sm ghost" data-lv="close">✕</button></div>
+   ${staff?`<label class="note">${T('ตัวละคร (หัวหน้าแจ้งแทนได้)')}<input id="lvWho" list="names" value="${esc(who||'')}" placeholder="${T('ชื่อตัวละคร')}"></label>`:(me?`<p style="margin:6px 0">${T('ตัวละคร')}: <b>${esc(me)}</b></p>`:`<p class="noc">${T('เลือกตัวละครของคุณก่อน')}</p>`)}
+   <div class="seg" id="lvWk" style="margin:8px 0"><button data-lvwk="0" aria-pressed="${leaveWk===0}">${T('สัปดาห์นี้')}</button><button data-lvwk="1" aria-pressed="${leaveWk===1}">${T('สัปดาห์หน้า')}</button></div>
+   <div class="lvacts">${ACT.map(([k,ic,n])=>{const d=actDate(k,wk),past=d.getTime()<Date.now();return `<label class="lvact ${past?'past':''}"><input type="checkbox" class="lvck" value="${k}" ${cur&&cur.acts.includes(k)?'checked':''} ${past?'disabled':''}><span>${ic} ${T(n)}</span><span class="note">${dTh(d.getTime())}${past?' · '+T('ผ่านไปแล้ว'):''}</span></label>`}).join('')}</div>
+   <input id="lvWhy" placeholder="${T('เหตุผล (ไม่บังคับ · เห็นเฉพาะหัวหน้า)')}" value="${esc(cur&&cur.reason||'')}" style="width:100%;margin-top:8px">
+   <div class="row" style="margin-top:10px"><button class="pri" data-lv="save" ${rulesOld.l&&!staff?'disabled':''}>${T('บันทึกการลา')}</button>${cur?`<button class="ghost" data-lv="del">${T('ยกเลิกการลานี้')}</button>`:''}</div>
+   ${rulesOld.l?`<p class="note noc">${T('ต้องอัปเดตกฎ Firebase ก่อน สมาชิกถึงจะแจ้งลาได้')}</p>`:''}</div>`}
+async function leaveAction(t){
+  const el=t.closest('[data-lv],[data-lvwk]');if(!el)return false;
+  if(el.dataset.lvwk!=null){leaveWk=+el.dataset.lvwk;rerLeave();return true}
+  const a=el.dataset.lv;if(a==='open'){leaveOpen=true;rerLeave();return true}if(a==='close'){leaveOpen=false;rerLeave();return true}
+  const box=el.closest('.lvbox'),q=s=>box&&box.querySelector(s),staff=stfx(),me=myChar(),who=staff&&q('#lvWho')?q('#lvWho').value.trim():me;if(!who){say(T('เลือกตัวละครของคุณก่อน'));return true}
+  if(model&&!model.P.some(p=>p.name===canon(who))){say(T('ไม่พบชื่อนี้ในรายชื่อกิลด์ล่าสุด'));return true}
+  const wk=(()=>{const d=new Date(monKey(Date.now())+'T12:00:00');d.setDate(d.getDate()+7*leaveWk);return dstr(d.getTime())})();
+  const mineDoc=canon(who)===canon(me||'');const id=`${wk}__${mineDoc?user.email:'manual:'+canon(who)}`;
+  const old=leaves.find(l=>canon(l.char)===canon(who)&&l.week===wk);
+  try{if(a==='del'||(a==='save'&&![...box.querySelectorAll('.lvck:checked')].length)){if(old)await FB.db.doc('leaves/'+old.id).delete();say(T('ยกเลิกการลาแล้ว'))}
+    else if(a==='save'){const acts=[...box.querySelectorAll('.lvck:checked')].map(x=>x.value);
+      if(old&&old.id!==id)await FB.db.doc('leaves/'+old.id).delete().catch(()=>{});
+      await FB.db.doc('leaves/'+id).set({char:canon(who),email:mineDoc?user.email:'',week:wk,acts,reason:q('#lvWhy').value.trim(),ts:Date.now(),by:user.email});
+      say(T('บันทึกการลาแล้ว — ชื่อในหน้าปาร์ตี้จะขึ้นว่าลา'));leaveOpen=false}}catch(e){ferr(e)}
+  rerLeave();return true}
+function rerLeave(){renderMyHome();renderParty()}
+/* ---------- member home ---------- */
+function renderMyHome(){
+  const el=$('myHome');if(!el)return;if(!model||!user||!isCloud()){el.innerHTML='';return}
+  const me=myChar();
+  const parts=ACT.map(([k,ic,n])=>{const key=k==='polar'?'polar':k,d=pbDoc(key),w=me&&pbWhere(d,key,me),lv=me&&leaveOf(me,k);
+    return `<li class="${lv?'lvoff':''}"><span class="ic">${ic}</span><div class="grow"><b>${T(n)}</b><div class="note">${dTh(actDate(k,nextOcc(k)).getTime())} · ${(PBDEF[key]||{}).t||''}</div></div><span class="pbwhere">${lv?`<span class="tag t-new">${T('ลา')}</span>`:w?`${key==='polar'?T(w.r==='up'?'ห้องบน':'ห้องล่าง')+' · ':''}${T('ปาร์ตี้')} <b>${w.i+1}</b>`:`<span class="note">${T('ยังไม่ได้จัด')}</span>`}</span></li>`}).join('');
+  const myQ=me?aucItems.filter(it=>it.status!=='closed').map(it=>{const Q=aucQ.filter(q=>q.itemId===it.id).sort((a,b)=>a.ts-b.ts),i=Q.findIndex(q=>canon(q.char)===canon(me));return i>=0?[it,i+1]:null}).filter(Boolean):[];
+  const won=me?aucItems.filter(it=>(it.winners||[]).some(w=>canon(w.char)===canon(me))):[];
+  const P=model.P,avg=P.reduce((a,p)=>a+p.gear,0)/P.length,top=[...P].filter(p=>p.dG!=null).sort((a,b)=>b.dG-a.dG).slice(0,5);
+  el.innerHTML=`<div class="myh">
+   <div class="card"><div class="head"><h2>🗓 ${T('ปาร์ตี้ของฉันสัปดาห์นี้')}</h2></div>${me?`<ul class="myparts">${parts}</ul>`:`<p class="note">${T('เชื่อมตัวละครก่อนเพื่อดูปาร์ตี้ของคุณ')}</p>`}<div id="lvHome">${leaveBox()}</div></div>
+   <div class="card"><div class="head"><h2>💰 ${T('คิวประมูลของฉัน')}</h2><a href="#auction" data-view="auction" class="sm btn ghost">${T('ไปหน้าประมูล')}</a></div>
+     ${myQ.length?`<ul class="list">${myQ.map(([it,n])=>{const inf=lotInfo(it);return `<li>${imgTag(inf,'sm')}<div class="grow"><b>${esc(inf.name)}</b></div><span>${T('คิวที่')} <b>${n}</b></span></li>`}).join('')}</ul>`:`<p class="note">${T('ยังไม่ได้จองคิวไอเทมไหน')}</p>`}
+     ${won.length?`<p style="margin:8px 0 0">✅ ${T('ได้ของแล้ว')}: ${won.map(it=>esc(lotInfo(it).name)).join(', ')}</p>`:''}</div>
+   <div class="card"><div class="head"><h2>🏰 ${T('ภาพรวมกิลด์')}</h2></div><div class="mstats"><div><span>${T('สมาชิก')}</span><b>${P.length}</b></div><div><span>${T('Gear เฉลี่ย')}</span><b>${fmt(avg)}</b></div></div>
+     ${top.length?`<h3 class="note" style="margin:10px 0 6px">🚀 ${T('Top 5 พัฒนาเร็วสุด')}</h3><ol class="toplist">${top.map(p=>`<li>${ico(p.cls,24)}<b>${esc(p.name)}</b><span class="up">${sgn(p.dG)}</span></li>`).join('')}</ol>`:''}</div>
+  </div>`}
 function autoAssign(e){
   const n=e.parties||4,size=e.size||5,A={};for(let i=1;i<=n;i++)A[i]=[...((e.assign||{})[i]||[])];
   const assigned=new Set(Object.values(A).flat().map(canon));
@@ -1937,14 +2052,17 @@ async function importBackup(f){
 /* ---------- events ---------- */
 function setSeg(id,v){[...$(id).children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v==v))}
 $('anaTab').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.v;try{sessionStorage.setItem('tm-ana',mode)}catch(_){}$('anaSec').dataset.tab=mode;setSeg('anaTab',mode);requestAnimationFrame(()=>Object.values(CH).forEach(c=>c.resize()))};
+try{if(localStorage.getItem('tm-anaopen'))document.body.classList.add('anaopen')}catch(_){}
 $('heatSort').onchange=drawChart;$('proj').onchange=drawChart;
 $('range').onclick=e=>{const b=e.target.closest('button');if(!b)return;range=+b.dataset.v;setSeg('range',range);render()};
 $('pick').onchange=e=>{const n=e.target.value;picked=picked||[];if(model&&model.P.some(p=>p.name===n)&&!picked.includes(n)){picked.push(n);if(picked.length>8)picked.shift()}e.target.value='';drawChart()};
 document.addEventListener('click',e=>{
+  if(FB&&user&&e.target.closest('[data-lv],[data-lvwk]')){leaveAction(e.target);return}
   if(FB&&user&&(e.target.closest('#auction')&&aucActionSync(e.target)||e.target.closest('#party')&&partyActionSync(e.target)))return;
   {const tb=e.target.closest('[data-tbl]');if(tb){const v=tb.dataset.tbl;tblLimit=v==='all'?1e9:v==='less'?20:tblLimit+20;renderTable();if(v==='less')$('members').scrollIntoView({behavior:'smooth'});return}}
   {const v=e.target.closest('[data-viewas]');if(v){if(role==='owner')setViewAs(v.dataset.viewas);return}}
-  {const a=e.target.closest('nav a[data-view]');if(a){setView(a.dataset.view)}}
+  {const a=e.target.closest('a[data-view]');if(a){setView(a.dataset.view)}}
+  {const ao=e.target.closest('[data-anaopen]');if(ao){const o=!document.body.classList.contains('anaopen');document.body.classList.toggle('anaopen',o);try{localStorage.setItem('tm-anaopen',o?'1':'')}catch(_){}if(o){if(mode==='all')mode='guild';drawChart();requestAnimationFrame(()=>{Object.values(CH).forEach(c=>c.resize());$('anaSec').scrollIntoView({behavior:'smooth'})})}return}}
   {const m=e.target.closest('[data-mychar]');if(m){editChar=true;render();renderAuction();renderParty();return}const ms=e.target.closest('[data-mycharsave]');if(ms){const v=ms.parentElement.querySelector('.mycharIn').value.trim();if(v)saveMyChar(v);return}}
   const t=e.target,cl=s=>t.closest(s);let el;
   if(t.id==='modal'||cl('#pClose')){closeProfile();return}
