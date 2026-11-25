@@ -1289,6 +1289,11 @@ async function dcPost(k,content,embed){if(!dcOn(k))return false;
   const chunks=[];let c=content||'';while(c.length>1900){let i=c.lastIndexOf('\n',1900);if(i<500)i=1900;chunks.push(c.slice(0,i));c=c.slice(i)}if(c||!chunks.length)chunks.push(c);
   try{for(let i=0;i<chunks.length;i++){const body={username:'TheMoon Guild',avatar_url:location.origin+location.pathname.replace(/[^/]*$/,'')+'icon-192.png',allowed_mentions:{parse:[]},content:chunks[i]};if(embed&&i===chunks.length-1)body.embeds=[embed];
       const r=await fetch(dcHooks[k],{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status)}return true}catch(e){console.warn('discord',e);return false}}
+function TB(s){const e=TEN(s);return e===s?s:s+' / '+e}
+function TEN(s){const L=LANG;LANG='en';try{return T(s)}finally{LANG=L}}
+const dBi=ts=>{const d=new Date(ts);return d.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'})+' / '+d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})};
+function pbTextBi(k,d){const L=LANG;LANG='th';let x;try{x=pbText(k,d)}finally{LANG=L}const dd=PBDEF[k].d;
+  x=x.replace(dd,TB(dd)).replace(/【ห้องบน】/g,'【ห้องบน / Upper】').replace(/【ห้องล่าง】/g,'【ห้องล่าง / Lower】').replace(' · สัปดาห์ ',' · สัปดาห์ / Week ').replace(/^ปาร์ตี้ (\d+)/gm,'ปาร์ตี้ / Party $1');return x}
 const dcEmb=(title,desc,color)=>({title,description:desc||'',color:color||0xd6a24f,timestamp:new Date().toISOString(),footer:{text:'TheMoon Guild'}});
 function renderDc(){const el=$('dcBox');if(!el)return;if(!isCloud()||!user||!stfx()){el.innerHTML='';return}
   const own=role==='owner',L=[['leave','📋 '+T('แจ้งลา')],['party','⚔️ '+T('ปาร์ตี้')],['auction','💰 '+T('ประมูล')]];
@@ -1296,7 +1301,7 @@ function renderDc(){const el=$('dcBox');if(!el)return;if(!isCloud()||!user||!stf
 async function dcAction(t){const b=t.closest('[data-dctest],#dcSave');if(!b)return false;
   if(b.id==='dcSave'){const v={};for(const k of ['leave','party','auction']){const x=($('dc_'+k).value||'').trim();if(x&&!DCRX.test(x)){say(T('ลิงก์ Webhook ไม่ถูกต้อง'));return true}v[k]=x}
     try{await FB.db.doc('meta/discord').set({leave:v.leave,ts:Date.now()});await FB.db.doc('dcsec/hooks').set({party:v.party,auction:v.auction,ts:Date.now()});Object.assign(dcHooks,v);say(T('บันทึกแล้ว'));renderDc()}catch(e){ferr(e)}return true}
-  const ok=await dcPost(b.dataset.dctest,'',dcEmb('✅ '+T('ทดสอบการเชื่อมต่อจากเว็บกิลด์'),'',0x2f9e8c));say(ok?T('ส่งข้อความทดสอบแล้ว — ดูในห้อง Discord'):T('ส่งไม่สำเร็จ'));return true}
+  const ok=await dcPost(b.dataset.dctest,'',dcEmb('✅ ทดสอบการเชื่อมต่อจากเว็บกิลด์ / Test message from the guild website','',0x2f9e8c));say(ok?T('ส่งข้อความทดสอบแล้ว — ดูในห้อง Discord'):T('ส่งไม่สำเร็จ'));return true}
 const pad=n=>String(n).padStart(2,'0');
 const dstr=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
 const dTh=ts=>new Date(ts).toLocaleDateString(LOCALE[LANG]||'th-TH',{day:'numeric',month:'short'});
@@ -1989,7 +1994,7 @@ async function aucAction(t){
   if(el=cl('[data-give]')){const q=aucQ.find(x=>x.id===el.dataset.give);if(!q)return true;const it=aucItems.find(x=>x.id===q.itemId);if(!it)return true;
     if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('กดอีกครั้งเพื่อยืนยัน')+': '+q.char;el.classList.add('arm');return true}
     const w=[...(it.winners||[]),{char:q.char,ts:Date.now(),by:user.email,qid:q.id,email:q.email||'',qts:q.ts||Date.now()}];
-    try{await db.doc('meta/'+it.id).update({winners:w,status:w.length>=(it.qty||1)?'closed':'open'});await db.doc('auction_queue/'+q.id).delete();dcPost('auction','',dcEmb('🎉 '+q.char+' ได้รับ '+it.name,'',0x5fb87c))}catch(e){ferr(e)}return true}
+    try{await db.doc('meta/'+it.id).update({winners:w,status:w.length>=(it.qty||1)?'closed':'open'});await db.doc('auction_queue/'+q.id).delete();dcPost('auction','',dcEmb('🎉 '+q.char+' ได้รับ / received '+it.name,'',0x5fb87c))}catch(e){ferr(e)}return true}
   if(el=cl('[data-ungive]')){const it=aucItems.find(x=>x.id===el.dataset.ungive);if(!it)return true;if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยกเลิก?');return true}
     const W=[...(it.winners||[])],w=W.splice(+el.dataset.wi,1)[0];if(!w)return true;
     try{await db.doc('meta/'+it.id).update({winners:W,status:'open'});if(w.qid)await db.doc('auction_queue/'+w.qid).set({itemId:it.id,char:w.char,email:w.email||'',ts:w.qts||Date.now(),by:user.email})}catch(e){ferr(e)}return true}
@@ -1997,7 +2002,7 @@ async function aucAction(t){
   if(el=cl('[data-idel]')){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('ยืนยันลบ');return true}const id=el.dataset.idel;
     try{await Promise.all(aucQ.filter(q=>q.itemId===id).map(q=>db.doc('auction_queue/'+q.id).delete()));await db.doc('meta/'+id).delete()}catch(e){ferr(e)}return true}
   if(t.id==='aucAddBtn'){const c=catPick&&CI.get(catPick),name=c?c.en:($('catQ').value||'').trim();if(!name){say(T('เลือกไอเทม หรือพิมพ์ชื่อไอเทม'));return true}
-    db.doc('meta/auc_'+uid()).set({name,itemId:c?c.id:null,cat:c?c.cat:'other',qty:Math.max(1,+$('aucQty').value||1),src:$('aucSrc').value,date:$('aucDate').value,note:$('aucNote').value.trim(),status:'open',winners:[],ts:Date.now(),by:user.email}).then(()=>{dcPost('auction','',dcEmb('🆕 ของประมูลใหม่: '+name,'จำนวน '+Math.max(1,+$('aucQty').value||1)+' ชิ้น — จองคิวในเว็บกิลด์ได้เลย',0xd6a24f));catPick=null;$('catQ').value='';$('aucNote').value='';$('aucQty').value=1;renderCatalog();say(T('เพิ่มไอเทมแล้ว'))}).catch(ferr);return true}
+    db.doc('meta/auc_'+uid()).set({name,itemId:c?c.id:null,cat:c?c.cat:'other',qty:Math.max(1,+$('aucQty').value||1),src:$('aucSrc').value,date:$('aucDate').value,note:$('aucNote').value.trim(),status:'open',winners:[],ts:Date.now(),by:user.email}).then(()=>{dcPost('auction','',dcEmb('🆕 ของประมูลใหม่ / New auction item: '+name,'จำนวน '+Math.max(1,+$('aucQty').value||1)+' ชิ้น — จองคิวในเว็บกิลด์ได้เลย\nQty '+Math.max(1,+$('aucQty').value||1)+' — reserve your spot on the guild website',0xd6a24f));catPick=null;$('catQ').value='';$('aucNote').value='';$('aucQty').value=1;renderCatalog();say(T('เพิ่มไอเทมแล้ว'))}).catch(ferr);return true}
   if(el=cl('#aucSeg [data-f]')){aucFilter=el.dataset.f;renderAuction();return true}
   if(el=cl('[data-aucc]')){aucCat=el.dataset.aucc;renderAuction();return true}
   if(el=cl('#aucTab [data-t]')){aucTab=el.dataset.t;renderAuction();return true}
@@ -2169,7 +2174,7 @@ function pbAction(t){
       if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=a==='tplload'?T('ยืนยันโหลด (แทนที่ของเดิม)'):T('ยืนยันลบ');return true}
       if(a==='tpldel'){FB.db.doc('meta/pbtpl').set({list:pbTpls.filter(x=>x.id!==id)}).catch(ferr);return true}
       const cp=P=>JSON.parse(JSON.stringify(P||[])).map(p=>({...p,id:uid()}));const nd={...d,parties:cp(t.parties)};if(isGL(k))nd.down=cp(t.down);pbSave(k,nd);say(T('โหลดแม่แบบแล้ว — กด ↶ ย้อนกลับได้'));return true}
-    if(a==='dcpost'){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('กดอีกครั้งเพื่อประกาศ');return true}el.disabled=true;dcPost('party','```\n'+pbText(k,d)+'\n```').then(ok=>{say(ok?T('ประกาศลง Discord แล้ว'):T('ส่งไม่สำเร็จ'));renderParty()});return true}
+    if(a==='dcpost'){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('กดอีกครั้งเพื่อประกาศ');return true}el.disabled=true;dcPost('party','```\n'+pbTextBi(k,d)+'\n```').then(ok=>{say(ok?T('ประกาศลง Discord แล้ว'):T('ส่งไม่สำเร็จ'));renderParty()});return true}
     if(a==='text'){navigator.clipboard.writeText(pbText(k,d)).then(()=>say(T('คัดลอกแล้ว — วางใน Discord/LINE ได้เลย')),()=>say(T('คัดลอกไม่ได้ในหน้านี้')));return true}
     if(!staff)return true;
     const L=el.dataset.r?pbList(k,d,el.dataset.r):null;
@@ -2226,12 +2231,12 @@ async function leaveAction(t){
   const wk=(()=>{const d=new Date(monKey(Date.now())+'T12:00:00');d.setDate(d.getDate()+7*leaveWk);return dstr(d.getTime())})();
   const mineDoc=canon(who)===canon(me||'');const id=`${wk}__${mineDoc?user.email:'manual:'+canon(who)}`;
   const old=leaves.find(l=>canon(l.char)===canon(who)&&l.week===wk);
-  try{if(a==='del'||(a==='save'&&![...box.querySelectorAll('.lvck:checked')].length)){if(old){await FB.db.doc('leaves/'+old.id).delete();dcPost('leave','',dcEmb('↩️ '+canon(who)+' ยกเลิกการลา','สัปดาห์ '+dTh(new Date(old.week+'T12:00:00').getTime()),0x6f9fd8))}say(T('ยกเลิกการลาแล้ว'))}
+  try{if(a==='del'||(a==='save'&&![...box.querySelectorAll('.lvck:checked')].length)){if(old){await FB.db.doc('leaves/'+old.id).delete();dcPost('leave','',dcEmb('↩️ '+canon(who)+' ยกเลิกการลา / Leave cancelled','สัปดาห์ / Week of: '+dBi(new Date(old.week+'T12:00:00').getTime()),0x6f9fd8))}say(T('ยกเลิกการลาแล้ว'))}
     else if(a==='save'){const acts=[...box.querySelectorAll('.lvck:checked')].map(x=>x.value);
       if(old&&old.id!==id)await FB.db.doc('leaves/'+old.id).delete().catch(()=>{});
       const why=q('#lvWhy').value.trim();await FB.db.doc('leaves/'+id).set({char:canon(who),email:mineDoc?user.email:'',week:wk,acts,ts:Date.now(),by:user.email});
       if(why)await FB.db.doc('leave_notes/'+id).set({reason:why,email:mineDoc?user.email:'',char:canon(who),ts:Date.now()}).catch(()=>FB.db.doc('leaves/'+id).update({reason:why}).catch(()=>{}));else await FB.db.doc('leave_notes/'+id).delete().catch(()=>{});
-      dcPost('leave','',dcEmb('🙋 '+canon(who)+' แจ้งลา',acts.map(k=>{const a=ACT.find(x=>x[0]===k);return a?'• '+a[1]+' '+a[2]+' — '+dTh(actDate(k,wk).getTime()):''}).filter(Boolean).join('\n'),0xd9605a));
+      dcPost('leave','',dcEmb('🙋 '+canon(who)+' แจ้งลา / Leave request',acts.map(k=>{const a=ACT.find(x=>x[0]===k);return a?'• '+a[1]+' '+(TEN(a[2])===a[2]?a[2]:a[2]+' / '+TEN(a[2]))+' — '+dBi(actDate(k,wk).getTime()):''}).filter(Boolean).join('\n'),0xd9605a));
       say(T('บันทึกการลาแล้ว — ชื่อในหน้าปาร์ตี้จะขึ้นว่าลา'));leaveOpen=false}}catch(e){ferr(e)}
   rerLeave();return true}
 function rerLeave(){renderMyHome();renderParty()}
