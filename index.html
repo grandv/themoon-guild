@@ -2420,7 +2420,7 @@ document.addEventListener('focusout',e=>{if(e.target.closest&&e.target.closest('
 document.addEventListener('touchstart',e=>{const el=e.target.closest&&e.target.closest('img[data-iid]');if(el){if(!el.closest('button'))e.preventDefault();showTip(el,true)}else if(tipEl&&!tipEl.hidden&&!e.target.closest('#itip'))hideTip()},{passive:false});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')hideTip()});
 window.addEventListener('scroll',()=>{if(!tipPin)hideTip()},{passive:true});
-const hv=()=>{const h=location.hash.slice(1);setView(h==='auction'||h==='party'?h:'dash')};window.addEventListener('hashchange',hv);hv();
+const hv=()=>{const h=location.hash.slice(1);if(h==='leave'){leaveOpen=true;setView('party');const go=(n)=>{const e=$('evTop');if(e&&e.querySelector('.lvbox,.lvbar')){e.scrollIntoView({behavior:'smooth',block:'start'})}else if(n>0)setTimeout(()=>go(n-1),500)};go(20);return}setView(h==='auction'||h==='party'||h==='mine'?(h==='mine'?'dash':h):'dash')};window.addEventListener('hashchange',hv);hv();
 startTr();
 const cfg=FB_CONFIG||ls.get('tm-fb');
 if(cfg){setMeta(null);render();useCloud(cfg).catch(er=>{say('เชื่อมฐานข้อมูล ไม่ได้ ใช้ข้อมูลในเครื่องแทน: '+er.message);useLocal()})}else useLocal();
