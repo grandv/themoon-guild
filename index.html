@@ -1306,7 +1306,7 @@ function botState(){const P=model?model.P:[],wk=monKey(Date.now()),parties={},ev
     parties[k]={title:PBDEF[k].n+(k==='gl_tue'?' (อังคาร/Tue)':k==='gl_thu'?' (พฤหัส/Thu)':''),text:pbTextBi(k,d),groups};
     const m=(PBDEF[k].t||'').match(/(\d{1,2}):(\d{2})/);if(m)events.push({k,dow:DOW[k],h:+m[1],m:+m[2],offset:k==='polar'?0:30})}
   const auction=[];aucItems.filter(it=>it.status!=='closed').forEach(it=>{const free=Math.max(0,(it.qty||1)-(it.winners||[]).length);let cat='other';try{cat=lotInfo(it).cat||it.cat||'other'}catch(e){cat=it.cat||'other'}
-    qOf(it.id).forEach((q,i)=>auction.push({item:it.name,cat,pos:i+1,free,char:q.char}))});
+    aucQ.filter(q=>q.itemId===it.id).sort((a,b)=>(a.ts||0)-(b.ts||0)).forEach((q,i)=>auction.push({item:it.name,cat,pos:i+1,free,char:q.char}))});
   return {roster:P.map(p=>({n:p.name,c:p.cls})),parties,events,auction,
     leaves:leaves.filter(l=>l.week===wk).map(l=>({char:l.char,acts:l.acts||[]})),
     summary:{slow:P.filter(p=>p.slow&&!p.ex).sort((a,b)=>a.slowGain-b.slowGain).map(p=>({n:p.name,gear:p.gear,gain:p.slowGain})),
