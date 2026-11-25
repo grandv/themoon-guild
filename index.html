@@ -1285,20 +1285,46 @@ function say(t){$('msg').textContent=t||''}
 let dcHooks={leave:'',party:'',auction:''};
 const DCRX=/^https:\/\/(discord\.com|discordapp\.com)\/api\/webhooks\/\d+\/[\w-]+$/;
 const dcOn=k=>DCRX.test(dcHooks[k]||'');
-async function dcPost(k,content,embed){if(!dcOn(k))return false;
+async function dcPost(k,content,embed,ids){if(!dcOn(k))return false;
   const chunks=[];let c=content||'';while(c.length>1900){let i=c.lastIndexOf('\n',1900);if(i<500)i=1900;chunks.push(c.slice(0,i));c=c.slice(i)}if(c||!chunks.length)chunks.push(c);
-  try{for(let i=0;i<chunks.length;i++){const body={username:'TheMoon Guild',avatar_url:location.origin+location.pathname.replace(/[^/]*$/,'')+'icon-192.png',allowed_mentions:{parse:[]},content:chunks[i]};if(embed&&i===chunks.length-1)body.embeds=[embed];
+  try{for(let i=0;i<chunks.length;i++){const body={username:'TheMoon Guild',avatar_url:location.origin+location.pathname.replace(/[^/]*$/,'')+'icon-192.png',allowed_mentions:{parse:[],users:(ids||[]).slice(0,100)},content:chunks[i]};if(embed&&i===chunks.length-1)body.embeds=[embed];
       const r=await fetch(dcHooks[k],{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status)}return true}catch(e){console.warn('discord',e);return false}}
 function TB(s){const e=TEN(s);return e===s?s:s+' / '+e}
 function TEN(s){const L=LANG;LANG='en';try{return T(s)}finally{LANG=L}}
 const dBi=ts=>{const d=new Date(ts);return d.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'})+' / '+d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})};
 function pbTextBi(k,d){const L=LANG;LANG='th';let x;try{x=pbText(k,d)}finally{LANG=L}const dd=PBDEF[k].d;
   x=x.replace(dd,TB(dd)).replace(/【ห้องบน】/g,'【ห้องบน / Upper】').replace(/【ห้องล่าง】/g,'【ห้องล่าง / Lower】').replace(' · สัปดาห์ ',' · สัปดาห์ / Week ').replace(/^ปาร์ตี้ (\d+)/gm,'ปาร์ตี้ / Party $1');return x}
+/* ---------- TheMoon Bot (Discord app) ---------- */
+const BOT='https://themoon-bot.themoonguild.workers.dev';let dcLinks={},botLast='',botSyncT=null,botSyncAt=0,botBusy=false;
+const isOff=()=>role==='owner'||role==='officer';
+async function botApi(path,body){try{if(!FB||!FB.auth||!FB.auth.currentUser)return null;const tok=await FB.auth.currentUser.getIdToken();
+  const r=await fetch(BOT+path,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});return r.ok?await r.json():null}catch(e){console.warn('bot',e);return null}}
+function botState(){const P=model?model.P:[],wk=monKey(Date.now()),parties={},events=[];const DOW={gl_tue:2,gl_thu:4,siege:0,polar:0};
+  for(const k of Object.keys(PBDEF)){const d=pbDoc(k),R=k==='polar'?[['ห้องบน / Upper',d.up||[]],['ห้องล่าง / Lower',d.down||[]]]:isGL(k)?[[(d.down||[]).some(p=>p.m.some(Boolean))?'ห้องบน / Upper':'',d.parties||[]],['ห้องล่าง / Lower',d.down||[]]]:[['',d.parties||[]]];
+    const groups=[];R.forEach(([room,L])=>L.forEach((p,i)=>{const ch=(p.m||[]).filter(Boolean);if(ch.length)groups.push({room,name:pName(p,i),chars:ch})}));
+    parties[k]={title:PBDEF[k].n+(k==='gl_tue'?' (อังคาร/Tue)':k==='gl_thu'?' (พฤหัส/Thu)':''),text:pbTextBi(k,d),groups};
+    const m=(PBDEF[k].t||'').match(/(\d{1,2}):(\d{2})/);if(m)events.push({k,dow:DOW[k],h:+m[1],m:+m[2],offset:k==='polar'?0:30})}
+  return {roster:P.map(p=>({n:p.name,c:p.cls})),parties,events,
+    leaves:leaves.filter(l=>l.week===wk).map(l=>({char:l.char,acts:l.acts||[]})),
+    summary:{slow:P.filter(p=>p.slow&&!p.ex).sort((a,b)=>a.slowGain-b.slowGain).map(p=>({n:p.name,gear:p.gear,gain:p.slowGain})),
+      absent:P.filter(p=>p.att&&p.att.tot>=2&&p.att.abs/p.att.tot>=.5).sort((a,b)=>b.att.abs-a.att.abs).map(p=>({n:p.name,abs:p.att.abs,tot:p.att.tot}))}}}
+function syncBot(force){if(!isCloud()||!user||!isOff()||!model)return;clearTimeout(botSyncT);botSyncT=setTimeout(async()=>{let st;try{st=botState()}catch(e){console.warn(e);return}const j=JSON.stringify(st);if(!force&&j===botLast)return;
+  const r=await botApi('/api/sync',st);if(r&&r.ok){botLast=j;botSyncAt=Date.now();renderDc()}},force?0:4000)}
+async function loadLinks(){const r=await botApi('/api/links');if(r&&typeof r==='object'){dcLinks=r;renderDc();try{renderSlow()}catch(e){}}}
+const linkOf=n=>{const k=Object.keys(dcLinks).find(x=>x.toLowerCase()===String(n).toLowerCase());return k?dcLinks[k]:null};
+async function importBotLeaves(){if(!isOff()||botBusy)return;botBusy=true;try{const P=await botApi('/api/pending');if(!Array.isArray(P)||!P.length)return;const done=[];
+  for(const x of P){try{const c=canon(x.char),old=leaves.find(l=>canon(l.char)===c&&l.week===x.week);
+    if(old){const acts=[...new Set([...(old.acts||[]),x.act])];await FB.db.doc('leaves/'+old.id).update({acts,ts:Date.now()})}
+    else await FB.db.doc(`leaves/${x.week}__manual:${c}`).set({char:c,email:'',week:x.week,acts:[x.act],ts:Date.now(),by:'discord'});done.push(x.id)}catch(e){console.warn(e)}}
+  if(done.length){await botApi('/api/pending/ack',{ids:done});say(`${T('นำเข้าการลาจาก Discord')} ${done.length} ${T('รายการ')}`)}}finally{botBusy=false}}
 const dcEmb=(title,desc,color)=>({title,description:desc||'',color:color||0xd6a24f,timestamp:new Date().toISOString(),footer:{text:'TheMoon Guild'}});
 function renderDc(){const el=$('dcBox');if(!el)return;if(!isCloud()||!user||!stfx()){el.innerHTML='';return}
   const own=role==='owner',L=[['leave','📋 '+T('แจ้งลา')],['party','⚔️ '+T('ปาร์ตี้')],['auction','💰 '+T('ประมูล')]];
-  el.innerHTML=`<p class="note" style="margin-top:0">${T('เว็บจะโพสต์แจ้งเตือนเข้าห้อง Discord ของกิลด์อัตโนมัติ')}</p>`+L.map(([k,n])=>`<div class="row" style="gap:8px;align-items:center;margin:6px 0"><b style="min-width:7em">${n}</b>${own?`<input id="dc_${k}" type="password" autocomplete="off" placeholder="Webhook URL" value="${esc(dcHooks[k]||'')}" style="flex:1;min-width:10em">`:''}<span class="tag ${dcOn(k)?'t-back':''}">${dcOn(k)?'✓ '+T('เชื่อมแล้ว'):T('ยังไม่เชื่อม')}</span><button class="sm ghost" data-dctest="${k}" ${dcOn(k)?'':'disabled'}>${T('ทดสอบ')}</button></div>`).join('')+(own?`<button class="sm pri" id="dcSave">${T('บันทึก')}</button>`:'')}
-async function dcAction(t){const b=t.closest('[data-dctest],#dcSave');if(!b)return false;
+  el.innerHTML=`<p class="note" style="margin-top:0">${T('เว็บจะโพสต์แจ้งเตือนเข้าห้อง Discord ของกิลด์อัตโนมัติ')}</p>`+L.map(([k,n])=>`<div class="row" style="gap:8px;align-items:center;margin:6px 0"><b style="min-width:7em">${n}</b>${own?`<input id="dc_${k}" type="password" autocomplete="off" placeholder="Webhook URL" value="${esc(dcHooks[k]||'')}" style="flex:1;min-width:10em">`:''}<span class="tag ${dcOn(k)?'t-back':''}">${dcOn(k)?'✓ '+T('เชื่อมแล้ว'):T('ยังไม่เชื่อม')}</span><button class="sm ghost" data-dctest="${k}" ${dcOn(k)?'':'disabled'}>${T('ทดสอบ')}</button></div>`).join('')+(own?`<button class="sm pri" id="dcSave">${T('บันทึก')}</button>`:'')
+  +`<div class="cmpbox" style="margin-top:12px"><b>🤖 TheMoon Bot</b><p class="note" style="margin:4px 0">${T('ผูกบัญชี Discord แล้ว')} <b>${Object.keys(dcLinks).length}</b> ${T('คน')} · ${T('ส่งข้อมูลให้บอทล่าสุด')} ${botSyncAt?new Date(botSyncAt).toLocaleTimeString(LOCALE[LANG]||'th-TH',{hour:'2-digit',minute:'2-digit'}):'—'}<br>${T('บอทเตือนก่อน GL และศึกชิงปราสาท 30 นาที และส่งสรุปให้หัวหน้าทุกวันจันทร์ 10:00')}</p><button class="sm" id="botSync">🔄 ${T('ส่งข้อมูลให้บอทตอนนี้')}</button> <button class="sm" id="botSum">📊 ${T('ส่งสรุปหัวหน้าตอนนี้')}</button></div>`}
+async function dcAction(t){const b=t.closest('[data-dctest],#dcSave,#botSync,#botSum');if(!b)return false;
+  if(b.id==='botSync'){botLast='';syncBot(true);await loadLinks();say(T('ส่งข้อมูลให้บอทแล้ว'));return true}
+  if(b.id==='botSum'){b.disabled=true;botLast='';const st=botState();await botApi('/api/sync',st);botLast=JSON.stringify(st);const r=await botApi('/api/summary',{});say(r&&r.ok?T('ส่งสรุปเข้าห้องหัวหน้าแล้ว'):T('ส่งไม่สำเร็จ'));b.disabled=false;return true}
   if(b.id==='dcSave'){const v={};for(const k of ['leave','party','auction']){const x=($('dc_'+k).value||'').trim();if(x&&!DCRX.test(x)){say(T('ลิงก์ Webhook ไม่ถูกต้อง'));return true}v[k]=x}
     try{await FB.db.doc('meta/discord').set({leave:v.leave,ts:Date.now()});await FB.db.doc('dcsec/hooks').set({party:v.party,auction:v.auction,ts:Date.now()});Object.assign(dcHooks,v);say(T('บันทึกแล้ว'));renderDc()}catch(e){ferr(e)}return true}
   const ok=await dcPost(b.dataset.dctest,'',dcEmb('✅ ทดสอบการเชื่อมต่อจากเว็บกิลด์ / Test message from the guild website','',0x2f9e8c));say(ok?T('ส่งข้อความทดสอบแล้ว — ดูในห้อง Discord'):T('ส่งไม่สำเร็จ'));return true}
@@ -1380,7 +1406,7 @@ function build(){
 }
 
 /* ---------- render ---------- */
-function render(){
+function render(){try{syncBot()}catch(e){}
   build();renderStore();syncSettings();applyRole();renderAccess();if($('linkBox'))$('linkBox').innerHTML=isCloud()&&role==='owner'&&(!(myReq&&myReq.char)||editChar)?myCharBox():'';if(view==='auction')renderAuction();if(view==='party')renderParty();
   if(!model){$('kpis').innerHTML='';$('title').textContent='TheMoon · ภาพรวมกิลด์';$('subtitle').textContent='ยังไม่มีข้อมูล — กด "อัปโหลด CSV" หรือลากไฟล์ CSV มาวางในหน้านี้ (หลายไฟล์พร้อมกันได้)';
     for(const id of ['classList','kick','improved','moves','rows','kicks','snaps'])$(id).innerHTML='';$('classList').innerHTML='<div class="empty">ยังไม่มีข้อมูล</div>';drawChart();return}
@@ -1410,7 +1436,7 @@ function renderSlow(){const el=$('slowList');if(!el||!model)return;const W=meta.
   el.innerHTML=L.length?L.map(p=>{const w=W[p.name]||[],last=w[w.length-1],dd=last?Math.floor((Date.now()-last)/DAY):null,again=last&&dd>=7;
     return `<li class="${again?'slowagain':''}">${ico(p.cls,30)}<div class="grow" style="min-width:0"><button class="lnk" data-p="${esc(p.name)}"><b>${esc(p.name)}</b></button> <span class="note">${esc(p.cls)}</span>
       <div class="why">Gear <b>${fmt(p.gear)}</b> · ${Math.round(p.slowSpan)} ${T('วัน')} <b class="${p.slowGain>0?'':'dn'}">${sgn(p.slowGain)}</b>${p.att.tot?` · ${T('เข้าร่วม')} ${p.att.pres}/${p.att.tot}`:''}${last?` · ${again?'⚠ ':''}${T('เตือนแล้ว')} ${w.length} ${T('ครั้ง')} (${dd} ${T('วันก่อน')})`:''}</div></div>
-      <button class="sm" data-slowmsg="${esc(p.name)}">📋 ${T('ข้อความเตือน')}</button><button class="sm ghost" data-warned="${esc(p.name)}">✓ ${T('เตือนแล้ว')}</button></li>`}).join(''):`<li class="note">${T('ไม่มีใครเข้าเกณฑ์ 🎉')}</li>`}
+      <button class="sm" data-slowmsg="${esc(p.name)}">📋 ${T('ข้อความเตือน')}</button>${linkOf(p.name)?`<button class="sm" data-dmwarn="${esc(p.name)}">📨 ${T('ส่ง DM')}</button>`:''}<button class="sm ghost" data-warned="${esc(p.name)}">✓ ${T('เตือนแล้ว')}</button></li>`}).join(''):`<li class="note">${T('ไม่มีใครเข้าเกณฑ์ 🎉')}</li>`}
 function slowMsg(n){const p=model.P.find(x=>x.name===n);if(!p)return '';return `สวัสดี ${p.name} 🌙\nช่วง ${Math.round(p.slowSpan)} วันที่ผ่านมา Gear ของคุณอยู่ที่ ${fmt(p.gear)} (ขึ้น ${sgn(p.slowGain)}) ซึ่งยังต่ำกว่าที่กิลต้องการสำหรับ Guild League (${kfmt(S.lowGear)}+)\nกิลเรากำลังไล่คะแนนกิลอื่นอยู่ ช่วยอัพตัวละครหน่อยนะ — ตีบวก/การ์ด/รีลิก ถ้าไม่รู้จะเริ่มตรงไหน ทักหัวหน้าหรือรองหัวหน้าได้เลย เรายินดีช่วย 💪`}
 function renderKick(){
   const K=kickList();$('kickN').textContent=K.length?`(${K.length} คน)`:'';
@@ -1747,6 +1773,7 @@ function startData(){
   dataUnsubs.push(db.doc('meta/state').onSnapshot(d=>{setMeta(d.exists?d.data():null);render()},()=>{}));
   dataUnsubs.push(db.collection('meta').onSnapshot(q=>{aucItems=[];events=[];const atts=[];q.docs.forEach(d=>{const x={...d.data(),id:d.id};if(d.id.startsWith('auc_'))aucItems.push(x);else if(d.id.startsWith('evt_'))events.push(x);else if(d.id.startsWith('pb_')){const k=d.id.slice(3);if(!(pbDrag&&pbDrag.el))pbData[k]=d.data()}else if(d.id.startsWith('att_'))atts.push(x);else if(d.id==='pbtpl')pbTpls=(d.data().list)||[];else if(d.id==='discord')dcHooks.leave=d.data().leave||''});const ch=JSON.stringify(atts.map(a=>a.id+a.ts))!==JSON.stringify(attRecs.map(a=>a.id+a.ts));attRecs=atts;renderAuction();renderParty();if(ch)render()},()=>{}));
   if(role==='owner'||role==='officer')dataUnsubs.push(db.doc('dcsec/hooks').onSnapshot(d=>{const x=d.exists?d.data():{};dcHooks.party=x.party||'';dcHooks.auction=x.auction||'';renderDc();renderParty()},()=>{}));
+  if(role==='owner'||role==='officer'){setTimeout(()=>{loadLinks();importBotLeaves();syncBot(true)},5000);const iv=setInterval(()=>{if(!dataOn)return clearInterval(iv);importBotLeaves();loadLinks()},5*60e3)}else setTimeout(loadLinks,5000);
   dataUnsubs.push(db.collection('auction_queue').onSnapshot(q=>{aucQ=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.q=false;renderAuction()},()=>{rulesOld.q=true;renderAuction()}));
   dataUnsubs.push(db.collection('leaves').onSnapshot(q=>{leaves=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.l=false;
     if(stfx())leaves.filter(l=>l.reason).forEach(l=>{db.doc('leave_notes/'+l.id).set({reason:l.reason,email:l.email||'',char:l.char,ts:l.ts||Date.now()}).then(()=>db.doc('leaves/'+l.id).set({...Object.fromEntries(Object.entries(l).filter(([k])=>k!=='reason'&&k!=='id'))})).catch(()=>{})});
@@ -2089,7 +2116,7 @@ function polarNewWeek(){
 function pbText(k,d){const head=`${PBDEF[k].n} · ${T(PBDEF[k].d)} ${PBDEF[k].t}`;const sec=(t,P)=>(t?`\n【${t}】`:'')+P.map((p,i)=>p.m.some(Boolean)?`\n${pName(p,i)}${p.lock?' 🔒':''}: ${p.m.filter(Boolean).map(c=>`${c} (${RSHORT[roleC(c)]})`).join(', ')}`:'').join('');
   if(isGL(k))return head+sec(T('ห้องบน'),d.parties)+'\n'+sec(T('ห้องล่าง'),d.down);
   return k==='polar'?head+` · ${T('สัปดาห์')} ${d.week||sunKey()}`+sec(T('ห้องบน'),d.up)+'\n'+sec(T('ห้องล่าง'),d.down):head+sec('',d.parties)}
-function renderParty(){
+function renderParty(){try{syncBot()}catch(e){}
   if(!$('pbBoard'))return;
   if(!isCloud()){$('pbBoard').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อมฐานข้อมูล')}</p>`;return}
   const staff=stfx(),k=pbKey,d=pbDoc(k),me=myChar(),def=PBDEF[k];
@@ -2174,7 +2201,7 @@ function pbAction(t){
       if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=a==='tplload'?T('ยืนยันโหลด (แทนที่ของเดิม)'):T('ยืนยันลบ');return true}
       if(a==='tpldel'){FB.db.doc('meta/pbtpl').set({list:pbTpls.filter(x=>x.id!==id)}).catch(ferr);return true}
       const cp=P=>JSON.parse(JSON.stringify(P||[])).map(p=>({...p,id:uid()}));const nd={...d,parties:cp(t.parties)};if(isGL(k))nd.down=cp(t.down);pbSave(k,nd);say(T('โหลดแม่แบบแล้ว — กด ↶ ย้อนกลับได้'));return true}
-    if(a==='dcpost'){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('กดอีกครั้งเพื่อประกาศ');return true}el.disabled=true;dcPost('party','```\n'+pbTextBi(k,d)+'\n```').then(ok=>{say(ok?T('ประกาศลง Discord แล้ว'):T('ส่งไม่สำเร็จ'));renderParty()});return true}
+    if(a==='dcpost'){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('กดอีกครั้งเพื่อประกาศ');return true}el.disabled=true;(()=>{const lv=new Set(leaves.filter(l=>l.week===monKey(Date.now())&&(l.acts||[]).includes(k)).map(l=>canon(l.char)));const all=[...(d.parties||[]),...(d.down||[]),...(d.up||[])].flatMap(p=>(p.m||[]).filter(Boolean)).filter(c=>!lv.has(canon(c)));const ids=[...new Set(all.map(linkOf).filter(Boolean))];return dcPost('party',(ids.length?ids.map(x=>`<@${x}>`).join(' ')+'\n':'')+'```\n'+pbTextBi(k,d)+'\n```',null,ids)})().then(ok=>{say(ok?T('ประกาศลง Discord แล้ว'):T('ส่งไม่สำเร็จ'));renderParty()});return true}
     if(a==='text'){navigator.clipboard.writeText(pbText(k,d)).then(()=>say(T('คัดลอกแล้ว — วางใน Discord/LINE ได้เลย')),()=>say(T('คัดลอกไม่ได้ในหน้านี้')));return true}
     if(!staff)return true;
     const L=el.dataset.r?pbList(k,d,el.dataset.r):null;
@@ -2332,8 +2359,10 @@ $('range').onclick=e=>{const b=e.target.closest('button');if(!b)return;range=+b.
 $('pick').onchange=e=>{const n=e.target.value;picked=picked||[];if(model&&model.P.some(p=>p.name===n)&&!picked.includes(n)){picked.push(n);if(picked.length>8)picked.shift()}e.target.value='';drawChart()};
 document.addEventListener('click',e=>{
   if(FB&&user&&e.target.closest('[data-lv],[data-lvwk]')){leaveAction(e.target);return}
-  if(FB&&user&&e.target.closest('[data-dctest],#dcSave')){dcAction(e.target);return}
+  if(FB&&user&&e.target.closest('[data-dctest],#dcSave,#botSync,#botSum')){dcAction(e.target);return}
   if(FB&&user&&(e.target.closest('#auction')&&aucActionSync(e.target)||e.target.closest('#party')&&partyActionSync(e.target)))return;
+  {const dw=e.target.closest('[data-dmwarn]');if(dw){const n=dw.dataset.dmwarn;if(dw.dataset.arm!=='1'){dw.dataset.arm='1';dw.textContent=T('กดอีกครั้งเพื่อส่ง');return}dw.disabled=true;
+    botApi('/api/dm',{chars:[n],title:'🌙 ข้อความจากหัวหน้ากิล TheMoon / Message from TheMoon leaders',text:slowMsg(n)}).then(r=>{if(r&&r.sent&&r.sent.length){meta.warns=meta.warns||{};(meta.warns[n]=meta.warns[n]||[]).push(Date.now());saveMeta();say(T('ส่ง DM เตือนทาง Discord แล้ว'))}else{say(T('ส่งไม่สำเร็จ — คนนี้อาจปิดรับข้อความส่วนตัว'));dw.disabled=false}});return}}
   {const sm=e.target.closest('[data-slowmsg]');if(sm){navigator.clipboard.writeText(slowMsg(sm.dataset.slowmsg)).then(()=>say(T('คัดลอกข้อความแล้ว — ส่งให้เขาใน Discord/LINE ได้เลย')),()=>say(T('คัดลอกไม่ได้ในหน้านี้')));return}}
   {const wd=e.target.closest('[data-warned]');if(wd){const n=wd.dataset.warned;meta.warns=meta.warns||{};(meta.warns[n]=meta.warns[n]||[]).push(Date.now());saveMeta();say(T('บันทึกว่าเตือนแล้ว'));return}}
   {const tb=e.target.closest('[data-tbl]');if(tb){const v=tb.dataset.tbl;tblLimit=v==='all'?1e9:v==='less'?20:tblLimit+20;renderTable();if(v==='less')$('members').scrollIntoView({behavior:'smooth'});return}}
