@@ -236,6 +236,7 @@ button.ok.arm,button[data-ungive][data-arm="1"]{background:var(--good);color:#ff
 .lotmenu[open]{flex-basis:100%;margin-left:0}.lotmenu[open] summary{display:inline-block;margin-bottom:8px}.lotmenu-b{display:flex;flex-direction:column;gap:8px}
 .cattag{font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:99px;background:var(--card2);border:1px solid var(--line);white-space:nowrap}
 #aucTable table td,#aucHist table td{vertical-align:middle}
+.bq{max-height:230px;overflow:auto}.bqr{display:flex;gap:10px;align-items:center;padding:5px 2px;border-bottom:1px solid var(--line)}.bqr:last-child{border:0}.bqi{display:flex;align-items:center;gap:6px;min-width:150px;max-width:200px;font-size:13px}.bqi img{width:22px;height:22px}.bqr[hidden]{display:none}@media(max-width:640px){.bqr{flex-direction:column;align-items:flex-start}}
 .qchips{display:flex;flex-wrap:wrap;gap:4px}.qchip{font-size:12.5px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}.qchip b{opacity:.65;margin-right:2px}.qchip.win{border-color:#3a9;}.qchip.me{background:rgba(120,160,255,.18);border-color:#79f}.qchip.hit{background:rgba(255,200,60,.25);border-color:#fc4}
 .catbar{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;margin-bottom:6px;scrollbar-width:thin}
 .catt{flex:none;display:flex;align-items:center;gap:10px;min-width:150px;padding:8px 14px 8px 8px;border-radius:16px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;position:relative;min-height:0;transition:border-color .12s,transform .12s}
@@ -531,6 +532,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
       <label>วันที่ประมูล<input id="aucDate" type="date"></label>
       <label style="grid-column:1/-1">หมายเหตุ<input id="aucNote" placeholder="เช่น กติกา หรือราคาเริ่ม"></label></div>
     <div class="row" style="margin-top:10px"><button class="pri" id="aucAddBtn">เพิ่มเข้าประมูล</button></div></details>
+  <div class="card" id="aucBoard" style="margin-top:14px;padding:12px 14px"></div>
   <div class="row" style="margin:14px 0 8px"><div class="seg" id="aucTab"><button data-t="lots" aria-pressed="true">รายการประมูล</button><button data-t="table" aria-pressed="false">ตารางคิวรวม</button><button data-t="hist" aria-pressed="false">ประวัติผู้ได้รับ</button></div></div>
   <div class="row" id="aucFilters" style="margin-bottom:12px"><div class="seg" id="aucSeg"><button data-f="open" aria-pressed="true">เปิดจอง</button><button data-f="closed" aria-pressed="false">ปิดแล้ว</button><button data-f="all" aria-pressed="false">ทั้งหมด</button></div></div>
   <div class="catbar" id="aucCats" translate="no"></div>
@@ -1977,7 +1979,7 @@ let pairHue={};
 function setPairHues(){const ks=[...new Set(aucItems.map(it=>pairKey(it.itemId)).filter(Boolean))].sort(),n=ks.length;pairHue={};ks.forEach((k,i)=>{const h=Math.round(i*360/Math.max(n,1)+200)%360;pairHue[k]=[h,(h+(i%2?70:-70)+360)%360]})}
 const pairBg=pr=>`--ph:${pr.h};--ph2:${pr.h2}`;
 function gotCount(){const now=Date.now(),got={};aucItems.forEach(it=>(it.winners||[]).forEach(w=>{if(now-w.ts<30*DAY)got[w.char]=(got[w.char]||0)+1}));return got}
-function aucTqF(v){window.__aucTq=v;const k=(v||'').trim().toLowerCase();document.querySelectorAll('#aucTable tr[data-bq]').forEach(r=>{r.hidden=!!k&&!r.dataset.bq.includes(k)});document.querySelectorAll('#aucTable .qchip').forEach(c=>c.classList.toggle('hit',!!k&&c.textContent.toLowerCase().includes(k)))}
+function aucTqF(v){window.__aucTq=v;const k=(v||'').trim().toLowerCase();document.querySelectorAll('#aucBoard [data-bq]').forEach(r=>{r.hidden=!!k&&!r.dataset.bq.includes(k)});document.querySelectorAll('#aucBoard .qchip').forEach(c=>c.classList.toggle('hit',!!k&&c.textContent.toLowerCase().includes(k)))}
 function renderAuction(){try{syncBot()}catch(e){}
   if(!$('aucList'))return;
   if(!isCloud()){$('aucList').innerHTML=`<p class="note">${T('ใช้ได้เมื่อเชื่อมฐานข้อมูล')}</p>`;return}
@@ -2019,18 +2021,17 @@ function renderAuction(){try{syncBot()}catch(e){}
       <section class="aucdet"><button class="sm ghost aucback" data-aucback="1">← ${T('กลับไปรายการ')}</button>${sel>=0?CARDS[sel]:`<div class="empty">${T('เลือกไอเทมทางซ้าย')}</div>`}</section></div>`;
     if(focus){const q=$('aucQs');q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
   }
-  if(aucTab==='table'&&($('aucTable').dataset.mode||'item')==='item'){
-    const open=aucItems.filter(it=>it.status!=='closed').sort((a,b)=>a.ts-b.ts);const tot=open.reduce((n,it)=>n+qOf(it.id).length,0);
-    $('aucTable').innerHTML=`<div class="head"><h2>${T('กระดานคิวรวม')} <span class="note">(${open.length} ${T('ไอเทม')} · ${tot} ${T('คิว')})</span></h2><div class="row" style="gap:8px;flex-wrap:wrap"><input id="aucTq" placeholder="${T('ค้นหาชื่อคน / ไอเทม')}" oninput="aucTqF(this.value)" value="${esc(window.__aucTq||'')}" style="min-width:180px"><div class="seg"><button data-tmode="item" aria-pressed="true">${T('แยกตามไอเทม')}</button><button data-tmode="list" aria-pressed="false">${T('รายคิว')}</button></div></div></div>
-    <div class="scroll"><table><thead><tr><th></th><th>${T('ไอเทม')}</th><th class="r">${T('ว่าง')}</th><th>${T('ลำดับคิว')}</th></tr></thead><tbody>
-    ${open.length?open.map(it=>{const inf=lotInfo(it),Q=qOf(it.id),free=Math.max(0,(it.qty||1)-(it.winners||[]).length),pr=pairOf(it);const txt=(inf.name+' '+Q.map(q=>q.char).join(' ')).toLowerCase();
-      return `<tr data-bq="${esc(txt)}"><td class="imgc" ${pr?`style="box-shadow:inset 4px 0 0 hsl(${pr.h} 75% 60%)"`:''}>${imgTag(inf,'sm')}</td><td><b>${esc(inf.name)}</b></td><td class="n">${free}</td><td>${Q.length?`<div class="qchips">${Q.map((q,i)=>{const mine=q.email===user.email||canon(q.char)===canon(me);return `<span class="qchip${mine?' me':''}${i<free?' win':''}"><b>${i+1}</b> ${esc(q.char)}</span>`}).join('')}</div>`:`<span class="note">${T('ยังไม่มีคนจอง')}</span>`}</td></tr>`}).join(''):`<tr><td colspan="4" class="empty">${T('ยังไม่มีไอเทมที่เปิดประมูล')}</td></tr>`}</tbody></table></div>`;
-    aucTqF(window.__aucTq||'');
+  {const foc=document.activeElement&&document.activeElement.id==='aucTq';
+    const open=aucItems.filter(it=>it.status!=='closed').sort((a,b)=>a.ts-b.ts).filter(it=>qOf(it.id).length);const tot=open.reduce((n,it)=>n+qOf(it.id).length,0);
+    $('aucBoard').innerHTML=`<div class="head" style="margin-bottom:6px"><h2 style="font-size:16px">📋 ${T('ใครจองอะไรอยู่บ้าง')} <span class="note">(${open.length} ${T('ไอเทม')} · ${tot} ${T('คิว')})</span></h2><input id="aucTq" placeholder="${T('ค้นหาชื่อคน / ไอเทม')}" oninput="aucTqF(this.value)" value="${esc(window.__aucTq||'')}" style="min-width:160px;max-width:220px"></div>
+    <div class="bq">${open.length?open.map(it=>{const inf=lotInfo(it),Q=qOf(it.id),free=Math.max(0,(it.qty||1)-(it.winners||[]).length);const txt=(inf.name+' '+Q.map(q=>q.char).join(' ')).toLowerCase();
+      return `<div class="bqr" data-bq="${esc(txt)}"><span class="bqi">${imgTag(inf,'sm')}<b>${esc(inf.name)}</b>${(it.qty||1)>1?`<span class="note"> ×${free}</span>`:''}</span><span class="qchips">${Q.map((q,i)=>{const mine=q.email===user.email||canon(q.char)===canon(me);return `<span class="qchip${mine?' me':''}${i<free?' win':''}"><b>${i+1}</b> ${esc(q.char)}</span>`}).join('')}</span></div>`}).join(''):`<div class="note" style="padding:8px">${T('ยังไม่มีคนจอง')}</div>`}</div>`;
+    aucTqF(window.__aucTq||'');if(foc){const i=$('aucTq');i.focus();i.setSelectionRange(i.value.length,i.value.length)}
   }
-  else if(aucTab==='table'){
+  if(aucTab==='table'){
     const rows=[];aucItems.filter(it=>it.status!=='closed').sort((a,b)=>a.ts-b.ts).forEach(it=>{qOf(it.id).forEach((q,i)=>rows.push({it,q,i}))});
     const onlyMe=$('aucTable').dataset.me==='1',R=onlyMe?rows.filter(r=>r.q.email===user.email||canon(r.q.char)===canon(me)):rows;
-    $('aucTable').innerHTML=`<div class="head"><h2>${T('ตารางคิวรวม')} <span class="note">(${R.length})</span></h2><div class="seg"><button data-tmode="item" aria-pressed="false">${T('แยกตามไอเทม')}</button><button data-tmode="list" aria-pressed="true">${T('รายคิว')}</button></div><div class="seg"><button data-tme="0" aria-pressed="${!onlyMe}">${T('ทุกคน')}</button><button data-tme="1" aria-pressed="${onlyMe}">${T('คิวของฉัน')}</button></div></div>
+    $('aucTable').innerHTML=`<div class="head"><h2>${T('ตารางคิวรวม')} <span class="note">(${R.length})</span></h2><div class="seg"><button data-tme="0" aria-pressed="${!onlyMe}">${T('ทุกคน')}</button><button data-tme="1" aria-pressed="${onlyMe}">${T('คิวของฉัน')}</button></div></div>
     <div class="scroll"><table><thead><tr><th></th><th>${T('ไอเทม')}</th><th class="r">${T('คิว')}</th><th>${T('ตัวละคร')}</th><th>${T('อาชีพ')}</th><th class="r">Gear</th><th>${T('จองเมื่อ')}</th><th class="r">${T('ได้ไปแล้ว (30 วัน)')}</th></tr></thead><tbody>
     ${R.length?R.map(({it,q,i})=>{const inf=lotInfo(it),p=pInfo(q.char);const pr=pairOf(it);return `<tr class="${q.email===user.email?'r1':''}"><td class="imgc" ${pr?`style="box-shadow:inset 4px 0 0 hsl(${pr.h} 75% 60%)"`:''}>${imgTag(inf,'sm')}</td><td><b>${esc(inf.name)}</b></td><td class="n"><b>#${i+1}</b></td><td><b>${esc(q.char)}</b></td><td>${p?`<span class="cls">${ico(p.cls,20)}${esc(p.cls)}</span>`:'–'}</td><td class="n">${p?fmt(p.gear):'–'}</td><td class="note">${dtTh(q.ts)}</td><td class="n">${got[q.char]||0}</td></tr>`}).join(''):`<tr><td colspan="8" class="empty">${T('ยังไม่มีคนจอง')}</td></tr>`}</tbody></table></div>`;
   }
