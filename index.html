@@ -143,7 +143,9 @@ button.big{font-size:16px;padding:9px 18px;min-height:42px}
 .okc{color:var(--good);font-weight:700}.noc{color:var(--bad);font-weight:700}
 
 body[data-view="auction"] main>section:not(.v-auction):not(#gate),body[data-view="party"] main>section:not(.v-party):not(#gate),body[data-view="dash"] main>section.v-auction,body[data-view="dash"] main>section.v-party,body:not([data-view]) main>section.v-auction,body:not([data-view]) main>section.v-party{display:none!important}
-body[data-view="auction"] #msg,body[data-view="party"] #msg{display:block}
+body[data-view="auction"] #msg,body[data-view="party"] #msg,body[data-view="gl"] #msg{display:block}
+body:not([data-view="gl"]) main>section.v-gl{display:none!important}body[data-view="gl"] main>section:not(.v-gl):not(#gate){display:none!important}
+#gl .card{margin-top:12px}.glchips{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 4px}.glc{font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:inherit;cursor:pointer}.glc.on{background:rgba(120,140,255,.22);border-color:#89f}.glc i{font-style:normal;font-weight:700}.glc.win i,.glr.win{color:#4d9}.glc.lose i,.glr.lose{color:#f77}.glcmp{width:100%}.glcmp td{padding:5px 6px}.glbar{height:8px;border-radius:5px;background:rgba(255,120,120,.25);overflow:hidden}.glbar span{display:block;height:100%;background:#4c9}.glbar span.b{background:#e87}.glins{margin:0;padding-left:18px;line-height:1.8}.glmvp{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.glp{display:flex;align-items:center;gap:5px;padding:3px 0;font-size:13.5px}.gls{display:inline-block;min-width:28px;text-align:center;padding:1px 6px;border-radius:6px;background:rgba(120,140,255,.18);font-weight:700}.gltbl th[data-gls],.gltbl th[data-glas]{cursor:pointer;white-space:nowrap}.gltbl tr.low td{background:rgba(255,90,90,.08)}.glk b{font-size:24px}
 body.localmode .cloudonly{display:none}
 nav a.on{background:var(--accbg);color:var(--acc);font-weight:600}
 .itimg{width:56px;height:56px;border-radius:12px;background:var(--card2);border:2px solid var(--qc,var(--line));object-fit:contain;flex:none}
@@ -418,7 +420,7 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
 <body>
 <div class="bar"><div class="wrap">
   <div class="brand"><span class="moon"></span>TheMoon</div>
-  <nav><a href="#overview" data-view="dash"><span class="nv-a">ภาพรวม</span><span class="nv-m">หน้าของฉัน</span></a><a href="#classes" data-view="dash">อาชีพ</a><a href="#members" data-view="dash">สมาชิก</a><a href="#log" class="riskonly" data-view="dash">ประวัติ</a><a href="#auction" data-view="auction" class="cloudonly">ประมูล</a><a href="#party" data-view="party" class="cloudonly">ปาร์ตี้</a><a href="#access" class="staffonly" id="navAccess" data-view="dash" hidden>สิทธิ์เข้าดู <span id="pendN"></span></a><a href="#settings" class="staffonly" data-view="dash">ตั้งค่า</a></nav>
+  <nav><a href="#overview" data-view="dash"><span class="nv-a">ภาพรวม</span><span class="nv-m">หน้าของฉัน</span></a><a href="#classes" data-view="dash">อาชีพ</a><a href="#members" data-view="dash">สมาชิก</a><a href="#log" class="riskonly" data-view="dash">ประวัติ</a><a href="#auction" data-view="auction" class="cloudonly">ประมูล</a><a href="#gl" data-view="gl" class="cloudonly">Guild League</a><a href="#party" data-view="party" class="cloudonly">ปาร์ตี้</a><a href="#access" class="staffonly" id="navAccess" data-view="dash" hidden>สิทธิ์เข้าดู <span id="pendN"></span></a><a href="#settings" class="staffonly" data-view="dash">ตั้งค่า</a></nav>
   <div class="right"><span id="langTop"></span><span class="pill hide-s" id="storePill">เก็บในเครื่องนี้</span><span id="viewAs" hidden></span><span id="auth"></span>
     <label class="btn pri staffonly">อัปโหลด CSV<input type="file" id="file" accept=".csv,text/csv" multiple></label></div>
 </div></div>
@@ -541,6 +543,10 @@ body.dragging::after{content:'วางไฟล์ CSV ที่นี่ (ห�
   <div class="card" id="aucHist" hidden></div>
 </section>
 
+<section id="gl" class="v-gl" style="margin-top:0">
+  <div class="head" style="margin:6px 0 10px"><div><h1 style="margin:0">⚔️ Guild League</h1><div class="note">สถิติการแข่งแต่ละเกม · เทียบกับกิลด์คู่แข่ง · คะแนนรายคน · ร่างจัดทีม</div></div></div>
+  <div id="glBody"></div>
+</section>
 <section id="party" class="v-party" style="margin-top:0">
   <div class="hero"><div><h1>จัดปาร์ตี้กิจกรรม</h1><p>ลากชื่อสมาชิกจากด้านซ้ายไปวางในช่อง · ครบ 5 คนแล้วปาร์ตี้จะล็อคไว้จนกว่าจะปลดล็อค · ใช้ซ้ำได้ทุกสัปดาห์</p></div></div>
   <div class="warnbox pvb" style="margin-top:14px">👁 <b>กำลังดูในมุมมองสมาชิก</b> <button class="sm" data-viewas="admin" style="margin-left:8px">กลับเป็น Admin</button></div>
@@ -1777,14 +1783,14 @@ async function useCloud(cfg){
     },e=>setGate('error',e.message)));
   });
 }
-function stopData(){const had=dataOn||snaps.length;aucItems=[];leaves=[];events=[];aucQ=[];signups=[];dataUnsubs.forEach(f=>{try{f()}catch(e){}});dataUnsubs=[];dataOn=false;snaps=[];members=[];rosterSynced=false;setMeta(null);closeProfileSafe();if(had)render()}
+function stopData(){const had=dataOn||snaps.length;aucItems=[];leaves=[];events=[];aucQ=[];glMatches=[];signups=[];dataUnsubs.forEach(f=>{try{f()}catch(e){}});dataUnsubs=[];dataOn=false;snaps=[];members=[];rosterSynced=false;setMeta(null);closeProfileSafe();if(had)render()}
 function closeProfileSafe(){try{if(!$('modal').hidden)closeProfile()}catch(e){}}
 function startData(){
   if(dataOn){setGate(null);return}dataOn=true;setGate(null);const db=FB.db;
   const t=setTimeout(()=>say('ยังโหลดข้อมูลจากคลาวด์ไม่ได้ ตรวจอินเทอร์เน็ต'),10000);
   dataUnsubs.push(db.collection('snapshots').onSnapshot(q=>{clearTimeout(t);snaps=q.docs.map(d=>{const x=d.data();if(x&&typeof x.rows==='string'){try{x.rows=JSON.parse(x.rows)}catch(e){x.rows=null}}return x}).filter(valid).sort(byTs);render();syncRoster()},e=>{clearTimeout(t);say('อ่านข้อมูลไม่ได้: '+(e.code==='permission-denied'?'ไม่มีสิทธิ์':e.message))}));
   dataUnsubs.push(db.doc('meta/state').onSnapshot(d=>{setMeta(d.exists?d.data():null);render()},()=>{}));
-  dataUnsubs.push(db.collection('meta').onSnapshot(q=>{aucItems=[];events=[];const atts=[];q.docs.forEach(d=>{const x={...d.data(),id:d.id};if(d.id.startsWith('auc_'))aucItems.push(x);else if(d.id.startsWith('evt_'))events.push(x);else if(d.id.startsWith('pb_')){const k=d.id.slice(3);if(!(pbDrag&&pbDrag.el))pbData[k]=d.data()}else if(d.id.startsWith('att_'))atts.push(x);else if(d.id==='pbtpl')pbTpls=(d.data().list)||[];else if(d.id==='discord')dcHooks.leave=d.data().leave||''});const ch=JSON.stringify(atts.map(a=>a.id+a.ts))!==JSON.stringify(attRecs.map(a=>a.id+a.ts));attRecs=atts;renderAuction();renderParty();if(ch)render()},()=>{}));
+  dataUnsubs.push(db.collection('meta').onSnapshot(q=>{aucItems=[];events=[];const atts=[],glN=[];q.docs.forEach(d=>{const x={...d.data(),id:d.id};if(d.id.startsWith('glm_')){try{x.rows=(x.rows||[]).map(r=>typeof r==='string'?JSON.parse(r):r)}catch(e){x.rows=[]}glN.push(x)}else if(d.id.startsWith('auc_'))aucItems.push(x);else if(d.id.startsWith('evt_'))events.push(x);else if(d.id.startsWith('pb_')){const k=d.id.slice(3);if(!(pbDrag&&pbDrag.el))pbData[k]=d.data()}else if(d.id.startsWith('att_'))atts.push(x);else if(d.id==='pbtpl')pbTpls=(d.data().list)||[];else if(d.id==='discord')dcHooks.leave=d.data().leave||''});const ch=JSON.stringify(atts.map(a=>a.id+a.ts))!==JSON.stringify(attRecs.map(a=>a.id+a.ts));attRecs=atts;glMatches=glN;if(view==='gl')renderGL();renderAuction();renderParty();if(ch)render()},()=>{}));
   if(role==='owner'||role==='officer')dataUnsubs.push(db.doc('dcsec/hooks').onSnapshot(d=>{const x=d.exists?d.data():{};dcHooks.party=x.party||'';dcHooks.auction=x.auction||'';renderDc();renderParty()},()=>{}));
   if(role==='owner'||role==='officer'){setTimeout(()=>{loadLinks();importBotLeaves();syncBot(true)},5000);const iv=setInterval(()=>{if(!dataOn)return clearInterval(iv);importBotLeaves();loadLinks()},5*60e3)}else setTimeout(loadLinks,5000);
   dataUnsubs.push(db.collection('auction_queue').onSnapshot(q=>{aucQ=q.docs.map(d=>({...d.data(),id:d.id}));rulesOld.q=false;renderAuction()},()=>{rulesOld.q=true;renderAuction()}));
@@ -1960,7 +1966,7 @@ async function saveMyChar(v){
     await db.doc('claims/'+k).set({email:user.email,char:v,ts:Date.now()}).catch(()=>{});
     ls.set('tm-mychar',v);editChar=false;say(T('เชื่อมตัวละครแล้ว')+': '+v)}catch(e){ferr(e)}
 }
-function setView(v){view=v;document.body.dataset.view=v;document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',(a.dataset.view||'dash')===v&&(v!=='dash'||a.getAttribute('href')==='#overview')));if(v==='auction')renderAuction();if(v==='party')renderParty()}
+function setView(v){view=v;document.body.dataset.view=v;document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',(a.dataset.view||'dash')===v&&(v!=='dash'||a.getAttribute('href')==='#overview')));if(v==='auction')renderAuction();if(v==='party')renderParty();if(v==='gl')renderGL()}
 function rulesBanner(old){if(!old)return '';return `<div class="warnbox" style="margin-bottom:12px">${stfx()?T('ต้องอัปเดตกฎฐานข้อมูล ก่อน สมาชิกถึงจะลงชื่อได้ — เมนู "สิทธิ์เข้าดู" → กฎฐานข้อมูล → คัดลอกไปวางใน database console'):T('ระบบลงชื่อยังไม่เปิด — รอหัวหน้าตั้งค่า')}</div>`}
 
 /* auction */
@@ -2488,7 +2494,119 @@ document.addEventListener('focusout',e=>{if(e.target.closest&&e.target.closest('
 document.addEventListener('touchstart',e=>{const el=e.target.closest&&e.target.closest('img[data-iid]');if(el){if(!el.closest('button'))e.preventDefault();showTip(el,true)}else if(tipEl&&!tipEl.hidden&&!e.target.closest('#itip'))hideTip()},{passive:false});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')hideTip()});
 window.addEventListener('scroll',()=>{if(!tipPin)hideTip()},{passive:true});
-const hv=()=>{const h=location.hash.slice(1);if(h==='leave'){leaveOpen=true;setView('party');const go=(n)=>{const e=$('evTop');if(e&&e.querySelector('.lvbox,.lvbar')){e.scrollIntoView({behavior:'smooth',block:'start'})}else if(n>0)setTimeout(()=>go(n-1),500)};go(20);return}setView(h==='auction'||h==='party'||h==='mine'?(h==='mine'?'dash':h):'dash')};window.addEventListener('hashchange',hv);hv();
+// ===== Guild League =====
+let glMatches=[],glSel='all',glSort={k:'score',d:-1},glAggSort={k:'avg',d:-1},glQ='',glDraft=null;
+const GL_OUR='themoon';
+const GL_COLS={guild:'Guild',player:'Player',job:'Job',k:'Kill',a:'Assist',pd:'Player Damage',bd:'Building Damage',heal:'Heal',en:'Endure',d:'Deaths',rev:'Revive',mon:'Monster',flag:'Flag Repair',bk:'Boss Kill',bdm:'Boss Damage'};
+const GL_KEYS=Object.keys(GL_COLS);
+const GL_ROLE={'High Priest':'heal','Paladin':'tank','Lord Knight':'tank','Creator':'tank','Biochemist':'tank','Clown':'sup','Minstrel':'sup','Gypsy':'sup'};
+const GL_RN={dps:'⚔️ DPS',heal:'💚 ฮีล',tank:'🛡️ แทงก์',sup:'🎵 ซัพพอร์ต'};
+const glRole=j=>GL_ROLE[j]||'dps';
+function glParse(txt){
+  const L=String(txt||'').replace(/\r/g,'').split('\n').map(s=>s.trim()).filter(Boolean);if(L.length<2)return {err:'ไม่พบข้อมูล'};
+  const sp=L[0].includes('\t')?'\t':',';const H=L[0].split(sp).map(s=>s.trim().toLowerCase());
+  const idx={};for(const k of GL_KEYS){idx[k]=H.indexOf(GL_COLS[k].toLowerCase())}
+  if(idx.guild<0||idx.player<0)return {err:'หัวตารางต้องมี Guild และ Player'};
+  const num=v=>{let n=parseInt(String(v||'0').replace(/[, ]/g,''),10);if(isNaN(n))n=0;if(n<0)n+=4294967296;return n};
+  const rows=[];for(const ln of L.slice(1)){const c=ln.split(sp);if(c.length<3)continue;const r=GL_KEYS.map(k=>idx[k]<0?(k==='guild'||k==='player'||k==='job'?'':0):(k==='guild'||k==='player'||k==='job'?String(c[idx[k]]||'').trim():num(c[idx[k]])));if(r[1])rows.push(r)}
+  const gs=[...new Set(rows.map(r=>r[0]))];const ours=gs.find(g=>g.toLowerCase().replace(/\s/g,'')===GL_OUR)||gs[0];const opp=gs.filter(g=>g!==ours).join(', ');
+  const bd=rows.reduce((n,r)=>n+r[6],0),fl=rows.reduce((n,r)=>n+r[12]+r[11],0);
+  return {rows,ours,opp,map:bd>0?'fort':(fl>0?'flag':'other'),n:rows.length};
+}
+const glObj=(o,map)=>map==='fort'?o.bd:o.flag*20+o.mon;
+function glGame(m){
+  const R=(m.rows||[]).map(r=>{const o={};GL_KEYS.forEach((k,i)=>o[k]=r[i]);o.role=glRole(o.job);o.ours=o.guild===m.ours;o.obj=glObj(o,m.map);return o});
+  const pct=(v,arr)=>{if(arr.length<2)return .5;let lo=0,eq=0;for(const x of arr){if(x<v)lo++;else if(x===v)eq++}return (lo+(eq-1)/2)/(arr.length-1)};
+  const W={dps:{pd:.35,k:.25,obj:.15,a:.15,d:.1},heal:{heal:.45,rev:.3,a:.15,d:.1},tank:{en:.4,a:.25,obj:.25,d:.1},sup:{a:.45,heal:.1,rev:.05,en:.2,obj:.1,d:.1}};
+  for(const role in W){const G=R.filter(o=>o.role===role);if(!G.length)continue;const col={};for(const k in W[role])col[k]=G.map(o=>k==='d'?-o.d:o[k]);
+    G.forEach(o=>{let s=0;for(const k in W[role])s+=W[role][k]*pct(k==='d'?-o.d:o[k],col[k]);o.score=Math.round(s*100)})}
+  const side=f=>{const G=R.filter(f),S=k=>G.reduce((n,o)=>n+o[k],0);const t={n:G.length};GL_KEYS.slice(3).forEach(k=>t[k]=S(k));t.kd=t.d?t.k/t.d:t.k;t.roles={dps:0,heal:0,tank:0,sup:0};G.forEach(o=>t.roles[o.role]++);t.jobs={};G.forEach(o=>t.jobs[o.job]=(t.jobs[o.job]||0)+1);return t};
+  return {R,us:side(o=>o.ours),them:side(o=>!o.ours)};
+}
+const glMapN=m=>m==='fort'?'🏰 ป้อม/สิ่งก่อสร้าง':m==='flag'?'🚩 ธง/มอนสเตอร์':'❔';
+const glResN=r=>r==='win'?'ชนะ':r==='lose'?'แพ้':r==='draw'?'เสมอ':'';
+const glDt=s=>{if(!s)return '';const d=new Date(s+'T00:00');return isNaN(d)?s:d.toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short'})};
+const glM=n=>n>=1e9?(n/1e9).toFixed(2)+'B':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e4?(n/1e3).toFixed(0)+'K':fmt(n);
+function glInsights(m,g){
+  const u=g.us,t=g.them,out=[],r=(a,b)=>b?a/b:(a?99:1);const opp=esc(m.opp||T('ศัตรู'));
+  out.push(`${T('ฆ่าได้')} <b>${fmt(u.k)}</b> · ${T('ตาย')} <b>${fmt(u.d)}</b> · K/D <b>${u.kd.toFixed(2)}</b> (${opp} ${t.kd.toFixed(2)})`);
+  if(Math.abs(u.n-t.n)>=5)out.push(u.n<t.n?`⚠️ ${T('คนน้อยกว่า')} ${opp} <b>${t.n-u.n}</b> ${T('คน')} (${u.n} vs ${t.n})`:`✅ ${T('คนมากกว่า')} ${opp} <b>${u.n-t.n}</b> ${T('คน')}`);
+  const cmp=[['pd','Player Damage'],['bd','Building Damage'],['heal','Heal'],['rev','Revive'],['a','Assist'],['flag','Flag Repair'],['bdm','Boss Damage']];
+  for(const [k,n] of cmp){const a=u[k],b=t[k];if(!a&&!b)continue;if(!a&&b){out.push(`❌ ${n}: ${T('เราได้ 0 แต่')} ${opp} ${glM(b)}`);continue}const x=r(a,b);if(x>=1.3)out.push(`✅ ${n} ${T('สูงกว่า')} <b>${x.toFixed(1)}x</b> (${glM(a)} vs ${glM(b)})`);else if(x<=1/1.3)out.push(`⚠️ ${n} ${T('ต่ำกว่า')} <b>${(1/x).toFixed(1)}x</b> (${glM(a)} vs ${glM(b)})`)}
+  const hr=u.n?u.roles.heal/u.n:0,ht=t.n?t.roles.heal/t.n:0;if(Math.abs(hr-ht)>=.06)out.push(`💚 ${T('สัดส่วนฮีล')} ${Math.round(hr*100)}% vs ${Math.round(ht*100)}%`);
+  const low=g.R.filter(o=>o.ours&&o.score<20).length;if(low)out.push(`👀 ${T('สมาชิกคะแนนต่ำกว่า 20')}: <b>${low}</b> ${T('คน')} (${T('ดูในตารางด้านล่าง')})`);
+  return out;
+}
+function glAgg(){
+  const P={};glMatches.forEach(m=>{const g=glGame(m);g.R.filter(o=>o.ours).forEach(o=>{const c=canon(o.player);const p=P[c]||(P[c]={name:o.player,job:o.job,role:o.role,n:0,sc:0,k:0,d:0,a:0,pd:0,heal:0,rev:0,en:0,last:''});p.n++;p.sc+=o.score;['k','d','a','pd','heal','rev','en'].forEach(k=>p[k]+=o[k]);if((m.date||'')>=p.last){p.last=m.date||'';p.job=o.job;p.role=o.role;p.name=o.player}})});
+  return Object.values(P).map(p=>({...p,avg:Math.round(p.sc/p.n)}));
+}
+function glLineup(A){
+  const T1=[],T2=[];['tank','heal','sup','dps'].forEach(r=>{A.filter(p=>p.role===r).sort((a,b)=>b.avg-a.avg).forEach((p,i)=>((i%4===0||i%4===3)?T1:T2).push(p))});return [T1,T2];
+}
+function renderGL(){const box=$('glBody');if(!box)return;
+  const off=isOff(),games=glMatches.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.ts-a.ts);if(glSel!=='all'&&!games.find(m=>m.id===glSel))glSel='all';
+  const up=off?`<details class="card" id="glUp" ${glDraft?'open':''}><summary>+ ${T('เพิ่มผลการแข่ง Guild League')}</summary>
+    <div class="note" style="margin:8px 0">${T('วางตารางจากเกม (คัดลอกทั้งตาราง รวมหัวตาราง Guild / Player / Job ...) หรือเลือกไฟล์ .txt/.csv')}</div>
+    <div class="set"><label>${T('วันที่')}<input id="glDate" type="date" value="${glDraft&&glDraft.date||new Date(Date.now()+7*3600e3).toISOString().slice(0,10)}"></label>
+    <label>${T('ผล')}<select id="glRes"><option value="">${T('ไม่ระบุ')}</option><option value="win">${T('ชนะ')}</option><option value="lose">${T('แพ้')}</option><option value="draw">${T('เสมอ')}</option></select></label>
+    <label>${T('สนาม / รอบ')}<input id="glLbl" placeholder="${T('เช่น สนาม 1')}"></label>
+    <label>${T('ไฟล์')}<input id="glFile" type="file" accept=".txt,.csv,.tsv"></label>
+    <label style="grid-column:1/-1">${T('ข้อมูล')}<textarea id="glTxt" rows="5" placeholder="Guild	Player	Job	Kill	Assist ..." style="font-family:monospace;font-size:12px"></textarea></label></div>
+    <div class="row" style="margin-top:8px;gap:10px"><span class="note" id="glPrev"></span><button class="pri" data-gl="save">${T('บันทึก')}</button></div></details>`:'';
+  const chips=`<div class="glchips"><button class="glc ${glSel==='all'?'on':''}" data-gl="sel" data-id="all">📊 ${T('รวมทุกเกม')} <span class="note">${games.length}</span></button>${games.map(m=>`<button class="glc ${glSel===m.id?'on':''} ${m.result||''}" data-gl="sel" data-id="${m.id}"><b>${glDt(m.date)}</b> ${m.map==='fort'?'🏰':m.map==='flag'?'🚩':''} vs ${esc(m.opp||'?')}${m.label?` · ${esc(m.label)}`:''}${m.result?` <i>${T(glResN(m.result))}</i>`:''}</button>`).join('')}</div>`;
+  let body='';
+  if(!games.length)body=`<div class="card empty">${T('ยังไม่มีข้อมูลการแข่ง')}${off?' — '+T('กด "+ เพิ่มผลการแข่ง" ด้านบน'):''}</div>`;
+  else if(glSel!=='all'){const m=games.find(x=>x.id===glSel),g=glGame(m),u=g.us,t=g.them;
+    const rowsC=[['ผู้เล่น','n'],['Kill','k'],['Deaths','d'],['Assist','a'],['Player Damage','pd'],['Building Damage','bd'],['Heal','heal'],['Revive','rev'],['Endure','en'],['Flag Repair','flag'],['Monster','mon'],['Boss Damage','bdm']].filter(([,k])=>u[k]||t[k]);
+    const bar=(a,b,lowGood)=>{const s=a+b||1,p=Math.round(a/s*100);const good=lowGood?a<=b:a>=b;return `<div class="glbar"><span style="width:${p}%" class="${good?'g':'b'}"></span></div>`};
+    const cmp=`<div class="card"><div class="head"><h2>${esc(m.ours)} <span class="note">vs</span> ${esc(m.opp||'?')}</h2><span class="note">${glDt(m.date)} · ${T(glMapN(m.map))}${m.label?' · '+esc(m.label):''}${m.result?` · <b class="glr ${m.result}">${T(glResN(m.result))}</b>`:''}</span></div>
+      <table class="glcmp"><thead><tr><th></th><th class="r">${esc(m.ours)}</th><th></th><th>${esc(m.opp||'?')}</th></tr></thead><tbody>${rowsC.map(([n,k])=>`<tr><td>${T(n)}</td><td class="n"><b>${glM(u[k])}</b></td><td style="width:40%">${bar(u[k],t[k],k==='d')}</td><td class="n">${glM(t[k])}</td></tr>`).join('')}<tr><td>K/D</td><td class="n"><b>${u.kd.toFixed(2)}</b></td><td>${bar(u.kd,t.kd)}</td><td class="n">${t.kd.toFixed(2)}</td></tr></tbody></table>
+      ${off?`<div class="row" style="margin-top:10px;gap:8px;justify-content:flex-end"><select data-glres="${m.id}"><option value="">${T('ผล: ไม่ระบุ')}</option>${['win','lose','draw'].map(r=>`<option value="${r}" ${m.result===r?'selected':''}>${T(glResN(r))}</option>`).join('')}</select><button class="sm ghost" data-gl="del" data-id="${m.id}">${T('ลบเกมนี้')}</button></div>`:''}</div>`;
+    const comp=`<div class="card"><div class="head"><h2>🧩 ${T('องค์ประกอบทีม')}</h2></div><table class="glcmp"><thead><tr><th></th><th class="r">${esc(m.ours)}</th><th class="r">${esc(m.opp||'?')}</th></tr></thead><tbody>${Object.keys(GL_RN).map(r=>`<tr><td>${T(GL_RN[r])}</td><td class="n"><b>${u.roles[r]}</b> <span class="note">${u.n?Math.round(u.roles[r]/u.n*100):0}%</span></td><td class="n">${t.roles[r]} <span class="note">${t.n?Math.round(t.roles[r]/t.n*100):0}%</span></td></tr>`).join('')}</tbody></table>
+      <div class="note" style="margin-top:8px">${Object.entries(u.jobs).sort((a,b)=>b[1]-a[1]).map(([j,n])=>`<span class="cls">${ico(j,16)}${esc(j)} ${n}</span>`).join(' ')}</div></div>`;
+    const ins=`<div class="card"><div class="head"><h2>💡 ${T('สรุปอัตโนมัติ')}</h2></div><ul class="glins">${glInsights(m,g).map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+    const mine=g.R.filter(o=>o.ours);const mvp=`<div class="card"><div class="head"><h2>🏅 MVP ${T('แต่ละสาย')}</h2><span class="note">${T('คะแนน 0–100 เทียบกับคนสายเดียวกันทั้งสองกิลด์')}</span></div><div class="glmvp">${Object.keys(GL_RN).map(r=>{const top=mine.filter(o=>o.role===r).sort((a,b)=>b.score-a.score).slice(0,3);return `<div><div class="note">${T(GL_RN[r])}</div>${top.map((o,i)=>`<div class="glp">${['🥇','🥈','🥉'][i]} ${ico(o.job,18)}<b>${esc(o.player)}</b> <span class="gls">${o.score}</span></div>`).join('')||'–'}</div>`}).join('')}</div></div>`;
+    const cols=[['score','คะแนน'],['k','K'],['d','D'],['a','A'],['pd','Player Dmg'],[m.map==='fort'?'bd':'obj',m.map==='fort'?'Building':'Flag/Mon'],['heal','Heal'],['rev','Rev'],['en','Endure']];
+    const S=mine.slice().sort((a,b)=>glSort.k==='player'?a.player.localeCompare(b.player)*glSort.d:((a[glSort.k]||0)-(b[glSort.k]||0))*glSort.d);
+    const tbl=`<div class="card"><div class="head"><h2>👥 ${T('ผลรายคน')} <span class="note">(${mine.length})</span></h2><span class="note">${T('กดหัวตารางเพื่อเรียง · แถวสีแดง = คะแนนต่ำกว่า 20')}</span></div><div class="scroll"><table class="gltbl"><thead><tr><th>#</th><th data-gls="player">${T('ตัวละคร')}</th><th>${T('สาย')}</th>${cols.map(([k,n])=>`<th class="r" data-gls="${k}">${T(n)}${glSort.k===k?(glSort.d<0?' ▼':' ▲'):''}</th>`).join('')}</tr></thead><tbody>${S.map((o,i)=>`<tr class="${o.score<20?'low':''}"><td class="n">${i+1}</td><td><span class="cls">${ico(o.job,18)}<b>${esc(o.player)}</b></span></td><td class="note">${T(GL_RN[o.role])}</td>${cols.map(([k])=>`<td class="n">${k==='score'?`<span class="gls">${o.score}</span>`:glM(o[k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+    body=`<div class="g2">${cmp}<div>${ins}${comp}</div></div>${mvp}${tbl}`;
+  }else{
+    const A=glAgg(),w=games.filter(m=>m.result==='win').length,l=games.filter(m=>m.result==='lose').length;const K=games.map(m=>glGame(m).us);const kd=K.reduce((n,u)=>n+u.k,0)/Math.max(1,K.reduce((n,u)=>n+u.d,0));
+    const sum=`<div class="kpis glk"><div class="card"><div class="note">${T('จำนวนเกม')}</div><b>${games.length}</b></div><div class="card"><div class="note">${T('ชนะ / แพ้')}</div><b>${w} / ${l}</b></div><div class="card"><div class="note">K/D ${T('รวม')}</div><b>${kd.toFixed(2)}</b></div><div class="card"><div class="note">${T('สมาชิกที่มีข้อมูล')}</div><b>${A.length}</b></div></div>`;
+    const q=glQ.trim().toLowerCase();const F=A.filter(p=>!q||p.name.toLowerCase().includes(q)||p.job.toLowerCase().includes(q));
+    const ac=[['avg','คะแนนเฉลี่ย'],['n','ลงเกม'],['k','K/เกม'],['d','D/เกม'],['a','A/เกม'],['pd','Dmg/เกม'],['heal','Heal/เกม'],['rev','Rev/เกม']];
+    const val=(p,k)=>k==='avg'||k==='n'?p[k]:p[k]/p.n;
+    F.sort((a,b)=>glAggSort.k==='name'?a.name.localeCompare(b.name)*glAggSort.d:(val(a,glAggSort.k)-val(b,glAggSort.k))*glAggSort.d||b.n-a.n);
+    const tbl=`<div class="card"><div class="head"><h2>👥 ${T('สถิติสมาชิกรวมทุกเกม')} <span class="note">(${F.length})</span></h2><input id="glQ" placeholder="${T('ค้นหาชื่อ / อาชีพ')}" value="${esc(glQ)}" style="max-width:200px"></div><div class="scroll"><table class="gltbl"><thead><tr><th>#</th><th data-glas="name">${T('ตัวละคร')}</th><th>${T('สาย')}</th>${ac.map(([k,n])=>`<th class="r" data-glas="${k}">${T(n)}${glAggSort.k===k?(glAggSort.d<0?' ▼':' ▲'):''}</th>`).join('')}</tr></thead><tbody>${F.map((p,i)=>`<tr class="${p.avg<20?'low':''}"><td class="n">${i+1}</td><td><span class="cls">${ico(p.job,18)}<b>${esc(p.name)}</b></span></td><td class="note">${T(GL_RN[p.role])}</td>${ac.map(([k])=>`<td class="n">${k==='avg'?`<span class="gls">${p.avg}</span>`:k==='n'?p.n:glM(val(p,k))}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+    const [T1,T2]=glLineup(A);const col=(L,n)=>`<div><h3 style="margin:0 0 6px">${n} <span class="note">(${L.length})</span></h3>${Object.keys(GL_RN).map(r=>{const X=L.filter(p=>p.role===r);return X.length?`<div class="note" style="margin-top:6px">${T(GL_RN[r])} · ${X.length}</div><div class="qchips">${X.map(p=>`<span class="qchip">${esc(p.name)} <b>${p.avg}</b></span>`).join('')}</div>`:''}).join('')}</div>`;
+    const lu=`<div class="card"><div class="head"><h2>🧠 ${T('ร่างจัด 2 ทีม (แนะนำ)')}</h2><span class="note">${T('แบ่งแต่ละสายสลับกันตามคะแนนเฉลี่ย ให้ 2 ทีมกำลังใกล้กัน — ใช้เป็นจุดเริ่มต้น แล้วไปจัดจริงที่หน้าปาร์ตี้')}</span></div><div class="g2">${col(T1,T('ทีม 1'))}${col(T2,T('ทีม 2'))}</div></div>`;
+    body=sum+tbl+lu;
+  }
+  const foc=document.activeElement&&document.activeElement.id==='glQ';
+  box.innerHTML=up+chips+body;
+  if(glDraft){$('glTxt').value=glDraft.txt||'';$('glRes').value=glDraft.res||'';$('glLbl').value=glDraft.lbl||'';glPreview()}
+  if(foc){const i=$('glQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)}
+}
+function glPreview(){const t=$('glTxt');if(!t)return;const p=glParse(t.value);$('glPrev').innerHTML=!t.value.trim()?'':p.err?`<span style="color:#f77">${T(p.err)}</span>`:`✅ ${p.n} ${T('แถว')} · ${esc(p.ours)} vs ${esc(p.opp||'?')} · ${T(glMapN(p.map))}`}
+function glSaveDraft(){const t=$('glTxt');glDraft=t&&t.value.trim()?{txt:t.value,res:$('glRes').value,lbl:$('glLbl').value,date:$('glDate').value}:null}
+document.addEventListener('input',e=>{if(e.target.id==='glTxt'){glPreview();glSaveDraft()}else if(e.target.id==='glQ'){glQ=e.target.value;renderGL()}else if(e.target.closest&&e.target.closest('#glUp'))glSaveDraft()});
+document.addEventListener('change',async e=>{
+  if(e.target.id==='glFile'&&e.target.files[0]){const f=e.target.files[0];$('glTxt').value=await f.text();glPreview();glSaveDraft()}
+  if(e.target.dataset&&e.target.dataset.glres&&FB&&user){FB.db.doc('meta/'+e.target.dataset.glres).update({result:e.target.value}).catch(ferr)}
+});
+document.addEventListener('click',async e=>{const el=e.target.closest('#gl [data-gl],#gl [data-gls],#gl [data-glas]');if(!el)return;
+  if(el.dataset.gls){const k=el.dataset.gls;glSort=glSort.k===k?{k,d:-glSort.d}:{k,d:k==='player'?1:-1};renderGL();return}
+  if(el.dataset.glas){const k=el.dataset.glas;glAggSort=glAggSort.k===k?{k,d:-glAggSort.d}:{k,d:k==='name'?1:-1};renderGL();return}
+  const a=el.dataset.gl;
+  if(a==='sel'){glSel=el.dataset.id;renderGL();return}
+  if(a==='save'){if(!(FB&&user&&isOff()))return;const p=glParse($('glTxt').value);if(p.err){glPreview();return}
+    const date=$('glDate').value||new Date().toISOString().slice(0,10),id='glm_'+date.replace(/-/g,'')+'_'+Date.now().toString(36);
+    el.disabled=true;try{await FB.db.doc('meta/'+id).set({date,ours:p.ours,opp:p.opp,map:p.map,result:$('glRes').value,label:$('glLbl').value.trim(),rows:p.rows.map(r=>r.slice()).map(r=>JSON.stringify(r)),by:byNm(),ts:Date.now()});glDraft=null;glSel=id;const tx=$('glTxt');if(tx)tx.value='';renderGL();say(T('บันทึกแล้ว'))}catch(err){ferr(err)}el.disabled=false;return}
+  if(a==='del'){if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=T('กดอีกครั้งเพื่อยืนยันลบ');return}FB.db.doc('meta/'+el.dataset.id).delete().catch(ferr);glSel='all';return}
+});
+
+const hv=()=>{const h=location.hash.slice(1);if(h==='leave'){leaveOpen=true;setView('party');const go=(n)=>{const e=$('evTop');if(e&&e.querySelector('.lvbox,.lvbar')){e.scrollIntoView({behavior:'smooth',block:'start'})}else if(n>0)setTimeout(()=>go(n-1),500)};go(20);return}setView(h==='auction'||h==='party'||h==='gl'||h==='mine'?(h==='mine'?'dash':h):'dash')};window.addEventListener('hashchange',hv);hv();
 startTr();
 const cfg=FB_CONFIG||ls.get('tm-fb');
 if(cfg){setMeta(null);render();useCloud(cfg).catch(er=>{say('เชื่อมฐานข้อมูล ไม่ได้ ใช้ข้อมูลในเครื่องแทน: '+er.message);useLocal()})}else useLocal();
